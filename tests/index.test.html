@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/qunit@latest/qunit/qunit.css">
+    <link rel="stylesheet" href="../style.css">
+    <!-- <script src="aya.js"></script> -->
+    <script type="application/javascript"  src="https://cdn.jsdelivr.net/npm/ayajs@1.0.1/build/aya.js"></script>
+    <title>petri network test</title>
+</head>
+<body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+    <div class="scripts">
+        <script>
+            var aya = new aya.Init();
+            console.log(aya);
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/qunit@latest"></script>
+        <script src="place.test.js"></script>
+        <script src="transition.test.js"></script>
+        <script src="jeton.test.js"></script>
+</body>
+</html>
