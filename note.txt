@@ -1,0 +1,18 @@
+ - dans application
+	listes
+		place
+		transition
+		edge 	
+ 	
+séparer liste des places et transition
+
+save compo according to its type
+arc (num_place, num_transiton)
+
+dispatching des compo à partir du register
+
+
+creation de makefile
+	automatiser le review
+	ajout de tag 
+

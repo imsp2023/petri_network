@@ -1,0 +1,6 @@
+class Component{
+
+    constructor(){
+        
+    }
+}

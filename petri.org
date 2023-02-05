@@ -1,0 +1,94 @@
+#+SEQ_TODO: TODO REVIEW DONE
+
+Implementation of a petri's network in javascript
+
+* TODO Modeling
+* TODO Structuration of code's files according to the model
+* Implementation of visual components 
+** place
+*** TODO visual representation of a place
+a place is represented visually by a circle and is defined by json
+object. The json object has name and type attributes. The type
+attribute may have start, end and intermediary values. The place's
+color depends on its type. It's also possible to increase the size of
+circle contour. By default the place's type is intermediary.
+
+*** TODO panel of possible actions 
+when hovering over a place component, a panel must appear. The panel
+presents the components that can be attached to a place. Three
+components/actions can be associated to place:
+- delete; its representation is a trash
+- add transition; its representation is a rectangle
+- add edge; its representation is an arrow
+*** TODO place configuration
+when clicking on a panel, a window (popup) must be appear to configure
+a panel. The configuration of a panel consists in specifying its type
+and its name. The name must generated automatically. By default the
+place's type is intermediary. The possible types are start, end and
+intermediary.
+*** TODO generate a json structure to save place
+** transition
+*** TODO visual representation of transitions
+a transition is represented visually by a rectangle and is defined by
+json object. The json object has name, type and gate
+attribute. The possible types are automatic, manual, dummy, ssub,
+asub, clock. The possible values of the gate attribute are and_join,
+xor_join, and_split, xor_split. When the type attribute is not
+specified then the transition is considered as an and_split gate.  The
+visual form of a transition depends on its type. An automatic and
+dummy transition is represented with a rectangle ; we can use
+different color to distinguish them. A manual transition is
+represented by a wide down arrow. A clock transition is represented
+with a rectangle and a clock. A sub (process) tranisition is
+represented with a double rectangle. 
+
+*** TODO panel of possible actions 
+when hovering over a transition component, a panel must appear. The panel
+presents the components that can be attached to a transition. Three
+components/actions can be associated to place:
+- delete; its representation is a trash
+- add place; its representation is a circle
+- add edge; its representation is an arrow
+
+*** TODO transition configuration
+ When clicking on a panel, a window (popup) must be appear to
+configure a panel. Transition configuration consists in specifying the
+values of the name, type and gate attributes. The values of the
+different attributes have been specified in section "visual
+representaion of transitions". Extra attributes can also be added to
+transition json object according to its type:
+- automatic; define an app attribute that contain name and path
+  attributes. app attribute allows to define resource which will be
+  executed.
+- manual; no extra attribute. name corresponds to an activity
+- dummy; no extra attribute.
+- sub; no extra attribute but name corresponds to the name of process
+  that will be executed in parallel
+- clock; 
+
+*** TODO generate a json structure to save place 
+
+** edges
+*** TODO visual representation of edges
+an edge is represented visually by a directed arrow. The visual form
+of an edge depends on its direction that can be "p2t" or "t2p".
+
+*** TODO panel of possible actions
+when hovering over an edge component, a panel must appear. The panel
+presents actions that can be applied to an edge. two actions can be
+applied:
+- delete; its representation is a trash
+- configure; its representation is ....
+
+*** TODO edge configuration
+The configuration of an edge consists in specifying its direction and
+a condition to pass through
+
+*** TODO generate a json structure to save edge
+* Implementation of actions to be applied to components
+** place
+*** TODO delete action
+*** TODO 'add transition' action
+*** TODO 'add place' action
+** transition
+** edge
