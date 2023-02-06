@@ -3,6 +3,7 @@
 Implementation of a petri's network in javascript
 
 * TODO Modeling
+[[file:petri.org][architecture]]
 * TODO Structuration of code's files according to the model
 * Implementation of visual components 
 ** place
@@ -92,3 +93,5 @@ a condition to pass through
 *** TODO 'add place' action
 ** transition
 ** edge
+
+[[file:petri_model.png][architecture]]
