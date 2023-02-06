@@ -93,5 +93,3 @@ a condition to pass through
 *** TODO 'add place' action
 ** transition
 ** edge
-
-[[file:petri_model.png][architecture]]
