@@ -8,11 +8,11 @@
    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ayajs@1.0.1/build/style.css">
    <!-- <script type="application/javascript"  src="aya.js"></script> -->
    <script type="application/javascript"  src="https://cdn.jsdelivr.net/npm/ayajs@1.0.1/build/aya.js"></script>
+  <script src="./src/entities/place.js"></script>
    <title>petri network</title>
 </head>
 
 <body >
-
    <script>
       console.log(aya);
       var aya = new aya.Init();
@@ -22,6 +22,9 @@
          aya.svg.removeChild(child.c_svg);
       });
 
+     var p = new Place("end");
+     var p = new Place("start");
+     var p = new Place("intermediary");
       document.body.append(aya.svg);
    </script>
 </body>

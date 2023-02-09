@@ -2,12 +2,12 @@
 
 Implementation of a petri's network in javascript
 
-* TODO Modeling
+* DONE Modeling
 [[file:petri.org][architecture]]
-* TODO Structuration of code's files according to the model
+* DONE Structuration of code's files according to the model
 * Implementation of visual components 
 ** place
-*** TODO visual representation of a place
+*** DONE visual representation of a place
 a place is represented visually by a circle and is defined by json
 object. The json object has name and type attributes. The type
 attribute may have start, end and intermediary values. The place's
@@ -93,5 +93,4 @@ a condition to pass through
 *** TODO 'add place' action
 ** transition
 ** edge
-
-[[file:petri_model.png][architecture]]
+   
