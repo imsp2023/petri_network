@@ -6,9 +6,9 @@
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
    <meta name="viewport" content="initial-scale=1.0">
    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ayajs@1.0.1/build/style.css">
-   <!-- <script type="application/javascript"  src="aya.js"></script> -->
-   <script type="application/javascript"  src="https://cdn.jsdelivr.net/npm/ayajs@1.0.1/build/aya.js"></script>
-  <script src="./src/entities/place.js"></script>
+   <script type="application/javascript"  src="https://cdn.jsdelivr.net/npm/ayajs@1.1.2/build/aya.js"></script>
+   <!-- <script src="./src/entities/place.js"></script> -->
+   <script src="./src/entities/transition.js"></script>
    <title>petri network</title>
 </head>
 
@@ -22,9 +22,19 @@
          aya.svg.removeChild(child.c_svg);
       });
 
-     var p = new Place("end");
-     var p = new Place("start");
-     var p = new Place("intermediary");
+     // var p = new Place("end");
+     // var p = new Place("start");
+     // var p = new Place("intermediary");
+     
+     //var t = new Transition();
+     //t.setGate('xor_join');
+     //var t = new Transition("foobar", "automatic");
+     // var t = new Transition("foobar", "manual");
+     //var t = new Transition("foobar", "clock");
+     // var t = new Transition("foobar", "event");
+     var t = new Transition("foobar", "asub");
+     t.setGate('xor_join');
+     console.log(t);
       document.body.append(aya.svg);
    </script>
 </body>
