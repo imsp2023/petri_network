@@ -14,6 +14,8 @@ class Aya{
 	    form : {
 		vertex: [],
 		c_points: [],
+		redraw: ()=>{
+		},
 		children: [
 		],
 		c_svg: {
@@ -26,11 +28,14 @@ class Aya{
 			Obj.events.push(ev);
 		    },
 		},
-		removeBoxFromDOM(){
-		},
 		x: props ? props.x : null,
 		y: props ? props.y : null,
-		r: props ? props.r : null
+		r: props ? props.r : null,
+		width: props ? props.width : null,
+		height: props ? props.height : null
+	    },
+	    setGate(gate){
+		Obj['gate'] = gate;
 	    },
 	    addChild: (child, translate, rotate, drawing) => {
 		if (translate){
@@ -51,8 +56,8 @@ class Aya{
     Rectangle(x, y, width, height){
 	var Obj = {
 	    events: [],
-	    x: x ? x : null,
-	    y: y ? y : null,
+		x: x!=undefined ? x : null,
+	    y: y!=undefined ? y : null,
 	    width: width ? width : null,
 	    height: height ? height : null,
 	    type: "rectangle",
@@ -60,9 +65,6 @@ class Aya{
 	    offsetY: "",
 	    children : [
 	    ],
-	    c_points: [],
-	    vertex: [],
-	    form: {},
 	    c_svg: {
 		setAttribute: (tag, value) =>{
 		    Obj.form[tag] = value;
@@ -90,28 +92,8 @@ class Aya{
 	return Obj;
     }
 
-    Polyline(points = []){
-	var Obj = {
-	    events: [],
-	    points: points ? points : null,
-	    type: "polyline",
-	    c_svg: {
-		setAttribute: (tag, value) =>{
-		    Obj.form[tag] = value;
-		},
-		addEventListener: (e, callback) => {
-		    var ev = {};
-		    ev[e] = callback;
-		    Obj.events.push(ev);
-		},
-	    },
-	};
-	return Obj;
-    }
-
     Image(x, y, width, height, path){
 	var Obj = {
-	    events: [],
 	    x: x != undefined ? x : null,
 	    y: y != undefined ? y : null,
 	    width: width ? width : null,
@@ -131,6 +113,29 @@ class Aya{
 	    draw(){}
 	};
 
+	return Obj;
+    }
+
+    Text(x, y, text, size){
+	var Obj = {
+	    type: 'text',
+	    x: x!=undefined ? x : null,
+	    y: y!=undefined ? y : null,
+	    text: text ? text : null,
+	    draw(){}
+	};
+
+	return Obj;
+    }
+
+    Polyline(x, y, text, size){
+	var Obj = {
+	    type: 'polyline',
+	      removeFromDOM(){
+		Obj.c_svg = "";
+	    }
+	};
+	
 	return Obj;
     }
 }

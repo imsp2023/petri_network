@@ -1,4 +1,0 @@
-class Component(){
-    this.type = "";
-    this.form = "";
-}
