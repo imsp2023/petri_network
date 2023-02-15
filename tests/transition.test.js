@@ -382,3 +382,8 @@ QUnit.test("adding xor_join on existing xor_join will be ignored", assert =>{
     assert.equal(t.shape.form.height, 50, "the height must be 50 px");
     assert.equal(t.shape.form.fill, "black", "the color must be black");
 });
+
+
+QUnit.test("remove vertex", assert =>{
+
+});
