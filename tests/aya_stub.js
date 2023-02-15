@@ -12,6 +12,8 @@ class Aya{
 	    events: [],
 	    type : this.ttype ? this.ttype : type,
 	    form : {
+		vertex: [],
+		c_points: [],
 		redraw: ()=>{
 		},
 		children: [
@@ -54,7 +56,7 @@ class Aya{
     Rectangle(x, y, width, height){
 	var Obj = {
 	    events: [],
-	    	    x: x!=undefined ? x : null,
+		x: x!=undefined ? x : null,
 	    y: y!=undefined ? y : null,
 	    width: width ? width : null,
 	    height: height ? height : null,
@@ -98,6 +100,16 @@ class Aya{
 	    height: height ? height : null,
 	    path: path ? path : null,
 	    type: "image",
+	    c_svg: {
+		setAttribute: (tag, value) =>{
+		    Obj.form[tag] = value;
+		},
+		addEventListener: (e, callback) => {
+		    var ev = {};
+		    ev[e] = callback;
+		    Obj.events.push(ev);
+		},
+	    },
 	    draw(){}
 	};
 

@@ -14,7 +14,7 @@ attribute may have start, end and intermediary values. The place's
 color depends on its type. It's also possible to increase the size of
 circle contour. By default the place's type is intermediary.
 
-*** TODO panel of possible actions 
+*** DONE panel of possible actions 
 when hovering over a place component, a panel must appear. The panel
 presents the components that can be attached to a place. Three
 components/actions can be associated to place:
@@ -22,8 +22,8 @@ components/actions can be associated to place:
 - add transition; its representation is a rectangle
 - add edge; its representation is an arrow
 *** TODO place configuration
-when clicking on a panel, a window (popup) must be appear to configure
-a panel. The configuration of a panel consists in specifying its type
+when clicking on a place, a window (popup) must be appear to configure
+a place. The configuration of a place consists in specifying its type
 and its name. The name must generated automatically. By default the
 place's type is intermediary. The possible types are start, end and
 intermediary.

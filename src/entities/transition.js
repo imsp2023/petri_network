@@ -17,7 +17,6 @@ class Transition{
 	    }
 	}else if(type == "manual" || type == "automatic" ||
 		 type == "asub" || type == "ssub" || type == "event"){
-	    console.log('automatic');
 	    if(name == null)
 		throw new Error("manual transition requires a name");
 	    if(type == "asub" || type == "ssub"){
