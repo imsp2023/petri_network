@@ -40,6 +40,7 @@ class Transition{
 	    color = 'black';
 	    
 	this.shape.form.c_svg.setAttribute("fill", color);
+	this.shape.form.c_svg.setAttribute("stroke-width", "2px");
 	
 	if(type == 'asub' || type == 'ssub'){
 	    this.shape.addChild(aya.Rectangle(
