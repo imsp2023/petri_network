@@ -157,6 +157,8 @@ QUnit.test("the basic shape of a dummy transition is a black rectange", assert =
     assert.equal(t.shape.form.height, DHeight, "the height must be 50 px");
     assert.equal(t.shape.form.fill, "black", "the color must be black");
     assert.equal(t.shape.form["stroke-width"], TStroke, "the border width must  be 3 px");
+    assert.equal(t.shape.form.vertex.length, 0, "deletion of all vertex of the shape");
+    assert.equal(t.shape.form.c_points.length, 0, "deletion of all c_points of the shape");
 });
 
 QUnit.test("the basic shape of a manual transition is a rectange with a clock above", assert =>{
@@ -167,6 +169,10 @@ QUnit.test("the basic shape of a manual transition is a rectange with a clock ab
     assert.equal(t.shape.form.height, MHeight, "the height must be 40 px");
     assert.equal(t.shape.form.fill, "white", "the color must be black");
     assert.equal(t.shape.form["stroke-width"], TStroke, "the border width must  be 3 px");
+    assert.equal(t.shape.form.vertex.length, 0, "deletion of all vertex of the shape");
+    assert.equal(t.shape.form.c_points.length, 0, "deletion of all c_points of the shape");
+
+    
     assert.equal(t.shape.form.children[0].child.type, "image", "type of child is image");
     assert.equal(t.shape.form.children[0].child.path, "src/images/arrow.png", "clock image path");
 
@@ -194,6 +200,11 @@ QUnit.test("the basic shape of an automatic transition is a black rectange with 
     assert.equal(t.shape.form.height, AHeight, "the height must be 35 px");
     assert.equal(t.shape.form.fill, "white", "the color must be black");
     assert.equal(t.shape.form["stroke-width"], TStroke, "the border width must  be 3 px");
+    assert.equal(t.shape.form.vertex.length, 0, "deletion of all vertex of the shape");
+    assert.equal(t.shape.form.c_points.length, 0, "deletion of all c_points of the shape");
+    
+    
+    
     assert.equal(t.shape.form.children[0].child.type, "text", "type of child is text");
     assert.equal(t.shape.form.children[0].child.text, "foobar", "text value is tranisition name");
 });
@@ -206,6 +217,10 @@ QUnit.test("the basic shape of a event transition is a rectange with a clock abo
     assert.equal(t.shape.form.height, EHeight, "the height must be 40 px");
     assert.equal(t.shape.form.fill, "white", "the color must be black");
     assert.equal(t.shape.form["stroke-width"], TStroke, "the border width must  be 3 px");
+    assert.equal(t.shape.form.vertex.length, 0, "deletion of all vertex of the shape");
+    assert.equal(t.shape.form.c_points.length, 0, "deletion of all c_points of the shape");
+
+    
     assert.equal(t.shape.form.children[0].child.type, "image", "type of child is image");
     assert.equal(t.shape.form.children[0].child.path, "src/images/clock.png", "clock image path");
 
@@ -232,6 +247,10 @@ QUnit.test("the basic shape of a clock transition is a white rectange with a clo
     assert.equal(t.shape.form.height, CHeight, "the height must be 40 px");
     assert.equal(t.shape.form.fill, "white", "the color must be black");
     assert.equal(t.shape.form["stroke-width"], TStroke, "the border width must  be 3 px");
+    assert.equal(t.shape.form.vertex.length, 0, "deletion of all vertex of the shape");
+    assert.equal(t.shape.form.c_points.length, 0, "deletion of all c_points of the shape");
+    
+    
     assert.equal(t.shape.form.children[0].child.type, "image", "type of child is image");
     assert.equal(t.shape.form.children[0].child.path, "src/images/clock.png", "clock image path");
 
@@ -258,6 +277,9 @@ QUnit.test("the basic shape of a asub transition is a double rectange with its n
     assert.equal(t.shape.form.height, SHeight, "the height must be 35 px");
     assert.equal(t.shape.form.fill, "white", "the color must be black");
     assert.equal(t.shape.form["stroke-width"], TStroke, "the border width must  be 3 px");
+    assert.equal(t.shape.form.vertex.length, 0, "deletion of all vertex of the shape");
+    assert.equal(t.shape.form.c_points.length, 0, "deletion of all c_points of the shape");
+    
     assert.equal(t.shape.form.children[0].child.type, "rectangle", "type of child is rectangle");
     assert.equal(t.shape.form.children[0].child.width, 20, "width of the child");
     assert.equal(t.shape.form.children[0].child.height, 50, "height of the child");
@@ -287,6 +309,10 @@ QUnit.test("the basic shape of a ssub transition is a double rectange with its n
     assert.equal(t.shape.form.fill, "white", "the color must be black");
 
     assert.equal(t.shape.form["stroke-width"], TStroke, "the border width must  be 3 px");
+    assert.equal(t.shape.form.vertex.length, 0, "deletion of all vertex of the shape");
+    assert.equal(t.shape.form.c_points.length, 0, "deletion of all c_points of the shape");
+
+    
     assert.equal(t.shape.form.children[0].child.type, "rectangle", "type of child is rectangle");
     assert.equal(t.shape.form.children[0].child.width, 20, "width of the child");
     assert.equal(t.shape.form.children[0].child.height, 50, "height of the child");
@@ -417,4 +443,3 @@ QUnit.test("adding xor_join on existing xor_join will be ignored", assert =>{
     assert.equal(t.shape.form.fill, "black", "the color must be black");
     assert.equal(t.shape.form["stroke-width"], TStroke, "the border width must  be 3 px");
 });
-
