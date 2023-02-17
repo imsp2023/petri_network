@@ -1,5 +1,13 @@
+const t_actions = [
+    {name: "place", path: "src/images/place.png"},
+    {name: "edge", path: "src/images/edge2.png"},
+    {name: "deletion", path: "src/images/delete.png"}
+];
+const ImSZ = 20;
+
 class Transition{
     constructor(name=null, type=null){
+	var state = '';
 	var color = 'white';
 	var width = 20;
 	var height = 50;
@@ -32,7 +40,7 @@ class Transition{
 	
 	this.type = type;
 	this.name = name;
-	this.shape = aya.Component("rectangle", {x:100, y: 100, width: width, height: height});
+	this.shape = aya.Component("rectangle", {x:0, y:0, width: width, height: height});
 	if(this.shape && this.shape.type != 'rectangle')
 	    throw new Error("the shape isn't a reectangle");
 
@@ -71,8 +79,75 @@ class Transition{
 			     this.shape.form.y, name),
 		    {x: 0, y: -10}, null);
 	}
+
+	this.shape.form.c_svg.addEventListener("mouseover", (e)=>{
+	    if(this.panelPos==undefined || this.panelPos < 0)
+	    	this.addPanel();
+	    
+	    this.state = 'transition';
+	});
+
+	this.shape.form.c_svg.addEventListener("mouseleave", (e)=>{
+	    this.state = '';
+	});
+    }
+    
+
+    addPanel(){
+	var x = this.shape.form.x + this.shape.form.width;
+	var y = this.shape.form.y;
+	var wid, hei, panel, img;
+
+	wid = 2*ImSZ+2*5/*spacing*/;
+	hei = Math.floor(t_actions.length/2);
+	if(t_actions.length % 2)
+	    hei++;
+	
+	hei = hei*ImSZ+ hei*5;
+	panel = aya.Rectangle(x, y, wid, hei);
+
+	this.shape.addChild(panel, {x: -2, y: 0}, null, true);
+	panel.c_svg.setAttribute("stroke-width", "0px");
+	this.panelPos = this.shape.form.children.length-1;
+	
+	for (var i = 0, j = 0; i < t_actions.length; i++, j++){
+	    if (i && !(i%2)){
+		j = 0;
+		y += ImSZ+5/* spacing */;
+	    }
+
+	    img = aya.Image(x +ImSZ * j, y, ImSZ, ImSZ, t_actions[i].path);
+	    this.shape.addChild(img, {x: 5, y: 0}, null, true);
+	    img.c_svg.addEventListener("mouseover", (e)=>{
+		this.state = 'panel';
+	    });
+	    img.c_svg.addEventListener("mouseleave", (e)=>{
+		this.state = '';
+	    });
+	}
+	
+	panel.c_svg.addEventListener("mouseover", (e)=>{
+	    this.state = 'panel';
+	});
+	panel.c_svg.addEventListener("mouseleave", (e)=>{
+	    this.state = '';
+	});
+	
+	this.shape.form.svg.addEventListener("mouseover", () => {
+	    if (this.state == '' && this.panelPos >= 0)
+		this.closePanel();
+	});
     }
 
+    closePanel(){
+	var i;
+	for(i = this.panelPos; i <= this.panelPos+t_actions.length; i++)
+	    this.shape.form.children[i].child.removeFromDOM();
+	this.shape.form.children.splice(this.panelPos, 1+t_actions.length);
+	
+	this.panelPos = -1;
+	this.shape.form.svg.removeEventListener("mouseover", () => {});
+    }
     setGate(gate){
 	var index;
 	if(this.gate != 'xor_join' && gate == 'xor_join'){

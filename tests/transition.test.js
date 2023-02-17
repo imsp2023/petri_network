@@ -18,6 +18,8 @@ const SHeight = 60;
 
 const TStroke = '2px';
 
+const T_ImSZ = 20;
+
 QUnit.module("Transition");
 
 QUnit.test("Transition without name is a dummy transition with dummy name", assert =>{
@@ -442,4 +444,130 @@ QUnit.test("adding xor_join on existing xor_join will be ignored", assert =>{
     assert.equal(t.shape.form.height, DHeight, "the height must be 50 px");
     assert.equal(t.shape.form.fill, "black", "the color must be black");
     assert.equal(t.shape.form["stroke-width"], TStroke, "the border width must  be 3 px");
+});
+
+/****************************** Possibles actions ****************************/
+
+QUnit.test("Ensure that  we define an hover event on the Transition with addPanel() as callback", assert => {
+    var t = new Transition();
+    var ev = null;
+    for (e of t.shape.events)
+	if (e["mouseover"])
+	    ev = e;
+    assert.ok(ev, "mouseover event is defined");
+});
+
+
+QUnit.test("addPanel() opens an empty panel when we hover over a transition", assert => {
+    var t = new Transition();
+
+    t.addPanel();
+
+    assert.ok(t.shape.form.children.length, "the shape has a child");
+    assert.equal(t.shape.form.children[0].child.type, "rectangle", "panel has a rectangle as support");
+
+    assert.equal(t.shape.form.children[0].child.x, t.shape.form.x+t.shape.form.width, "panel x-absc");
+    assert.equal(t.shape.form.children[0].child.y, t.shape.form.y, "panel y-absc");
+    
+    assert.equal(t.shape.form.children[0].child.width,  2*20+10, "panel width");
+    assert.equal(t.shape.form.children[0].child.height, 2*20+10, "panel height");
+    
+    assert.equal(t.shape.form.children[0].child.form["stroke-width"], "0px", "the border width must  be 2 px");
+});
+
+QUnit.test("panel must cover the transition", assert => {
+    var t = new Transition();
+
+    t.addPanel();
+
+    assert.ok(t.shape.form.children.length, "the shape has a child");
+    assert.equal(t.shape.form.children[0].child.type, "rectangle", "panel has a rectangle as support");
+    assert.equal(t.shape.form.children[0].child.offsetX, -2, "panel offsetX");
+    assert.equal(t.shape.form.children[0].child.offsetY, 0, "panel offsetY");
+
+});
+
+
+QUnit.test("add all actions on the panel when we hover over it", assert => {
+    var t = new Transition();
+
+    t.addPanel();
+
+    var action = [
+	{name: "place", path: "src/images/place.png"},
+	{name: "edge", path: "src/images/edge2.png"},
+	{name: "deletion", path: "src/images/delete.png"}
+    ];
+
+    assert.equal(t.shape.form.children.length, 4, "panel has 4 children");
+    t.shape.form.children.map(({child}, index) => {
+	if (index != 0){
+	    assert.equal(child.type, "image", "children are images");
+	    assert.equal(child.width, T_ImSZ, "the width of the child must be 30 px");
+	    assert.equal(child.height, T_ImSZ, "the height of the child must be 30 px");
+	    assert.equal(child.path, action[index - 1].path, "check the correct path of each image");
+	}
+    });
+});
+
+
+QUnit.test("actions are display on two columns", assert => {
+    var t = new Transition();
+
+    t.addPanel();
+
+    var action = [
+	{x:  DWidth, y: 0, name: "place", path: "src/images/place.png"},
+	{x:  DWidth + T_ImSZ, y: 0, name: "edge", path: "src/images/edge.png" },
+	{x:  DWidth, y: T_ImSZ+5, name: "deletion", path: "src/images/times.png" }
+    ];
+
+    t.shape.form.children.map(({child}, index) => {
+	if (index != 0){
+	    console.log(child);
+	    assert.equal(child.x, action[index - 1].x, "setting the abscissa of the child");
+	    assert.equal(child.y, action[index - 1].y, "setting the ordinate of the child");
+	    assert.equal(child.offsetX, 5, "setting offsetX");
+	    assert.equal(child.offsetY, 0, "setting offsetY");
+	}
+    });
+});
+
+
+QUnit.test("add mouseleave event on panel", assert => {
+    var t = new Transition();
+
+    t.addPanel();
+
+    var ev = null;
+    for (e of t.shape.form.children[0].child.events)
+	if (e["mouseleave"])
+	    ev = e;
+    assert.ok(ev, "mouseleave event is defined on the rectangle child");
+});
+
+
+QUnit.test("add mouseleave event on place", assert => {
+    var t = new Transition();
+
+    t.addPanel();
+
+    var ev = null;
+    for (e of t.shape.events)
+	if (e["mouseleave"])
+	    ev = e;
+    assert.ok(ev, "mouseleave event is defined on the place");
+});
+
+
+QUnit.test("panel must stay opened when mouse is moving from Transition to panel", assert => {
+    var t = new Transition();
+
+    t.addPanel();
+
+    var cpt = 0;
+    for (e of t.shape.events)
+	if (e["mouseover"])
+	    cpt++;
+    assert.equal(cpt, 1, "there must have 1 mousever event defined on the placel");
 });

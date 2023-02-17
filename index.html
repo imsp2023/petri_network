@@ -15,8 +15,8 @@
 </head>
 
 <body >
-   <script>
-      console.log(aya);
+  <script>
+    console.log(aya);
       var aya = new aya.Init();
 
       // remove grid from the svg
@@ -33,17 +33,18 @@
      // var p = new Place("end");
      // var p = new Place("start");
      // var p = new Place("intermediary");
-     
-     //var t = new Transition();
-     //t.setGate('xor_join');
+
+    //var t = new Transition();
+
+    //t.setGate('xor_join');
      //var t = new Transition("foobar", "automatic");
-     // var t = new Transition("foobar", "manual");
+      var t = new Transition("foobar", "manual");
      //var t = new Transition("foobar", "clock");
      // var t = new Transition("foobar", "event");
-     var t = new Transition("foobar", "asub");
-     t.setGate('xor_join');
-     console.log(t);
-      document.body.append(aya.svg);
+    //var t = new Transition("foobar", "asub");
+    //t.setGate('xor_join');
+    console.log(t);
+    document.body.append(aya.svg);
    </script>
 </body>
 </html>

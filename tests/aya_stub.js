@@ -16,6 +16,9 @@ class Aya{
 		c_points: [],
 		redraw: ()=>{
 		},
+		svg: {
+		    addEventListener: ()=>{}
+		},
 		children: [
 		],
 		c_svg: {
@@ -65,6 +68,7 @@ class Aya{
 	    offsetY: "",
 	    children : [
 	    ],
+	    form: {svg:{}},
 	    c_svg: {
 		setAttribute: (tag, value) =>{
 		    Obj.form[tag] = value;
@@ -100,6 +104,7 @@ class Aya{
 	    height: height ? height : null,
 	    path: path ? path : null,
 	    type: "image",
+	    events: [],
 	    c_svg: {
 		setAttribute: (tag, value) =>{
 		    Obj.form[tag] = value;
