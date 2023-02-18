@@ -12,6 +12,8 @@ class Aya{
 	    events: [],
 	    type : this.ttype ? this.ttype : type,
 	    form : {
+		dest_x: props ? props.dest_x : null,
+		dest_y: props ? props.dest_y : null,
 		vertex: [],
 		c_points: [],
 		redraw: ()=>{
@@ -135,7 +137,18 @@ class Aya{
 		Obj.c_svg = "";
 	    }
 	};
-	
+	return Obj;
+    }
+
+    Link(src_point, dest_point, line){
+	var Obj = {
+	    source: src_point != undefined ? src_point : null,
+	    destination: dest_point != undefined ? dest_point : null,
+	    line: line != undefined ? line : null,
+	    type:"link",
+	    redraw(){
+	    }
+	};
 	return Obj;
     }
 }
