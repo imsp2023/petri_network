@@ -11,32 +11,57 @@
    <!-- <script src="./src/entities/place.js"></script> -->
    <script src="./src/entities/place.js"></script>
    <script src="./src/entities/transition.js"></script>
+   <script src="./src/entities/edge.js"></script>
+   <script src="./src/register.js"></script>
+   <script src="./src/component.js"></script>
+   <script src="./src/factory.js"></script>
    <title>petri network</title>
 </head>
 
 <body >
-   <script>
-      console.log(aya);
+  <script>
+    console.log(aya);
       var aya = new aya.Init();
 
       // remove grid from the svg
       aya.box.form.children.map(({child}) =>{
          aya.svg.removeChild(child.c_svg);
       });
-     
-    // var p = new Place("end");
-    // var l = new Place("start");
-     
+
+    var p = new Component("place", {type: 'end'});
+    p.comp.shape.form.x = 300;
+    p.comp.shape.form.y = 200;
+    p.comp.shape.form.redraw();
+
+    p.comp.setType("start");
+    p.comp.setName("p2");
+
+    var l = new Component('transition', {direction: 'p2t', src: p.comp.shape.uuid});
+
+    l.comp.shape.form.x = 500;
+    l.comp.shape.form.y = 300;
+    l.comp.shape.form.redraw();
+
+
+    var l = new Component('transition', {direction: 'p2t', src: p.comp.shape.uuid});
+
+    l.comp.shape.form.x = 100;
+    l.comp.shape.form.y = 300;
+    l.comp.shape.form.redraw();
+
+    
+//    var e = new Edge("p2t", p.shape.uuid, l.shape.uuid);
      //var c = new Place("intermediary");
      
      // var p = new Place("end");
      // var p = new Place("start");
      // var p = new Place("intermediary");
-     
-     //var t = new Transition();
-     //t.setGate('xor_join');
+
+    //var t = new Transition();
+
+    //t.setGate('xor_join');
      //var t = new Transition("foobar", "automatic");
-     // var t = new Transition("foobar", "manual");
+//      var t = new Transition("foobar", "manual");
      //var t = new Transition("foobar", "clock");
      // var t = new Transition("foobar", "event"); 
      //var t = new Transition("foobar", "asub");

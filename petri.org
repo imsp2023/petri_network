@@ -3,7 +3,7 @@
 Implementation of a petri's network in javascript
 
 * DONE Modeling
-[[file:petri.org][architecture]]
+[[file:petri.org][architectuare]]
 * DONE Structuration of code's files according to the model
 * Implementation of visual components 
 ** place
@@ -21,13 +21,17 @@ components/actions can be associated to place:
 - delete; its representation is a trash
 - add transition; its representation is a rectangle
 - add edge; its representation is an arrow
+- configure
+
 *** TODO place configuration
-when clicking on a place, a window (popup) must be appear to configure
+when clicking on configure action, a window (popup) must be appear to configure
 a place. The configuration of a place consists in specifying its type
 and its name. The name must generated automatically. By default the
 place's type is intermediary. The possible types are start, end and
 intermediary.
+
 *** TODO generate a json structure to save place
+The object must contain place attributes plus the one of DOM such as position.
 ** transition
 *** TODO visual representation of transitions
 a transition is represented visually by a rectangle and is defined by
@@ -50,9 +54,10 @@ components/actions can be associated to place:
 - delete; its representation is a trash
 - add place; its representation is a circle
 - add edge; its representation is an arrow
+- configure
 
 *** TODO transition configuration
- When clicking on a panel, a window (popup) must be appear to
+ When clicking on confiure action, a window (popup) must be appear to
 configure a panel. Transition configuration consists in specifying the
 values of the name, type and gate attributes. The values of the
 different attributes have been specified in section "visual
@@ -68,6 +73,7 @@ transition json object according to its type:
 - clock; 
 
 *** TODO generate a json structure to save place 
+The object must contain transition attributes plus the one of DOM such as position.
 
 ** edges
 *** TODO visual representation of edges
@@ -86,10 +92,70 @@ The configuration of an edge consists in specifying its direction and
 a condition to pass through
 
 *** TODO generate a json structure to save edge
+The object must contain uuid of both ends.
+
+
+** TODO names
+Default names must be uniq
+
+** TODO positioning
+When the position of a component is no specified then it will be determine automatically.
+
+
 * Implementation of actions to be applied to components
 ** place
 *** TODO delete action
+this action must delete the specified place and all {in,out} edges.
+
 *** TODO 'add transition' action
-*** TODO 'add place' action
+this action must draw a link between this place and a new dummy transition.
+
+*** TODO 'configure' action
+see place configuration section
+
 ** transition
+*** TODO delete action
+this action must delete the specified transition and all {in,out} edges.
+
+*** TODO 'add transition' action
+this action must a link between this transition and a new intermediary place.
+
+*** TODO 'configure' action
+see transition configuration section
+
 ** edge
+*** TODO delete action
+this action must only delete the specified edge. This action do not delete the edge ends.
+
+*** TODO 'configure' action
+see edge configuration section
+* Implementation of composite composants
+** multi choice
+#+CAPTION: mc image
+#+ATTR_HTML: :width 300px
+[[doc/images/multichoice.png]] This action is associated to a place. The
+components of the multi choice start just after the place.
+
+** TODO while
+#+CAPTION: mc image
+#+ATTR_HTML: :width 300px
+[[doc/images/while.png]] This action is associated to a place. The
+components of the "while" start just after the  place.
+
+** TODO do while
+#+CAPTION: mc image
+#+ATTR_HTML: :width 300px
+[[doc/images/multichoice.png]] This action is associated to a
+transition. The "do while" starts with the transition.  The transition
+represents the transition to be executed at least once.
+
+** TODO deferrd choice
+#+CAPTION: mc image
+#+ATTR_HTML: :width 300px
+[[doc/images/multichoice.png]] This action is associated to a place. The
+components of the "deferred choice" start just after the place.
+
+** TODO selection
+with a mousedown event we can define a group of components. The group
+is represented by a rectangle containing all the components. The group
+also define actions that are apply to all the components.
