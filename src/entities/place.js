@@ -29,15 +29,18 @@ class Place{
 	else if (this.type != "intermediary")
 	    throw new Error("this type is not correct");
 
+	this.name = "";
 
-	this.name = null;
 	this.shape = aya.Component("circle", {x:0, y: 0, r: 20});
+
+	var text = aya.Text(this.shape.form.x, this.shape.form.y, this.name, 20);
+	this.shape.addChild(text, {x: this.shape.form.x - (text.size / 2), y: this.shape.form.r + 20}, null, true);
 
 	this.shape.form.c_points.map((pt) => {
 	    pt.deleteEvent("mousedown");
 	    pt.deleteEvent("mouseover");
 	    pt.deleteEvent("mouseleave");
-	    pt.c_svg.setAttribute("fill", "red");
+	    pt.c_svg.setAttribute("fill", color);
 	});
 
 	this.shape.form.vertex.map((vt) => {
@@ -61,10 +64,7 @@ class Place{
 		if (this.state == "mouseover")
 		    return;
 		if (this.active_component){
-		    this.shape.form.children.map(({child}) => {
-			child.removeFromDOM();
-		    });
-		    this.shape.form.children = [];
+		    this.removePanel();
 		    this.shape.form.svg.removeEventListener("mouseover", () => {});
 		}
 		this.active_component = null;
@@ -78,7 +78,13 @@ class Place{
     setName(name){
 	if (name)
 	    this.name = name;
-	this.shape.addChild(aya.Text(this.shape.form.x, this.shape.form.y, this.name, 20), {x: -this.shape.form.r, y: this.shape.form.r + 20}, null, true);
+	this.shape.form.children.map(({child}) => {
+	    if (child.type == 'text'){
+		console.log("debuuuuuuuuuuug");
+		child.text = this.name;
+		child.redraw();
+	    }
+	});
     }
 
     setType(type){
@@ -97,16 +103,20 @@ class Place{
 	}
 	else if (this.type != "intermediary")
 	    throw new Error("this type is not correct");
+
+	this.shape.form.c_points.map((pt) => {
+	    pt.c_svg.setAttribute("fill", color);
+	});
 	this.shape.form.c_svg.setAttribute("stroke-width", pixel);
 	this.shape.form.c_svg.setAttribute("stroke", color);
     }
 
     addPanel(){
-	var x = this.shape.form.x + this.shape.form.r; 
+	var x = this.shape.form.x + this.shape.form.r;
 	var y = this.shape.form.y - this.shape.form.r - 10;
 
 	this.shape.addChild(aya.Rectangle(x,y, 100, 100), {x: 0, y: 0}, null, true);
-	this.shape.form.children[0].child.c_svg.setAttribute("stroke-width", "0px");
+	this.shape.form.children[1].child.c_svg.setAttribute("stroke-width", "0px");
 
 	for (var i = 0, j = 0; i < actions.length; i++, j++){
 	    if (i && !(i%2)){
@@ -117,52 +127,44 @@ class Place{
 	}
 	// adding mouseover to the children to allow panel to stay open when moving on its children
 	this.shape.form.children.map(({child}, index) => {
-	    if (child.type != "rectangle"){
+
+	    if (child.type != "rectangle" && child.type != 'text'){
+
 		child.c_svg.addEventListener("mouseover", () => {
 		    this.state = "mouseover";
 		});
+
 		child.c_svg.addEventListener("mousedown", (e) => {
 		    var cp = Register.find(this.shape.uuid);
 		    if (cp){
-			src = cp;
-			if (child.name == 'edge'){
-			    state = 'drawing_edge';
-			    cp.addConnector("edge");
-			}
-			else if (child.name == 'transition'){
-			    state = 'c_transit';
-			    cp.addConnector('transition');
-			}
-			else if (child.name == 'deletion'){
-			    var links = Register.findAllEdges(cp);
-			    links.map((lk) => {
-				lk.comp.shape.line.removeFromDOM();
-				Register.clear(lk.comp.shape.line.uuid);
-			    });
-			    this.shape.form.children.map(({child}) => {
-				child.removeFromDOM();
-			    });
-			    this.shape.form.svg.removeChild(this.shape.form.c_svg);
-			    Register.clear(this.shape.uuid);
-			}
-			else if (child.name == 'setting'){
-			}
+			if (child.name == 'edge')
+			    src = cp;
+			cp.addConnector(child.name);
 		    }
-		});
-
-		child.c_svg.addEventListener("mouseup", () => {
-		    this.shape.form.children.map(({child}) => {
-			child.removeFromDOM();
-		    });
-		    this.shape.form.children = [];
 		});
 	    }
 	});
-	this.shape.form.children[0].child.c_svg.addEventListener("mouseover", () => {
+
+	this.shape.form.children[1].child.c_svg.addEventListener("mouseover", () => {
 	    this.state = "mouseover";
 	});
-	this.shape.form.children[0].child.c_svg.addEventListener("mouseleave", () => {
+
+	this.shape.form.children[1].child.c_svg.addEventListener("mouseleave", () => {
 	    this.state = "";
 	});
+    }
+
+    removePanel(){
+	var name_comp;
+	this.shape.form.children.map(({child}) => {
+	    if (child.type != 'text')
+		child.removeFromDOM();
+	    else
+		name_comp = child;
+	});
+	this.shape.form.children = [];
+	if (name_comp != undefined)
+	    this.shape.form.children.push({child: name_comp});
+
     }
 }

@@ -13,25 +13,26 @@ class Aya{
     }
 
     Component(type, props){
+	var uuid =  Math.random().toString(36).substring(2, 15) +
+	    Math.random().toString(36).substring(2, 15); 
 	var Obj = {
-	    uuid: Math.random().toString(36).substring(2, 15) +
-		Math.random().toString(36).substring(2, 15),
+	    uuid : uuid,
 	    events: [],
 	    type : this.ttype ? this.ttype : type,
 	    form : {
 		dest_x: props ? props.dest_x : null,
 		dest_y: props ? props.dest_y : null,
 		vertex: [
-		    this.Point(0, 0, 5),
-		    this.Point(0, 0, 5),
-		    this.Point(0, 0, 5),
-		    this.Point(0, 0, 5)
+		    this.Point(uuid, 0, 0, 5),
+		    this.Point(uuid, 0, 0, 5),
+		    this.Point(uuid, 0, 0, 5),
+		    this.Point(uuid, 0, 0, 5)
 		],
 		c_points: [
-		    this.Point(0, 0, 5),
-		    this.Point(0, 0, 5),
-		    this.Point(0, 0, 5),
-		    this.Point(0, 0, 5)
+		    this.Point(uuid, 0, 0, 5),
+		    this.Point(uuid, 0, 0, 5),
+		    this.Point(uuid, 0, 0, 5),
+		    this.Point(uuid, 0, 0, 5)
 		],
 		draw(){
 		    Obj.form.c_points.map((pt) => {
@@ -100,11 +101,12 @@ class Aya{
 	return Obj;
     }
 
-    Point(x, y, r){
+    Point(uuid, x, y, r){
 	var Obj = {
 	    x: x != undefined ? x : null,
 	    y: y != undefined ? y : null,
 	    r: r != undefined ? r : null,
+	    ref: uuid ? uuid : null,
 	    c_svg: {
 		setAttribute(){
 		}
@@ -209,13 +211,15 @@ class Aya{
 	return Obj;
     }
 
-    Text(x, y, text, size){
+    Text(x, y, text, size = 0){
 	var Obj = {
 	    type: 'text',
-	    x: x!=undefined ? x : null,
-	    y: y!=undefined ? y : null,
+	    size: size ? size : null,
+	    x: x != undefined ? x : null,
+	    y: y != undefined ? y : null,
 	    text: text ? text : null,
-	    draw(){}
+	    draw(){},
+	    redraw(){}
 	};
 
 	return Obj;

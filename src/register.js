@@ -1,7 +1,7 @@
 var store = {};
 class Register{
     static add(object) {
-        store[object.type == 'link' ? object.comp.shape.line.uuid : object.comp.shape.uuid] = object;
+        store[object.type == 'edge' ? object.comp.shape.line.uuid : object.comp.shape.uuid] = object;
     }
 
     static find(uuid){
