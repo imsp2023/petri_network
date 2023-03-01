@@ -104,14 +104,13 @@ When the position of a component is no specified then it will be determine autom
 
 * Implementation of actions to be applied to components
 ** place
-*** DONE delete action
+*** TODO delete action
 this action must delete the specified place and all {in,out} edges.
 
-*** DONE 'add transition' action
+*** TODO 'add transition' action
+this action must a link between this place and a new dummy transition.
 
-this action must draw a link between this place and a new dummy transition.
-
-*** DONE 'configure' action
+*** TODO 'configure' action
 see place configuration section
 
 ** transition
