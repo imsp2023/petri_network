@@ -5,9 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/qunit@latest/qunit/qunit.css">
-    <link rel="stylesheet" href="../style.css">
     <script type="application/javascript" src="aya_stub.js"></script>
-   <!--  <script type="application/javascript"  src="https://cdn.jsdelivr.net/npm/ayajs@1.1.2/build/aya.js"></script> -->
     <title>petri network test</title>
 </head>
 <body>
@@ -19,11 +17,21 @@
             console.log(aya);
         </script>
         <script src="https://cdn.jsdelivr.net/npm/qunit@latest"></script>
-	<!-- <script src="../src/entities/place.js"></script> -->
-	<!-- <script src="../src/entities/transition.js"></script> -->
+	<script src="../src/factory.js"></script>
+	<script src="../src/component.js"></script>
+	<script src="../src/entities/edge.js"></script>
+	<script src="../src/entities/place.js"></script>
+	<script src="../src/entities/transition.js"></script>
+	<!-- <script src="../src/register.js"></script>-->
 	<script src="../src/layout.js"></script>
-        <!-- <script src="place.test.js"></script> -->
-        <!-- <script src="transition.test.js"></script> -->
+	
+	<script src="edge.test.js"></script>
+	<script src="place.test.js"></script>
+	<!-- <script src="transition.test.js"></script> -->
+	<script src="register_stub.js"></script>
+	<script src="factory.test.js"></script>
+	<script src="component.test.js"></script>
+	<!-- <script src="register.test.js"></script> -->
 	<script src="layout.test.js"></script>
 </body>
 </html>

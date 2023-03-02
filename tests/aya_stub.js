@@ -7,20 +7,53 @@ class Aya{
 	 this.ttype = type;
     }
 
+    _uuid(){
+	return  Math.random().toString(36).substring(2, 15) +
+	    Math.random().toString(36).substring(2, 15);
+    }
+
     Component(type, props){
+	var uuid =  Math.random().toString(36).substring(2, 15) +
+	    Math.random().toString(36).substring(2, 15); 
 	var Obj = {
+	    uuid : uuid,
 	    events: [],
 	    type : this.ttype ? this.ttype : type,
 	    form : {
-		vertex: [],
-		c_points: [],
+		dest_x: props ? props.dest_x : null,
+		dest_y: props ? props.dest_y : null,
+		vertex: [
+		    this.Point(uuid, 0, 0, 5),
+		    this.Point(uuid, 0, 0, 5),
+		    this.Point(uuid, 0, 0, 5),
+		    this.Point(uuid, 0, 0, 5)
+		],
+		c_points: [
+		    this.Point(uuid, 0, 0, 5),
+		    this.Point(uuid, 0, 0, 5),
+		    this.Point(uuid, 0, 0, 5),
+		    this.Point(uuid, 0, 0, 5)
+		],
+		draw(){
+		    Obj.form.c_points.map((pt) => {
+			pt.draw();
+		    });
+		    Obj.form.vertex.map((vt) => {
+			vt.draw();
+		    });
+		},
 		redraw: ()=>{
 		},
 		svg: {
-		    addEventListener: ()=>{}
+		    setAttribute: (tag, value) =>{
+			Obj.form[tag] = value;
+		    },
+		    addEventListener: ()=>{},
+		    removeEventListener: () => {}
 		},
 		children: [
 		],
+		removeBoxFromDOM(){},
 		c_svg: {
 		    setAttribute: (tag, value) =>{
 			Obj.form[tag] = value;
@@ -50,9 +83,66 @@ class Aya{
 		    child.centerY = rotate.centerY;
 		    child.angle = rotate.angle;
 		}
-		Obj.form.children.push({child, translate, rotate});
+		Obj.form.children.push({child});
 	    }
 	}
+	return Obj;
+    }
+
+    Link(src_point, dest_point, line){
+	var Obj = {
+	    source: src_point != undefined ? src_point : null,
+	    destination: dest_point != undefined ? dest_point : null,
+	    line: line != undefined ? line : null,
+	    type: 'link',
+	    redraw(){
+	    }
+	}
+	return Obj;
+    }
+
+    Point(uuid, x, y, r){
+	var Obj = {
+	    x: x != undefined ? x : null,
+	    y: y != undefined ? y : null,
+	    r: r != undefined ? r : null,
+	    ref: uuid ? uuid : null,
+	    c_svg: {
+		setAttribute(){
+		}
+	    },
+	    events: {},
+	    addEvent(event, callback){
+		Obj.events[event] = callback;
+	    },
+	    deleteEvent(event){
+		delete Obj.events[event];
+	    },
+	    removeFromDOM(){
+	    },
+	    draw(){
+		Obj.addEvent("mousedown", ()=>{});
+		Obj.addEvent("mouseover", ()=>{});
+		Obj.addEvent("mouseleave", ()=>{});
+	    }
+	}
+	return Obj;
+    }
+
+    Line(x, y, dest_x, dest_y){
+	var Obj = {
+	    x: x != undefined ? x : null,
+	    y: y != undefined ? y : null,
+	    dest_x: dest_x != undefined ? dest_x : null,
+	    dest_y: dest_y != undefined ? dest_y : null,
+
+	    draw(){
+	    },
+
+	    redraw(){
+	    }
+	}
+
 	return Obj;
     }
 
@@ -121,13 +211,15 @@ class Aya{
 	return Obj;
     }
 
-    Text(x, y, text, size){
+    Text(x, y, text, size = 0){
 	var Obj = {
 	    type: 'text',
-	    x: x!=undefined ? x : null,
-	    y: y!=undefined ? y : null,
+	    size: size ? size : null,
+	    x: x != undefined ? x : null,
+	    y: y != undefined ? y : null,
 	    text: text ? text : null,
-	    draw(){}
+	    draw(){},
+	    redraw(){}
 	};
 
 	return Obj;
@@ -140,7 +232,18 @@ class Aya{
 		Obj.c_svg = "";
 	    }
 	};
-	
+	return Obj;
+    }
+
+    Link(src_point, dest_point, line){
+	var Obj = {
+	    source: src_point != undefined ? src_point : null,
+	    destination: dest_point != undefined ? dest_point : null,
+	    line: line != undefined ? line : null,
+	    type:"link",
+	    redraw(){
+	    }
+	};
 	return Obj;
     }
 }

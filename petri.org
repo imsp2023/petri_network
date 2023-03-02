@@ -33,7 +33,7 @@ intermediary.
 *** TODO generate a json structure to save place
 The object must contain place attributes plus the one of DOM such as position.
 ** transition
-*** TODO visual representation of transitions
+*** DONE visual representation of transitions
 a transition is represented visually by a rectangle and is defined by
 json object. The json object has name, type and gate
 attribute. The possible types are automatic, manual, dummy, ssub,
@@ -47,7 +47,7 @@ represented by a wide down arrow. A clock transition is represented
 with a rectangle and a clock. A sub (process) tranisition is
 represented with a double rectangle. 
 
-*** TODO panel of possible actions 
+*** DONE panel of possible actions 
 when hovering over a transition component, a panel must appear. The panel
 presents the components that can be attached to a transition. Three
 components/actions can be associated to place:
@@ -76,7 +76,7 @@ transition json object according to its type:
 The object must contain transition attributes plus the one of DOM such as position.
 
 ** edges
-*** TODO visual representation of edges
+*** DONE visual representation of edges
 an edge is represented visually by a directed arrow. The visual form
 of an edge depends on its direction that can be "p2t" or "t2p".
 
@@ -159,4 +159,3 @@ components of the "deferred choice" start just after the place.
 with a mousedown event we can define a group of components. The group
 is represented by a rectangle containing all the components. The group
 also define actions that are apply to all the components.
-
