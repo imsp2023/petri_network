@@ -1,3 +1,5 @@
+var lineRemove = 0;
+
 class Aya{
     constructor(){
 	this.ttype = null;
@@ -140,6 +142,9 @@ class Aya{
 	    },
 
 	    redraw(){
+	    },
+	    removeFromDOM: ()=>{
+		lineRemove++;
 	    }
 	}
 
