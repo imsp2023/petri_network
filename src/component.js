@@ -1,81 +1,92 @@
-var line, src;
 class Component{
+    static line = null;
+    static src = null;
     constructor(type, props){
 
 	if (!type || !props)
 	    throw new Error("missing parameter");
-	if (type != 'place' && type != 'edge' && type != 'transition')
-	    throw new Error("type isn't correct");
+	else if ((type != 'place' && type != 'edge' && type != 'transition') ||
+		 typeof props != 'object')
+	    throw new Error("wrong parameter");
 
 	this.type = type;
-	this.comp = Factory.getShape(type, props);
 
-	if (this.type != 'edge'){
-
-	    this.comp.shape.form.svg.removeEventListener("mouseup", ()=>{});
-
-	    this.comp.shape.form.svg.addEventListener("mouseup", ()=>{
-		if (line)
-		    this.comp.shape.form.svg.removeChild(line.c_svg);
-	    });
-
-	    this.comp.shape.form.c_svg.addEventListener("mouseup", (e) => {
-		// check if line is define otherwise it will create an edge twice when drawing an edge between two components
-		// we need src variable to reference the source component that throws the creation of the edge
-		if (line){
-		    var drc =  (src.type == 'place' && this.type == 'transition') ? "p2t" :
-			(src.type == 'transition' && this.type == 'place') ? "t2p" : "blabla";
-
-		    if (src.type != this.type){
-			var edge = new Component('edge', {
-			    direction: drc,
-			    src: src.comp.shape.uuid,
-			    dest: this.comp.shape.uuid
-			});
-		    }
-		    line.removeFromDOM();
-		    line = null;
-		    src = null;
-		}
-	    });
+	if(props.x >= 0 && props.y >= 0){
+	    var lyt = layout.fixPoint(props.x, props.y);
+	    props.x = lyt.x;
+	    props.y = lyt.y;
+	}else{
+	    props.x = 0;
+	    props.y = 0;
 	}
+	    
+	this.comp = Factory.getShape(type, props);
+	if(this.comp == null)
+	    throw new Error ("instantiation failed");
+	
 	Register.add(this);
     }
+    edgeCompleted(target){
+	var found;
+	if(!Component.line)
+	    return;
 
-    addConnector(type){
-	if (type == this.type)
-	    throw new Error('link forbidden');
+	if(!(found=Register.find(target)))
+	    return;
 
-	if (type == 'edge'){
-	    line = aya.Line(this.comp.shape.form.c_points[0].x, this.comp.shape.form.c_points[0].y);
-	    line.draw();
+	Component.line.removeFromDOM();
 
-	    this.comp.shape.form.svg.removeEventListener("mousemove", ()=>{});
-
-	    this.comp.shape.form.svg.addEventListener("mousemove", (e) => {
-		if (line){
-		    line.dest_x = e.clientX;
-		    line.dest_y = e.clientY;
-		    line.redraw();
-		}
+	if(Component.src.type != found.type){
+	    new Component('edge', {
+		direction:found.type=='place'?'t2p':'p2t',
+		src: Component.src.comp.shape.uuid,
+		dest: found.comp.shape.uuid
 	    });
+	    layout.markEdge(/* to be completed with line ends */);
 	}
-	else if (type == 'transition'){
-	    this.comp.removePanel();
+	
+	Component.line = null;
+	Component.src = null;
+    }
+    
+    addConnector(type){
+	this.comp.removePanel();
+	if(type == this.type)
+	    return;
+	
+	if(type == 'edge'){
+	    Component.src = this;
+	    Component.line = aya.Line(this.comp.shape.form.c_points[0].x, this.comp.shape.form.c_points[0].y);
+	    Component.line.draw();
+	}else if(type == 'transition' || type == 'place'){
+	    var props = {}, tr, pos, edge, step, i;
 
-	    var tr = new Component('transition', {});
+	    if(type == 'place')
+		props.type = 'intermediary';
+	    else
+		props.type = 'dummy'
 
-	    tr.comp.shape.form.x = this.comp.shape.form.x + 200;
-	    tr.comp.shape.form.y = this.comp.shape.form.y;
-	    tr.comp.shape.form.redraw();
+	    /* TODO: genereate name*/
+	    props.name = 'generate automatic name';
 
-	    var edge =  new Component('edge', {
-		direction: "p2t",
+	    if((pos=layout.getClosestPosition(this.comp.shape.form.x, this.comp.shape.form.y))){
+		props.x = pos.x*layout.cellW;
+		props.y = pos.y*layout.cellH;
+	    }else{
+		props.x = 0;
+		props.y = 0;
+	    }
+	    
+	    layout.markEdge(this.comp.shape.form.x, this.comp.shape.form.y,
+			    pos.x, pos.y);
+	    tr = new Component(type, props);
+	    edge =  new Component('edge', {
+		direction: type=='transition'? 'p2t': 't2p',
 		src: this.comp.shape.uuid,
 		dest: tr.comp.shape.uuid
 	    });
 	}
-	else if (type == 'deletion'){
+	else if(type == 'deletion'){
 	    var edges = Register.findAllEdges(this.comp.shape.uuid);
 
 	    edges.map((lk) => {
