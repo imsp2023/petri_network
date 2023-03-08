@@ -1,8 +1,8 @@
 const space = 3;
 var layout = {
-    grid: [],
     cellW: 0,
-    cellH: 0
+    cellH: 0,
+    grid: [],
 };
 
 layout.init = function(cellW, cellH, gridW, gridH){
@@ -14,7 +14,7 @@ layout.init = function(cellW, cellH, gridW, gridH){
     layout.cellH = cellH;
     layout.ncols = Math.floor(gridW/cellW);
     layout.nligs = Math.floor(gridH/cellH);
-
+    layout.grid = [];
     for(i = 0; i < layout.ncols*layout.nligs; i++)
 	layout.grid.push(0);
     return true;
@@ -32,7 +32,7 @@ layout.getClosestPosition = (originX, originY)=>{
 	if(originX+coef*space >= layout.ncols || originX+coef*space < 0)
 	    continue;
 	
-	for(i=0; i < layout.nligs-originY; i++){
+	for(i=0; i < layout.nligs-originY; i+=2){
 	    pos1 = originY-i;
 	    pos2 = originY+i;
 
