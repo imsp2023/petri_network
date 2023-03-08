@@ -1,4 +1,4 @@
-const space = 3
+const space = 3;
 var layout = {
     grid: [],
     cellW: 0,
@@ -23,6 +23,7 @@ layout.init = function(cellW, cellH, gridW, gridH){
 layout.getClosestPosition = (originX, originY)=>{
     var obj = {}, pos1, pos2, i, j, coef;
 
+    console.log('closestposition x='+originX+' y='+originY);
     if(originX == undefined || originY == undefined ||
        originX < 0 || originY < 0 || originX >= layout.ncols || originY >= layout.nligs)
 	return null;
@@ -40,6 +41,8 @@ layout.getClosestPosition = (originX, originY)=>{
 		pos1 = layout.ncols*pos1+originX+coef*space;
 		if(!layout.grid[pos1]){
 		    obj.y = originY-i;
+		    console.log('close-1');
+		    console.log(obj);
 		    return obj;
 		}
 	    }				
@@ -49,6 +52,8 @@ layout.getClosestPosition = (originX, originY)=>{
 		
 		if(!layout.grid[pos2]){
 		    obj.y = originY+i;
+		    console.log('close-2');
+		    console.log(obj);
 		    return obj;
 		}
 	    }
@@ -78,7 +83,7 @@ layout.fixPoint = (x, y)=>{
        x < 0 || x >= layout.ncols*layout.cellW ||
        y < 0 || x >= layout.nligs*layout.cellH)
 	return {x: 0, y: 0};
-    return {x: (x/layout.cellW)*layout.cellW, y: (x/layout.cellH)*layout.cellH};
+    return {x: Math.floor(x/layout.cellW)*layout.cellW, y: Math.floor(y/layout.cellH)*layout.cellH};
 };
 
 layout.markEdge = (x1, y1, x2, y2)=>{
