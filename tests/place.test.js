@@ -273,3 +273,13 @@ QUnit.test("add mouseup event on place in order to add an edge", assert => {
 	    ev = e;
     assert.ok(ev, "mouseup event is defined on the place");
 });
+
+QUnit.test("add mousedown event on place", assert => {
+    var p = new place();
+
+    var ev = null;
+    for (e of p.shape.events)
+	if (e["mousedown"])
+	    ev = e;
+    assert.ok(ev, "mousedown event");
+});

@@ -213,7 +213,6 @@ class Component{
 				    Math.floor(dest.comp.shape.form.y/layout.cellH));
 		});
 	    }
-	    this.state = '';
 	}
 	Component.state = null;
     }

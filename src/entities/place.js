@@ -3,7 +3,7 @@
 class Place{
     static actions = [
 	
-	{name: "transition", path: "src/images/transition2.png"},
+	{name: "transition", path: "src/images/transition3.png"},
 	{name: "edge", path: "src/images/edge2.png"},
 	{name: "deletion", path: "src/images/delete.png"}
     ];
@@ -53,7 +53,7 @@ class Place{
 	    props.x += props.cWidth/2;
 	    props.y += props.cHeight/2;
 	}
-	console.log('place x='+props.x+' y='+props.y);	
+
 	this.shape = aya.Component("circle",
 				   {x:props.x, y: props.y,
 				    r: Place.Radius});
@@ -74,18 +74,39 @@ class Place{
 	});
 
 	this.shape.form.c_svg.addEventListener("mouseover", () => {
+
+	    if(this.state == 'moving')
+		return;
+
 	    if(this.panel == null)
 		this.addPanel();
 	    this.state = 'place';
 	});
 	this.shape.form.c_svg.addEventListener("mouseleave", ()=> {
+	    if(this.state == 'moving')
+		return;
+	    
 	    this.state = '';
 	});
 
+	this.shape.form.c_svg.addEventListener("mousedown", (e)=>{
+	    var target;
+
+	    this.removePanel();
+	    this.state = 'moving';
+	    
+	    if((target=Register.find(this.shape.uuid)))
+		target.onMouseDown();
+	});
+	
 	this.shape.form.c_svg.addEventListener("mouseup", (e)=>{
 	    var target;
+	    
+	    if(this.state == 'moving')
+		this.state = '';
+	    
 	    if((target=Register.find(this.shape.uuid)))
-		target.edgeCompleted(this.shape.uuid);
+		target.onMouseUp();
 	});
     }
 

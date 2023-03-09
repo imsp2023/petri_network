@@ -654,8 +654,6 @@ QUnit.test("panel must stay opened when mouse is moving from Transition to panel
 QUnit.test("add mousedown event on transition", assert => {
     var t = new Transition();
 
-    t.addPanel();
-
     var ev = null;
     for (e of t.shape.events)
 	if (e["mousedown"])
