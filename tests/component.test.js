@@ -106,12 +106,6 @@ QUnit.test("Instantiation of an edge must register it", assert => {
     assert.equal(n_tab, 1, "register count");
 });
 
-// QUnit.test("define a mouseup event on svg to delete edge line", assert => {
-//     var cp = new Component("edge", {});
-//     assert.equal(events['mouseup'], 1, "event count");
-// });
-
-
 QUnit.test("use the default position when not provided", assert => {
     layoutAjust = 0;
     var props = {};
@@ -125,6 +119,24 @@ QUnit.test("reajust the default position when provided", assert => {
     layoutAjust = 0;
     var cp = new Component("place", {x:0,y:1});
     assert.equal(layoutAjust, 1, "layoutAjust count");
+});
+
+QUnit.test("mark transition position on layout", assert => {
+    layoutMark = 0;
+    var cp = new Component("transition", {x:0,y:0});
+    assert.equal(layoutMark, 1, "mark count");
+});
+
+QUnit.test("mark place position on layout", assert => {
+    layoutMark = 0;
+    var cp = new Component("place", {x:0,y:0});
+    assert.equal(layoutMark, 1, "Mark count");
+});
+
+QUnit.test("do not mark edge on layout", assert => {
+    layoutMark = 0;
+    var cp = new Component("edge", {});
+    assert.equal(layoutMark, 0, "Mark count");
 });
 
 QUnit.test("addConnector from transition first removes panel", assert => {
@@ -194,12 +206,17 @@ QUnit.test("addConnector looks for a new position for the place to be added", as
     assert.equal(layoutClosest, 1, "layoutClosest count");
 });
 
-QUnit.test("addConnector calls mark method at least twice to add transition", assert => {
-    layoutMark = 0;
+QUnit.test("addConnector calls mark method five times to add transition", assert => {
+
     layout.init(10, 10, 5, 5);
     var cp = new Component("place", {x:0,y:0});
+    layoutMark = 0;
     cp.addConnector('transition');
-    assert.equal(layoutMark, 4, "layoutMark count");
+
+    /* once for the compenents creation and four times by 
+       markEdge: closestposition stub always returns (2, 2)
+    */
+    assert.equal(layoutMark, 5, "layoutMark count");
 });
 
 /******* add edge ******************/
@@ -219,20 +236,9 @@ QUnit.test("edgeComplete do nothing when no line", assert => {
     assert.equal(lineRemove, 0, "remove from DOM count");
 });
 
-QUnit.test("edgeCompleted do nothing when target is not correct", assert => {
-    n_tab = 0;
-    tab[0] = null;
-    lineRemove = 0;
-    var cp = new Component("transition", {x:0,y:0});
-    cp.addConnector('edge');
-    n_tab = 0;
-    tab[0] = null;
-    cp.edgeCompleted(111);
-    assert.equal(lineRemove, 0, "remove from DOM count");
-});
-
 QUnit.test("edgeCompleted deletes current line", assert => {
     var cp = new Component("transition", {x:0,y:0});
+    lineRemove = 0;
     cp.addConnector('edge');
 
     cp.edgeCompleted(1);
@@ -247,23 +253,125 @@ QUnit.test("edgeCompleted do not create the edge when target and src is the same
     n_tab = 0;
     cp.edgeCompleted(1);
     assert.equal(lineRemove, 1, "remove from DOM count");
-    assert.equal(n_tab, 1, "register count");
+    assert.equal(n_tab, 0, "register count");
 });
 
 QUnit.test("edgeCompleted registers an edge component", assert => {
     lineRemove = 0;
     layoutMark = 0;
     n_tab = 0
+
+    layout.init(10, 10, 40, 40);
     var cp = new Component("transition", {x:0,y:0});
-    
     cp.addConnector('edge');
-    n_tab=1;
-    tab[1] = {type: 'place', comp: {shape: {uuid: 1122}}};
-    
-    cp.edgeCompleted(1);
+
+    var cp = new Component("place", {x:20,y:20});
+    layoutMark = 0;
+    cp.edgeCompleted();
     assert.equal(lineRemove, 1, "remove from DOM count");
     assert.equal(n_tab, 3, "register count");
     assert.equal(layoutMark, 4, "layoutMark count");
+});
+
+/******************* component moving ***********************/
+QUnit.test("onMouseDown set state attribute", assert => {
+    var t = new Component('transition', {type:'dummy'});
+    t.onMouseDown();
+    assert.equal(Component.state, 'moving', 'state value');
+});
+
+QUnit.test("onMouseDown stores transition position", assert => {
+    var t = new Component('transition', {type:'dummy'});
+    t.onMouseDown();
+    assert.equal(Component.x, t.comp.shape.form.x, "x value");
+    assert.equal(Component.y, t.comp.shape.form.y, "y value");
+});
+
+QUnit.test("onMouseUp fix transition position", assert => {
+    var t = new Component('transition', {type:'dummy'});
+
+    layoutAjust = 0;
+    Component.state  = 'moving';
+    t.onMouseUp();
+    assert.equal(layoutAjust, 1, "ajust count");
+});
+
+QUnit.test("onMouseUp unmarks only old transition position  when no link", assert => {
+    var t = new Component('transition', {type:'dummy'});
+    layoutUMark = 0;
+    Component.state  = 'moving';
+    t.onMouseUp();
+    assert.equal(layoutUMark, 1, "umark count");
+});
+
+QUnit.test("onMouseUp marks transition position  when no link", assert => {
+    var t = new Component('transition', {type:'dummy'});
+    layoutMark = 0;
+    Component.state  = 'moving';
+    t.onMouseUp();
+    assert.equal(layoutMark, 1, "mark count");
+    
+});
+
+QUnit.test("onMouseUp looks for component neighbors", assert => {
+    var t = new Component('transition', {type:'dummy'});
+    registerForEach = 0;
+    Component.state  = 'moving';
+    t.onMouseUp();
+    assert.equal(registerForEach, 1, "foreach count");
+});
+
+QUnit.test("onMouseUp unmarks old edges  when neighbors", assert => {
+    var t = new Component('transition', {type:'dummy'});
+    layout.init(10, 10, 40, 40);
+    registerUserData = [{},
+			{}];
+    tab = [{comp:{shape: {form:{x: 0, y: 0}}}},
+	   {comp:{shape: {form:{x: 0, y: 0}}}}];
+    n_tab = 0;
+    layoutUMark = 0;
+    
+    Component.x = 20;
+    Component.y = 20;
+
+    Component.state  = 'moving';
+    t.onMouseUp();
+    assert.equal(layoutUMark, 8, "umark count");
+});
+
+QUnit.test("onMouseUp marks edges  when neighbors", assert => {
+    var t = new Component('transition', {type:'dummy'});
+    layout.init(10, 10, 40, 40);
+    layoutMark = 0;
+        
+    Component.x = 0;
+    Component.y = 0;
+    
+    registerUserData = [{},
+			{}];
+    tab = [{comp:{shape: {form:{x: 0, y: 0}}}},
+	   {comp:{shape: {form:{x: 0, y: 0}}}}];
+    n_tab = 0;
+    layoutUMark = 0;
+    Component.state  = 'moving';
+    
+    t.comp.shape.form.x = 30;
+    t.comp.shape.form.y = 30;
+    
+    t.onMouseUp();
+    assert.equal(layoutMark, 12, "mark count");
+    
+});
+
+
+QUnit.test("onMouseUp clear state", assert => {
+    var t = new Component('transition', {type:'dummy'});
+    layoutMark = 0;
+    registerUserData = [];
+    Component.state  = 'moving';
+    t.onMouseUp();
+    assert.equal(Component.state, null, "component state");
+    
 });
 
 /********************** delete action ***********************/

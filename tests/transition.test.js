@@ -650,3 +650,19 @@ QUnit.test("panel must stay opened when mouse is moving from Transition to panel
 	    cpt++;
     assert.equal(cpt, 1, "there must have 1 mousever event defined on the transition");
 });
+
+QUnit.test("add mousedown event on transition", assert => {
+    var t = new Transition();
+
+    t.addPanel();
+
+    var ev = null;
+    for (e of t.shape.events)
+	if (e["mousedown"])
+	    ev = e;
+    assert.ok(ev, "mousedown event");
+});
+
+
+
+

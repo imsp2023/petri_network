@@ -1,6 +1,7 @@
 class Component{
     static line = null;
     static src = null;
+    static state = null;
     static initSvgEvents(svg){
 	svg.addEventListener("mousemove", (e)=>{
 	    if(Component.line){
@@ -35,6 +36,7 @@ class Component{
 	}else{
 	    props.x = 0;
 	    props.y = 0;
+	    
 	}
 
 	props.cWidth = layout.cellW;
@@ -42,32 +44,32 @@ class Component{
 	this.comp = Factory.getShape(type, props);
 	if(this.comp == null)
 	    throw new Error ("instantiation failed");
-	
+	if(type=='transition' || type == 'place')
+	    layout.mark(Math.floor(props.x/layout.cellW), Math.floor(props.y/layout.cellH));
 	Register.add(this);
     }
-    edgeCompleted(target){
-	var found;
-	console.log('edgecompleted');
+    edgeCompleted(){
 	if(!Component.line)
 	    return;
-
-	console.log('edgecompleted3');
+	console.log('completed type='+this.type+ ' x2='+ this.comp.shape.form.x);
 	Component.line.removeFromDOM();
 
 	if(Component.src.type != this.type){
-	    console.log('edgecompleted4');
+	    
 	    new Component('edge', {
 		direction:this.type=='place'?'t2p':'p2t',
 		src: Component.src.comp.shape.uuid,
 		dest: this.comp.shape.uuid
 	    });
-	    layout.markEdge(Component.src.comp.shape.form.x,
-			    Component.src.comp.shape.form.y,
-			    this.comp.shape.form.x, this.comp.shape.form.y);
+	    layout.markEdge(Component.src.comp.shape.form.x/layout.cellW,
+			    Component.src.comp.shape.form.y/layout.cellH,
+			    this.comp.shape.form.x/layout.cellW,
+			    this.comp.shape.form.y/layout.cellH);
 	}
 	
 	Component.line = null;
 	Component.src = null;
+	Component.state = null;
     }
     
     addConnector(type){
@@ -76,6 +78,7 @@ class Component{
 	    return;
 	
 	if(type == 'edge'){
+	    Component.state = 'linking'
 	    Component.src = this;
 	    Component.line = aya.Line(this.comp.shape.form.c_points[0].x, this.comp.shape.form.c_points[0].y);
 	    Component.line.draw();
@@ -111,7 +114,7 @@ class Component{
 	    layout.markEdge(posx, posy, pos.x, pos.y);
 
 	    tr = new Component(type, props);
-	    edge =  new Component('edge', {
+	    edge = new Component('edge', {
 		direction: type=='transition'? 'p2t': 't2p',
 		src: this.comp.shape.uuid,
 		dest: tr.comp.shape.uuid
@@ -139,5 +142,79 @@ class Component{
 	    var type = window.prompt("Type of the place :");
 	    this.comp.setType(type);
 	}
+    }
+
+    onMouseDown(){
+	Component.state = 'moving';
+	Component.x = this.comp.shape.form.x;
+	Component.y = this.comp.shape.form.y;
+    }
+
+    onMouseUp(uuid){
+	console.log('mouseUp state='+Component.state);
+	if(Component.state == 'linking')
+	    this.edgeCompleted(uuid);
+	else if(Component.state == 'moving'){
+	    var lyt = layout.fixPoint(this.comp.shape.form.x,
+				      this.comp.shape.form.y);
+	    var edges = [], src, dest, osrc, odest;
+	    this.comp.shape.form.x = lyt.x;
+	    this.comp.shape.form.y = lyt.y;
+	    this.comp.shape.form.redraw();
+	    Register.forEach(
+		(item)=>{
+		    if(item.type=='edge' &&
+		       (item.src == this.comp.shape.uuid ||
+			item.dest == this.comp.shape.uuid))
+			edges.push(item);
+		},
+		edges);
+	    console.log('mouseUp edges='+edges);
+	    if(!edges.length){
+		layout.umark(Math.floor(Component.x/layout.cellW),
+			     Math.floor(Component.y/layout.cellH));
+		layout.mark(lyt.x/layout.cellW,  lyt.y/layout.cellH);
+	    }else{
+		edges.map((e)=>{
+		    if(e.src == this.comp.shape.uuid){
+			dest = Register.find(e.dest);
+			odest = {
+			    x: dest.comp.shape.form.x,
+			    y: dest.comp.shape.form.y
+			};
+			src = this;
+			osrc = {
+			    x: Component.x,
+			    y: Component.y
+			};
+		    }
+		    else{
+			src = Register.find(e.src);
+			osrc = {
+			    x: src.comp.shape.form.x,
+			    y: src.comp.shape.form.y
+			};
+			
+			dest = this;
+			odest = {
+			    x: Component.x,
+			    y: Component.y
+			};
+		    }
+		    
+		    layout.umarkEdge(Math.floor(osrc.x/layout.cellW),
+				     Math.floor(osrc.y/layout.cellH),
+				     Math.floor(odest.x/layout.cellW),
+				     Math.floor(odest.y/layout.cellH));
+
+		    layout.markEdge(Math.floor(src.comp.shape.form.x/layout.cellW),
+				    Math.floor(src.comp.shape.form.y/layout.cellH),
+				    Math.floor(dest.comp.shape.form.x/layout.cellW),
+				    Math.floor(dest.comp.shape.form.y/layout.cellH));
+		});
+	    }
+	    this.state = '';
+	}
+	Component.state = null;
     }
 }

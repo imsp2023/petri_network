@@ -7,8 +7,8 @@ class Factory{
 	return {
 	    shape : {
 		form: {
-		    x: 0,
-		    y: 0,
+		    x: props.x,
+		    y: props.y,
 		    c_points: [{x:0,y:0}],
 		    redraw: ()=>{},
 		    svg: {

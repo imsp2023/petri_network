@@ -12,15 +12,18 @@ class Register{
         delete store[uuid];
     }
 
-    static findAllEdges(object){
-	var result = [];
-        Object.keys(store).map((id) => {
-            var obj = Register.find(id);
-            if(obj.type == "edge"){
-                if(object.comp.shape.uuid == obj.comp.shape.source.ref || object.comp.shape.uuid == obj.comp.shape.destination.ref)
-                    result.push(obj);
-            }
-        });
-        return result;
+    // static findAllEdges(object){
+    // 	var result = [];
+    //     Object.keys(store).map((id) => {
+    //         var obj = Register.find(id);
+    //         if(obj.type == "edge"){
+    //             if(object.comp.shape.uuid == obj.comp.shape.source.ref || object.comp.shape.uuid == obj.comp.shape.destination.ref)
+    //                 result.push(obj);
+    //         }
+    //     });
+    //     return result;
+    // }
+    static forEach(func, userdata){
+	
     }
 }

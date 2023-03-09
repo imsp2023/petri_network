@@ -20,10 +20,10 @@ class Transition{
 	var color = 'white';
 	var width = 20;
 	var height = 50;
-	
+
 	if(props && typeof props != 'object')
 	    throw new Error('wrong parameter');
-
+	
 	if(!props){
 	    props = {};
 	    props.type = "dummy";
@@ -50,7 +50,8 @@ class Transition{
 	    }
 	}else
 	    throw new Error("wrong transition type");
-	
+
+	this.state = '';
 	this.type = props.type;
 	this.name = props.name;
 
@@ -110,23 +111,48 @@ class Transition{
 	}
 
 	this.shape.form.c_svg.addEventListener("mouseover", (e)=>{
-	    if(this.panelPos==undefined || this.panelPos < 0)
+	    console.log('mouseover state='+this.state+ ' pos='+this.panelPos);
+	    if(this.state == 'moving')
+		return;
+	    else if(this.panelPos==undefined || this.panelPos < 0)
 	    	this.addPanel();
 	    this.state = 'transition';
 	});
 
 	this.shape.form.c_svg.addEventListener("mouseleave", (e)=>{
+	    console.log('mouseleave transition');
+	    if(this.state == 'moving')
+		return;
 	    this.state = '';
 	});
 
+	this.shape.form.c_svg.addEventListener("mousedown", (e)=>{
+	    var target;
+	    console.log('mousedown');
+	    this.removePanel();
+	    this.state = 'moving';
+
+	    if((target=Register.find(this.shape.uuid)))
+		target.onMouseDown();
+	    
+	});
+	
 	this.shape.form.c_svg.addEventListener("mouseup", (e)=>{
 	    var target;
+	    
+	    if(this.state == 'moving')
+		this.state = '';
+	    
 	    if((target=Register.find(this.shape.uuid)))
-		target.edgeCompleted(this.shape.uuid);
+		target.onMouseUp(this.shape.uuid);
+	});
+
+	this.shape.form.c_svg.addEventListener("mousemove", (e)=>{
+		// this.shape.form.x = e.clientX;
+		// this.shape.form.y = e.clientY;
 	});
     }
     
-
     addPanel(){
 	var x = this.shape.form.x + this.shape.form.width;
 	var y = this.shape.form.y;
@@ -168,6 +194,7 @@ class Transition{
 	}
 	
 	panel.c_svg.addEventListener("mouseover", (e)=>{
+	    console.log('mouseover panel');
 	    this.state = 'panel';
 	});
 	panel.c_svg.addEventListener("mouseleave", (e)=>{
@@ -175,6 +202,7 @@ class Transition{
 	});
 	
 	this.shape.form.svg.addEventListener("mouseover", () => {
+	    console.log('mouseover svg');
 	    if (this.state == '' && this.panelPos >= 0)
 		this.removePanel();
 	});

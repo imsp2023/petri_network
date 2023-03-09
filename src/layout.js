@@ -71,10 +71,12 @@ layout.clear = ()=>{
 };
 
 layout.mark = (col, lig)=>{
+    console.log('mark x1='+col+' y1='+lig);
     layout.grid[lig*layout.ncols+col] = 1;
 };
 
 layout.umark = (col, lig)=>{
+    console.log('umark x1='+col+' y1='+lig);
     layout.grid[lig*layout.ncols+col] = 0;
 };
 
@@ -88,6 +90,8 @@ layout.fixPoint = (x, y)=>{
 
 layout.markEdge = (x1, y1, x2, y2)=>{
     var step, val;
+
+    console.log('markEdge x1='+x1+' y1='+y1+' x2='+x2+' y2='+y2);
     if(y1 < y2)
 	step = 1;
     else
@@ -107,6 +111,33 @@ layout.markEdge = (x1, y1, x2, y2)=>{
     val = x1;
     while(val != x2){
 	layout.mark(val+step, y2);
+	val+=step;
+    }
+};
+
+layout.umarkEdge = (x1, y1, x2, y2)=>{
+    var step, val;
+
+    console.log('umarkEdge x1='+x1+' y1='+y1+' x2='+x2+' y2='+y2);
+    if(y1 < y2)
+	step = 1;
+    else
+	step = -1;
+
+    val = y1;
+    while(val != y2){
+	layout.umark(x1, val+step);
+	val+=step;
+    }
+    
+    if(x1 < x2)
+	step = 1;
+    else
+	step = -1;
+
+    val = x1;
+    while(val != x2){
+	layout.umark(val+step, y2);
 	val+=step;
     }
 };
