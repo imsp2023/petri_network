@@ -275,7 +275,7 @@ QUnit.test("add mouseup event on place in order to add an edge", assert => {
 });
 
 QUnit.test("add mousedown event on place", assert => {
-    var p = new place();
+    var p = new Place();
 
     var ev = null;
     for (e of p.shape.events)

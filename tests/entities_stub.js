@@ -5,7 +5,7 @@ var layoutUMark = 0;
 var entities = {};
 
 class Transition {
-    constructor(props){
+    constructor(props={}){
 	if(factoryFailed)
 	    throw new Error("instantiation failed");
 	this.comp = {shape: {form: {x: props.x,cy: props.y}}};
@@ -20,7 +20,7 @@ class Edge {
 }
 
 class Place {
-    constructor(props){
+    constructor(props={}){
 	if(factoryFailed)
 	    throw new Error("instantiation failed");
 	this.comp = {shape: {form: {x: props.x,y: props.y}}};

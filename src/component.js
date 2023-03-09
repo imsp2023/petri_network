@@ -46,7 +46,9 @@ class Component{
 	    throw new Error ("instantiation failed");
 	if(type=='transition' || type == 'place')
 	    layout.mark(Math.floor(props.x/layout.cellW), Math.floor(props.y/layout.cellH));
-	Register.add(this);
+	Register.add(this.type == 'edge'?
+		     this.comp.shape.line.uuid :
+		     this.comp.shape.uuid, this);
     }
     edgeCompleted(){
 	if(!Component.line)

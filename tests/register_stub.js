@@ -4,7 +4,7 @@ var stub = 0;
 var registerForEach = 0;
 var registerClear = 0;
 class Register{
-    static add(object) {
+    static add(id, object) {
 	tab[n_tab++] = object;
     }
 

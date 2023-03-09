@@ -1,29 +1,22 @@
-var store = {};
 class Register{
-    static add(object) {
-        store[object.type == 'edge' ? object.comp.shape.line.uuid : object.comp.shape.uuid] = object;
+    static store = {};
+    
+    static add(id, obj) {
+	if(id)
+	    Register.store[id] = obj;
     }
 
-    static find(uuid){
-        return store[uuid] ? store[uuid] : null;
+    static find(id){
+        return Register.store[id] ? Register.store[id] : null;
     }
 
-    static clear(uuid){
-        delete store[uuid];
+    static clear(id){
+        delete Register.store[id];
     }
 
-    // static findAllEdges(object){
-    // 	var result = [];
-    //     Object.keys(store).map((id) => {
-    //         var obj = Register.find(id);
-    //         if(obj.type == "edge"){
-    //             if(object.comp.shape.uuid == obj.comp.shape.source.ref || object.comp.shape.uuid == obj.comp.shape.destination.ref)
-    //                 result.push(obj);
-    //         }
-    //     });
-    //     return result;
-    // }
     static forEach(func, userdata){
-	
+	Object.keys(Register.store).map((e)=>{
+	    func(e, userdata);
+	})
     }
 }
