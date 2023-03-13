@@ -1,4 +1,4 @@
-var tab  = [null, null];
+var tab  = [null, null, null, null];
 var n_tab = 0, registerUserData;
 var stub = 0;
 var registerForEach = 0;

@@ -6,6 +6,7 @@ class Factory{
 	if(factoryFailed)
 	    return null;
 	return {
+	    redraw: ()=>{},
 	    shape : {
 		line:{uuid: ''},
 		form: {

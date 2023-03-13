@@ -383,11 +383,36 @@ QUnit.test("delete only the component when no neighbor", assert => {
     registerClear = 0;
     removeFromDOM = 0;
     registerUserData= [];
+    layoutUMark = 0;
     
     t.addConnector('deletion');
     
     assert.equal(registerForEach, 1, "foreach count");
 
     assert.equal(registerClear, 1, "clear count");
+    assert.equal(layoutUMark, 1, "umark count");
+    
+});
+
+QUnit.test("delete component and its edges when neighbors", assert => {
+    layout.init(10, 10, 40, 40);
+
+    var t = new Component('transition', {type:'automatic',name: 'foo', x:0, y:0});
+    var p = new Component('place', {x:20, y:20});
+    // var e = new Edge('edge', {src: t.comp.shape.uuid, dest: p.comp.shape.uuid, direction:'p2t'})
+    var line = 0;
+    n_tab = 0;
+    registerForEach = 0;
+    registerClear = 0;
+    //    removeFromDOM = 0;
+    registerUserData= [{comp:{shape: {line:{removeFromDOM: ()=>{line++;}}}}}];
+    layoutUMark = 0;
+    
+    t.addConnector('deletion');
+    
+    assert.equal(registerForEach, 1, "foreach count");
+    assert.equal(line, 1, "remove count");
+    assert.equal(registerClear, 2, "clear count");
+    assert.equal(layoutUMark, 5, "umark count");
     
 });

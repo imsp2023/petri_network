@@ -8,7 +8,7 @@ class Transition {
     constructor(props={}){
 	if(factoryFailed)
 	    throw new Error("instantiation failed");
-	this.comp = {shape: {form: {x: props.x,cy: props.y}}};
+	this.comp = {redraw: ()=>{},shape: {form: {x: props.x,cy: props.y}}};
     }
 }
 
@@ -23,7 +23,7 @@ class Place {
     constructor(props={}){
 	if(factoryFailed)
 	    throw new Error("instantiation failed");
-	this.comp = {shape: {form: {x: props.x,y: props.y}}};
+	this.comp = {redraw: ()=>{},shape: {form: {x: props.x,y: props.y}}};
     }
 }
 

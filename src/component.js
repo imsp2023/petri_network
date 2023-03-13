@@ -127,18 +127,13 @@ class Component{
 	    });
 	}
 	else if(type == 'deletion'){
-	    var edges = [];
+	    var edges = [], src, dest;
 
 	    Register.forEach(
 		(item, data)=>{
-		    console.log('foreach');
-		    console.log(item);
-		    
 		    if(item.type=='edge' &&
 		       (item.comp.src == this.comp.shape.uuid ||
 			item.comp.dest == this.comp.shape.uuid)){
-			console.log('FIND EDGE');
-			console.log(item);
 			data.push(item);
 		    }
 		},
@@ -146,17 +141,23 @@ class Component{
 
 	    edges.map((lk) => {
 		console.log('MAP edges');
+		src = Register.find(lk.comp.src);
+		dest = Register.find(lk.comp.dest);
+
+		console.log(src);
+		console.log(dest);
+		layout.umarkEdge(Math.floor(src.comp.shape.form.x/layout.cellW),
+				 Math.floor(src.comp.shape.form.y/layout.cellH),
+				 Math.floor(dest.comp.shape.form.x/layout.cellW),
+				 Math.floor(dest.comp.shape.form.y/layout.cellH));
+		
 		lk.comp.shape.line.removeFromDOM();
 		Register.clear(lk.comp.shape.line.uuid);
+		
 	    });
 
-	    /* why ?? aya stuf */
-	    // this.comp.shape.form.c_points.map((pt)=>{
-	    // 	pt.removeFromDOM();
-	    // });
-	    // this.comp.shape.form.children.map(({child}) => {
-	    // 	child.removeFromDOM();
-	    // });
+	    layout.umark(Math.floor(this.comp.shape.form.x/layout.cellW),
+			 Math.floor(this.comp.shape.form.y/layout.cellH));
 	    this.comp.shape.form.svg.removeChild(this.comp.shape.form.c_svg);
 	    Register.clear(this.comp.shape.uuid);
 	}
@@ -232,7 +233,7 @@ class Component{
 			e.comp.shape.line.dest_x = this.comp.shape.form.c_points[0].x;
 			e.comp.shape.line.dest_y = this.comp.shape.form.c_points[0].y;
 		    }
-		    e.comp.shape.redraw();
+		    
 		    layout.umarkEdge(Math.floor(osrc.x/layout.cellW),
 				     Math.floor(osrc.y/layout.cellH),
 				     Math.floor(odest.x/layout.cellW),
@@ -242,9 +243,28 @@ class Component{
 				    Math.floor(src.comp.shape.form.y/layout.cellH),
 				    Math.floor(dest.comp.shape.form.x/layout.cellW),
 				    Math.floor(dest.comp.shape.form.y/layout.cellH));
+
+		    e.comp.shape.redraw();
 		});
 	    }
 	}
 	Component.state = null;
+    }
+
+    save(container){
+	var obj = {};
+	this.comp.Object.keys.map((e)=>{
+	    if(e != shape)
+		obj[e] = this.comp[e];
+	});
+	obj.x = this.comp.shape.form.x;
+	obj.y = this.comp.shape.form.y;
+
+	if(this.type == 'transition')
+	    container.transitions.push(obj);
+	else if(this.type == 'place')
+	    container.places.push(obj);
+	else if(this.type == 'edge')
+	    container.edges.push(obj);
     }
 }

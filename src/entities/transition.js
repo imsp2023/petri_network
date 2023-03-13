@@ -155,7 +155,7 @@ class Transition{
     }
     redraw(cwidth, cheight){
 	Transition.centerComponent(this.shape.form, this.shape.form.width,
-				   this.shape.form.height, cwidth, cheight);
+	this.shape.form.height, cwidth, cheight);
 	this.shape.form.redraw();
     }
     
