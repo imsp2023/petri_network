@@ -16,7 +16,7 @@ class Register{
 
     static forEach(func, userdata){
 	Object.keys(Register.store).map((e)=>{
-	    func(e, userdata);
+	    func(Register.store[e], userdata);
 	})
     }
 }

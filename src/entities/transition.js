@@ -15,6 +15,12 @@ class Transition{
 	}
 	return '';
     }
+    
+    static centerComponent(comp, cwidth, cheight, cellW, cellH){
+        comp.x += (cellW-cwidth)/2;
+        comp.y += (cellH-cheight)/2;
+    }
+
     constructor(props){
 	var state = '';
 	var color = 'white';
@@ -23,7 +29,7 @@ class Transition{
 
 	if(props && typeof props != 'object')
 	    throw new Error('wrong parameter');
-	
+
 	if(!props){
 	    props = {};
 	    props.type = "dummy";
@@ -61,8 +67,7 @@ class Transition{
 	}
 
 	if(props.cWidth && props.cHeight){
-	    props.x += (props.cWidth-width)/2;
-	    props.y += (props.cHeight-height)/2;
+	    Transition.centerComponent(props, width, height, props.cWidth, props.cHeight);
 	}
 	
 	this.shape = aya.Component("rectangle", {x:props.x, y:props.y, width: width, height: height});
@@ -128,7 +133,7 @@ class Transition{
 
 	this.shape.form.c_svg.addEventListener("mousedown", (e)=>{
 	    var target;
-	    console.log('mousedown');
+	    console.log('mousedown trans');
 	    this.removePanel();
 	    this.state = 'moving';
 
@@ -147,10 +152,11 @@ class Transition{
 		target.onMouseUp(this.shape.uuid);
 	});
 
-	this.shape.form.c_svg.addEventListener("mousemove", (e)=>{
-		// this.shape.form.x = e.clientX;
-		// this.shape.form.y = e.clientY;
-	});
+    }
+    redraw(cwidth, cheight){
+	Transition.centerComponent(this.shape.form, this.shape.form.width,
+				   this.shape.form.height, cwidth, cheight);
+	this.shape.form.redraw();
     }
     
     addPanel(){
@@ -188,6 +194,7 @@ class Transition{
 		this.state = '';
 	    });
 	    img.c_svg.addEventListener("mousedown", (e)=>{
+		console.log('mousedown image trans');
 		if((cp=Register.find(this.shape.uuid)))
 		    cp.addConnector(Transition.path2name(e.target.href.baseVal));
 	    });

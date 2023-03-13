@@ -12,10 +12,12 @@ class Component{
 	});
 
 	svg.addEventListener("mouseup", (e)=>{
+	    console.log('mouseUP SVG');
 	    if(Component.line){
 		Component.line.removeFromDOM();
 		Component.line = null;
 		Component.src = null;
+		Component.state = null;
 	    }
 	});
     }
@@ -53,6 +55,7 @@ class Component{
     edgeCompleted(){
 	if(!Component.line)
 	    return;
+	
 	console.log('completed type='+this.type+ ' x2='+ this.comp.shape.form.x);
 	Component.line.removeFromDOM();
 
@@ -63,10 +66,10 @@ class Component{
 		src: Component.src.comp.shape.uuid,
 		dest: this.comp.shape.uuid
 	    });
-	    layout.markEdge(Component.src.comp.shape.form.x/layout.cellW,
-			    Component.src.comp.shape.form.y/layout.cellH,
-			    this.comp.shape.form.x/layout.cellW,
-			    this.comp.shape.form.y/layout.cellH);
+	    layout.markEdge(Math.floor(Component.src.comp.shape.form.x/layout.cellW),
+			    Math.floor(Component.src.comp.shape.form.y/layout.cellH),
+			    Math.floor(this.comp.shape.form.x/layout.cellW),
+			    Math.floor(this.comp.shape.form.y/layout.cellH));
 	}
 	
 	Component.line = null;
@@ -80,6 +83,7 @@ class Component{
 	    return;
 	
 	if(type == 'edge'){
+	    console.log('addconnector edge');
 	    Component.state = 'linking'
 	    Component.src = this;
 	    Component.line = aya.Line(this.comp.shape.form.c_points[0].x, this.comp.shape.form.c_points[0].y);
@@ -123,18 +127,36 @@ class Component{
 	    });
 	}
 	else if(type == 'deletion'){
-	    var edges = Register.findAllEdges(this.comp.shape.uuid);
+	    var edges = [];
+
+	    Register.forEach(
+		(item, data)=>{
+		    console.log('foreach');
+		    console.log(item);
+		    
+		    if(item.type=='edge' &&
+		       (item.comp.src == this.comp.shape.uuid ||
+			item.comp.dest == this.comp.shape.uuid)){
+			console.log('FIND EDGE');
+			console.log(item);
+			data.push(item);
+		    }
+		},
+		edges);
 
 	    edges.map((lk) => {
+		console.log('MAP edges');
 		lk.comp.shape.line.removeFromDOM();
 		Register.clear(lk.comp.shape.line.uuid);
 	    });
-	    this.comp.shape.form.c_points.map((pt)=>{
-		pt.removeFromDOM();
-	    });
-	    this.comp.shape.form.children.map(({child}) => {
-		child.removeFromDOM();
-	    });
+
+	    /* why ?? aya stuf */
+	    // this.comp.shape.form.c_points.map((pt)=>{
+	    // 	pt.removeFromDOM();
+	    // });
+	    // this.comp.shape.form.children.map(({child}) => {
+	    // 	child.removeFromDOM();
+	    // });
 	    this.comp.shape.form.svg.removeChild(this.comp.shape.form.c_svg);
 	    Register.clear(this.comp.shape.uuid);
 	}
@@ -160,26 +182,28 @@ class Component{
 	    var lyt = layout.fixPoint(this.comp.shape.form.x,
 				      this.comp.shape.form.y);
 	    var edges = [], src, dest, osrc, odest;
+
 	    this.comp.shape.form.x = lyt.x;
 	    this.comp.shape.form.y = lyt.y;
-	    this.comp.shape.form.redraw();
+	    this.comp.redraw(layout.cellW, layout.cellH);
+
 	    Register.forEach(
-		(item)=>{
+		(item, data)=>{
 		    if(item.type=='edge' &&
-		       (item.src == this.comp.shape.uuid ||
-			item.dest == this.comp.shape.uuid))
-			edges.push(item);
+		       (item.comp.src == this.comp.shape.uuid ||
+			item.comp.dest == this.comp.shape.uuid))
+			data.push(item);
 		},
 		edges);
-	    console.log('mouseUp edges='+edges);
+
 	    if(!edges.length){
 		layout.umark(Math.floor(Component.x/layout.cellW),
 			     Math.floor(Component.y/layout.cellH));
 		layout.mark(lyt.x/layout.cellW,  lyt.y/layout.cellH);
 	    }else{
 		edges.map((e)=>{
-		    if(e.src == this.comp.shape.uuid){
-			dest = Register.find(e.dest);
+		    if(e.comp.src == this.comp.shape.uuid){
+			dest = Register.find(e.comp.dest);
 			odest = {
 			    x: dest.comp.shape.form.x,
 			    y: dest.comp.shape.form.y
@@ -189,9 +213,12 @@ class Component{
 			    x: Component.x,
 			    y: Component.y
 			};
+			e.comp.shape.line.x = this.comp.shape.form.c_points[0].x;
+			e.comp.shape.line.y = this.comp.shape.form.c_points[0].y;
+
 		    }
 		    else{
-			src = Register.find(e.src);
+			src = Register.find(e.comp.src);
 			osrc = {
 			    x: src.comp.shape.form.x,
 			    y: src.comp.shape.form.y
@@ -202,8 +229,10 @@ class Component{
 			    x: Component.x,
 			    y: Component.y
 			};
+			e.comp.shape.line.dest_x = this.comp.shape.form.c_points[0].x;
+			e.comp.shape.line.dest_y = this.comp.shape.form.c_points[0].y;
 		    }
-		    
+		    e.comp.shape.redraw();
 		    layout.umarkEdge(Math.floor(osrc.x/layout.cellW),
 				     Math.floor(osrc.y/layout.cellH),
 				     Math.floor(odest.x/layout.cellW),

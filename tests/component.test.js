@@ -324,8 +324,8 @@ QUnit.test("onMouseUp looks for component neighbors", assert => {
 QUnit.test("onMouseUp unmarks old edges  when neighbors", assert => {
     var t = new Component('transition', {type:'dummy'});
     layout.init(10, 10, 40, 40);
-    registerUserData = [{},
-			{}];
+    registerUserData = [{comp:{shape: {redraw :()=>{},line:{}}}},
+			{comp:{shape: {redraw :()=>{},line:{}}}}];
     tab = [{comp:{shape: {form:{x: 0, y: 0}}}},
 	   {comp:{shape: {form:{x: 0, y: 0}}}}];
     n_tab = 0;
@@ -347,8 +347,8 @@ QUnit.test("onMouseUp marks edges  when neighbors", assert => {
     Component.x = 0;
     Component.y = 0;
     
-    registerUserData = [{},
-			{}];
+    registerUserData = [{comp:{shape: {redraw :()=>{},line:{}}}},
+			{comp:{shape: {redraw :()=>{},line:{}}}}];
     tab = [{comp:{shape: {form:{x: 0, y: 0}}}},
 	   {comp:{shape: {form:{x: 0, y: 0}}}}];
     n_tab = 0;
@@ -376,3 +376,18 @@ QUnit.test("onMouseUp clear state", assert => {
 
 /********************** delete action ***********************/
 /* TODO: To be done */
+QUnit.test("delete only the component when no neighbor", assert => {
+    var t = new Component('transition', {type:'automatic',name: 'foo'});
+
+    registerForEach = 0;
+    registerClear = 0;
+    removeFromDOM = 0;
+    registerUserData= [];
+    
+    t.addConnector('deletion');
+    
+    assert.equal(registerForEach, 1, "foreach count");
+
+    assert.equal(registerClear, 1, "clear count");
+    
+});

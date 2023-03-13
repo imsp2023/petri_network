@@ -26,6 +26,11 @@ class Place{
 	return '';
     }
     
+    static centerComponent(comp, cellW, cellH){
+	comp.x += cellW/2
+	comp.y += cellH/2;
+    }
+    
     constructor(props = {}){
 	var color = Place.IColor;
 	var pixel = Place.IStroke;
@@ -50,8 +55,7 @@ class Place{
 	}
 
 	if(props.cWidth && props.cHeight){
-	    props.x += props.cWidth/2;
-	    props.y += props.cHeight/2;
+	    Place.centerComponent(props, props.cWidth, props.cHeight);
 	}
 
 	this.shape = aya.Component("circle",
@@ -91,7 +95,7 @@ class Place{
 
 	this.shape.form.c_svg.addEventListener("mousedown", (e)=>{
 	    var target;
-
+	    console.log('mousedown place');
 	    this.removePanel();
 	    this.state = 'moving';
 	    
@@ -134,6 +138,11 @@ class Place{
 	this.shape.form.c_svg.setAttribute("stroke", color);
     }
 
+    redraw(cwidth, cheight){
+	Place.centerComponent(this.shape.form, cwidth, cheight);
+	this.shape.form.redraw(cwidth, cheight);
+    }
+    
     addPanel(){
 	var img;
 	var x = this.shape.form.x + this.shape.form.r;
@@ -170,6 +179,7 @@ class Place{
 		this.state = '';
 	    });
 	    img.c_svg.addEventListener("mousedown", (e)=>{
+		console.log('mousedown image place');
 		if((cp=Register.find(this.shape.uuid)))
 		    cp.addConnector(Place.path2name(e.target.href.baseVal));
 	    });
