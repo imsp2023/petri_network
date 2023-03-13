@@ -1,7 +1,7 @@
 QUnit.module("Edge");
 
 /************************ Visual representation of edges ********************/
-QUnit.test("the creation of an edge requires at least 2 parameters (in case nothing is provided)", assert => {
+QUnit.test("throws an exception when no parameter", assert => {
 
     assert.throws(
 	function(){
@@ -11,33 +11,80 @@ QUnit.test("the creation of an edge requires at least 2 parameters (in case noth
     );
 });
 
-QUnit.test("the creation of an edge requires at least 2 parameters (in case only one is provided)", assert => {
+QUnit.test("throws an exception when no source)", assert => {
 
     assert.throws(
 	function(){
-	    new Edge("p2t");
+	    new Edge({});
 	},
 	"missing parameters"
     );
 });
 
-QUnit.test("throws an exception when direction type isn't correct", assert => {
+QUnit.test("throws an exception when no destination", assert => {
     assert.throws(
 	function(){
-	    new Edge("blabla", null);
+	    new Edge({src:'foo'});
 	},
 	"wrong direction"
     );
 });
 
-QUnit.test("throws an exception when the specified end is null or isn't correct", assert => {
+QUnit.test("throws an exception when no direction", assert => {
     assert.throws(
 	function(){
-	    new Edge("p2t", 1);
+	    new Edge({src:'foo', dest: 'bar'});
 	},
-	"wrong parameter"
+	"wrong direction"
     );
 });
+
+QUnit.test("throws an exception when wrong src", assert => {
+    n_tab = 0;
+    assert.throws(
+	function(){
+	    new Edge({src:'foo', dest: 'bar', direction:'p2t'});
+	},
+	"wrong direction"
+    );
+});
+
+QUnit.test("throws an exception when wrong dest", assert => {
+    n_tab = 0;
+    tab[0] = {
+	    shape: {
+		uuid: 1,
+		type: 'place',
+		form: {
+		    x: 10,
+		    y: 30,
+		    c_points: [
+			{
+			    x: 10,
+			    y: 30
+			},
+		    ]
+		}
+	    }
+    };
+    assert.throws(
+	function(){
+	    new Edge({src:'foo', dest: 'bar', direction:'p2t'});
+	},
+	"wrong direction"
+    );
+});
+
+
+QUnit.test("throws an exception when wrong direction", assert => {
+    assert.throws(
+	function(){
+	    new Edge({src:'foo', dest: 'bar', direction:''});
+	},
+	"wrong direction"
+    );
+});
+
 
 QUnit.test("edge has a line with an arrow as support shape", assert => {
     n_tab = 0;
@@ -53,13 +100,12 @@ QUnit.test("edge has a line with an arrow as support shape", assert => {
 			{
 			    x: 10,
 			    y: 30
-			},
+			}
 		    ]
 		}
 	    }
-	}
-    };
-    tab[1] = {
+	}};
+	tab[1] ={
 	comp: {
 	    shape: {
 		uuid: 1,
@@ -71,80 +117,19 @@ QUnit.test("edge has a line with an arrow as support shape", assert => {
 			{
 			    x: 50,
 			    y: 30
-			},
+			}
 		    ]
 		}
 	    }
-	}
-    }
+	}};
 
-    var e = new Edge("p2t", 1, 2);
-    assert.equal(e.shape.type, "link", "edge has a line as shape");
+    var e = new Edge({src:'foo', dest: 'bar', direction:'p2t'});
+    assert.equal(e.shape.type, "link", "component type");
     assert.equal(e.shape.line.x, 10, "set x");
     assert.equal(e.shape.line.y, 30, "set y");
     assert.equal(e.shape.line.dest_x, 50, "set dest_x");
     assert.equal(e.shape.line.dest_y, 30, "set dest_y");
 });
 
-QUnit.test("throws an exception when the second end isn't correct", assert => {
-    tab[0] = {uuid: 1};
 
-    assert.throws(
-	function(){
-	    new Edge("p2t", 1, 2);
-	},
-	"wrong parameter"
-    );
-});
-
-
-QUnit.test("check that a link between two places or two transitions are forbidden", assert => {
-    assert.throws(
-	function(){
-	    new Edge("p2t",
-		     {
-			 shape : {
-			     form: {
-				 c_svg: {}
-			     },
-			     type: "place"
-			 }
-		     },
-		     {
-			 shape : {
-			     form: {
-				 c_svg: {}
-			     },
-			     type: "place"
-			 }
-		     });
-	},
-	"link between two places is forbidden"
-    );
-
-    assert.throws(
-	function(){
-	    new Edge("p2t",
-		     {
-			 shape : {
-			     form: {
-				 c_svg: {}
-			     },
-			     type: "transition"
-			 }
-		     },
-		     {
-			 shape : {
-			     form: {
-				 c_svg: {}
-			     },
-			     type: "transition"
-			 }
-		     });
-	},
-	"link between two transitions is forbidden"
-    );
-});
-
-
-/******************************* panel of possible actions ****************************/
+// /******************************* panel of possible actions ****************************/

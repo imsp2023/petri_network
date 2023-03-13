@@ -1,5 +1,5 @@
 var lineRemove = 0;
-
+var removeFromDOM = 0;
 class Aya{
     constructor(){
 	this.ttype = null;
@@ -121,6 +121,7 @@ class Aya{
 		delete Obj.events[event];
 	    },
 	    removeFromDOM(){
+		removeFromDOM++;
 	    },
 	    draw(){
 		Obj.addEvent("mousedown", ()=>{});
@@ -145,6 +146,7 @@ class Aya{
 	    },
 	    removeFromDOM: ()=>{
 		lineRemove++;
+		removeFromDOM++;
 	    }
 	}
 
@@ -175,6 +177,7 @@ class Aya{
 		},
 	    },
 	    removeFromDOM(){
+		removeFromDOM++;
 		Obj.c_svg = "";
 	    },
 	    setOffsetX :  (x) => {
@@ -233,7 +236,8 @@ class Aya{
     Polyline(x, y, text, size){
 	var Obj = {
 	    type: 'polyline',
-	      removeFromDOM(){
+	    removeFromDOM(){
+		removeFromDOM++;
 		Obj.c_svg = "";
 	    }
 	};
