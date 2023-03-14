@@ -49,8 +49,8 @@ class Transition{
 	    
 	this.shape.form.c_svg.setAttribute("fill", color);
 	this.shape.form.c_svg.setAttribute("stroke-width", "2px");
-	this.shape.form.vertex = [];
-	this.shape.form.c_points = [];
+//	this.shape.form.vertex = [];
+//	this.shape.form.c_points = [];
 	
 	if(type == 'asub' || type == 'ssub'){
 	    this.shape.addChild(aya.Rectangle(

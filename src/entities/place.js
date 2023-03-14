@@ -8,7 +8,7 @@ var actions = [
 
 class Place{
 
-    constructor(type){
+    constructor(props = {}){
 	var color = "black";
 	var pixel = "3px";
 
@@ -16,7 +16,7 @@ class Place{
 
 	this.active_component = null;
 
-	this.type = !type ? "intermediary" :  type;
+	this.type = !props.type ? "intermediary" :  props.type;
 
 	if (this.type == "start"){
 	    color = "green";
@@ -80,7 +80,6 @@ class Place{
 	    this.name = name;
 	this.shape.form.children.map(({child}) => {
 	    if (child.type == 'text'){
-		console.log("debuuuuuuuuuuug");
 		child.text = this.name;
 		child.redraw();
 	    }
@@ -136,11 +135,8 @@ class Place{
 
 		child.c_svg.addEventListener("mousedown", (e) => {
 		    var cp = Register.find(this.shape.uuid);
-		    if (cp){
-			if (child.name == 'edge')
-			    src = cp;
+		    if (cp)
 			cp.addConnector(child.name);
-		    }
 		});
 	    }
 	});

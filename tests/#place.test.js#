@@ -31,15 +31,15 @@ QUnit.test("Adding the place to Register", assert => {
 });
 
 
-// QUnit.test("Removing mousedown, mouseover and mouseleave events on connection points of aya's component", assert => {
-//     var p = new Place();
+QUnit.test("Removing mousedown, mouseover and mouseleave events on connection points of aya's component", assert => {
+    var p = new Place();
 
-//     p.shape.form.c_points.map((pt) => {
-// 	assert.equal(pt.events["mousedown"], undefined, "mousedown event is removed from c_points");
-// 	assert.equal(pt.events["mouseover"], undefined, "mouseover event is removed from c_points");
-// 	assert.equal(pt.events["mouseleave"], undefined, "mouseleave event is removed from c_points");
-//     });
-// });
+    p.shape.form.c_points.map((pt) => {
+	assert.equal(pt.events["mousedown"], undefined, "mousedown event is removed from c_points");
+	assert.equal(pt.events["mouseover"], undefined, "mouseover event is removed from c_points");
+	assert.equal(pt.events["mouseleave"], undefined, "mouseleave event is removed from c_points");
+    });
+});
 
 QUnit.test("Creation of place by default", assert => {
     var p = new Place();

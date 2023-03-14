@@ -1,20 +1,21 @@
-var store = {};
 class Register{
+    static store = {};
+
     static add(object) {
-        store[object.type == 'edge' ? object.comp.shape.line.uuid : object.comp.shape.uuid] = object;
+        Register.store[object.type == 'edge' ? object.comp.shape.line.uuid : object.comp.shape.uuid] = object;
     }
 
     static find(uuid){
-        return store[uuid] ? store[uuid] : null;
+        return Register.store[uuid] ? store[uuid] : null;
     }
 
     static clear(uuid){
-        delete store[uuid];
+        delete Register.store[uuid];
     }
 
     static findAllEdges(object){
 	var result = [];
-        Object.keys(store).map((id) => {
+        Object.keys(Register.store).map((id) => {
             var obj = Register.find(id);
             if(obj.type == "edge"){
                 if(object.comp.shape.uuid == obj.comp.shape.source.ref || object.comp.shape.uuid == obj.comp.shape.destination.ref)

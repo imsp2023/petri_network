@@ -37,6 +37,7 @@ QUnit.test("umark clears a specific cell", assert =>{
     assert.equal(layout.grid[11], 0, "cell value");
     });
 
+// why didn't you write an assert to test that all the cells are marked before clear the grid ?
 QUnit.test("clear unmarks all the cells", assert =>{
     var i, j;
     layout.init(10, 10, 100, 100);
@@ -57,7 +58,7 @@ QUnit.test("getClosestPostion returns null when origin point is not provided", a
     assert.equal(r, null);
 });
 
-QUnit.test("getClosestPostion returns nullwhen origin is invalid", assert =>{
+QUnit.test("getClosestPostion returns null when origin is invalid", assert =>{
     layout.init(10, 10, 40, 50);
     var r = layout.getClosestPosition(4, -1); 
     

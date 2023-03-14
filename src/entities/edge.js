@@ -32,7 +32,6 @@ class Edge {
 		nparams++;
 	}
 	this.direction = direction;
-
 	if (nparams == 2){
 	    var line = aya.Line(src.comp.shape.form.c_points[0].x, src.comp.shape.form.c_points[0].y, dest.comp.shape.form.c_points[0].x, dest.comp.shape.form.c_points[0].y);
 	    line.draw();
