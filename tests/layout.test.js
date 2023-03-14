@@ -66,83 +66,83 @@ QUnit.test("getClosestPostion returns null when origin is invalid", assert =>{
 });
 
 QUnit.test("in west orientation the first point is at west", assert =>{
-    layout.init(10, 10, 40, 40);
-    var r = layout.getClosestPosition(0, 1); 
+    layout.init(10, 10, 50, 50);
+    var r = layout.getClosestPosition(0, 2); 
     
     assert.equal(r.x, 0+space, "X-axis");
-    assert.equal(r.y, 1, "Y-axis");
+    assert.equal(r.y, 2, "Y-axis");
 });
 
 QUnit.test("in west orientation the second point is at NW", assert =>{
-    layout.init(10, 10, 40, 40);
+    layout.init(10, 10, 50, 50);
 
     layout.clear();
-    layout.mark(0+space, 1);
-    var r = layout.getClosestPosition(0, 1); 
+    layout.mark(0+space, 2);
+    var r = layout.getClosestPosition(0, 2); 
     
     assert.equal(r.x, 0+space, "X-axis");
     assert.equal(r.y, 0, "Y-axis");
 });
 
 QUnit.test("in west orientation the third point is at SW", assert =>{
-    layout.init(10, 10, 40, 40);
+    layout.init(10, 10, 50, 50);
 
     layout.clear();
-    layout.mark(0+space, 1);
+    layout.mark(0+space, 2);
     layout.mark(0+space, 0);
 
-    var r = layout.getClosestPosition(0, 1); 
+    var r = layout.getClosestPosition(0, 2); 
     
     assert.equal(r.x, 0+space, "X-axis");
-    assert.equal(r.y, 2, "Y-axis");
+    assert.equal(r.y, 4, "Y-axis");
 });
 
 QUnit.test("in west orientation the fourth point is below the third point", assert =>{
-    layout.init(10, 10, 40, 40);
+    layout.init(10, 10, 50, 70);
 
     layout.clear();
-    layout.mark(0+space, 1);
-    layout.mark(0+space, 0);
     layout.mark(0+space, 2);
+    layout.mark(0+space, 4);
+    layout.mark(0+space, 0);
 
-    var r = layout.getClosestPosition(0, 1); 
+    var r = layout.getClosestPosition(0, 2); 
     
     assert.equal(r.x, 0+space, "X-axis");
-    assert.equal(r.y, 3, "Y-axis");
+    assert.equal(r.y, 6, "Y-axis");
 });
 
 //+++++
 
 QUnit.test("in east orientation the first point is at east", assert =>{
-    layout.init(10, 10, 40, 40);
-    var r = layout.getClosestPosition(3, 1); 
+    layout.init(10, 10, 40, 50);
+    var r = layout.getClosestPosition(3, 2); 
     
     assert.equal(r.x, 3-space, "X-axis");
-    assert.equal(r.y, 1, "Y-axis");
+    assert.equal(r.y, 2, "Y-axis");
 });
 
 QUnit.test("in east orientation the second point is at NE", assert =>{
-    layout.init(10, 10, 40, 40);
+    layout.init(10, 10, 40, 50);
 
     layout.clear();
-    layout.mark(3-space, 1);
-    var r = layout.getClosestPosition(3, 1); 
+    layout.mark(3-space, 2);
+    var r = layout.getClosestPosition(3, 2); 
     
     assert.equal(r.x, 3-space, "X-axis");
     assert.equal(r.y, 0, "Y-axis");
 });
 
 QUnit.test("in east orientation the third point is at SE", assert =>{
-    layout.init(10, 10, 40, 40);
+    layout.init(10, 10, 40, 50);
 
     layout.clear();
-    layout.mark(3-space, 1);
+    layout.mark(3-space, 2);
     layout.mark(3-space, 0);
 
-    var r = layout.getClosestPosition(3, 1); 
+    var r = layout.getClosestPosition(3, 2); 
     
     assert.equal(r.x, 3-space, "X-axis");
-    assert.equal(r.y, 2, "Y-axis");
+    assert.equal(r.y, 4, "Y-axis");
 });
 
 QUnit.test("in west orientation getclosestpostion returns null when no position is available", assert =>{

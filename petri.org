@@ -30,7 +30,7 @@ and its name. The name must generated automatically. By default the
 place's type is intermediary. The possible types are start, end and
 intermediary.
 
-*** TODO generate a json structure to save place
+*** DONE generate a json structure to save place
 The object must contain place attributes plus the one of DOM such as position.
 ** transition
 *** DONE visual representation of transitions
@@ -72,7 +72,7 @@ transition json object according to its type:
   that will be executed in parallel
 - clock; 
 
-*** TODO generate a json structure to save place 
+*** DONE generate a json structure to save place 
 The object must contain transition attributes plus the one of DOM such as position.
 
 ** edges
@@ -98,26 +98,26 @@ The object must contain uuid of both ends.
 ** TODO names
 Default names must be uniq
 
-** TODO positioning
+** REVIEW positioning
 When the position of a component is no specified then it will be determine automatically.
 
 
 * Implementation of actions to be applied to components
 ** place
-*** TODO delete action
+*** DONE delete action
 this action must delete the specified place and all {in,out} edges.
 
-*** TODO 'add transition' action
+*** DONE 'add transition' action
 this action must a link between this place and a new dummy transition.
 
 *** TODO 'configure' action
 see place configuration section
 
 ** transition
-*** TODO delete action
+*** DONE delete action
 this action must delete the specified transition and all {in,out} edges.
 
-*** TODO 'add transition' action
+*** DONE 'add transition' action
 this action must a link between this transition and a new intermediary place.
 
 *** TODO 'configure' action
