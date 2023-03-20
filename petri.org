@@ -130,7 +130,7 @@ this action must only delete the specified edge. This action do not delete the e
 *** TODO 'configure' action
 see edge configuration section
 * Implementation of composite composants
-** multi choice
+** TODO multi choice
 #+CAPTION: mc image
 #+ATTR_HTML: :width 300px
 [[doc/images/multichoice.png]] This action is associated to a place. The

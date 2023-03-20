@@ -5,6 +5,11 @@ class Place{
 	
 	{name: "transition", path: "src/images/transition3.png"},
 	{name: "edge", path: "src/images/edge2.png"},
+	{name: "xorsplit", path: "src/images/xorsplit.png"},
+	{name: "multichoice", path: "src/images/inclusive.png"},
+	{name: "deferredchoice", path: "src/images/deferredchoice.png"},
+	{name: "while", path: "src/images/loop2.png"},
+	{name: "multinstance", path: "src/images/multinstance.png"},
 	{name: "deletion", path: "src/images/delete.png"}
     ];
     static ImgSZ = 20;
@@ -149,9 +154,9 @@ class Place{
 	var y = this.shape.form.y - this.shape.form.r;
 	var wid, hei, cp;
 
-	wid = 2*Place.ImgSZ+2*5/*spacing*/+10;
+	wid = 3*Place.ImgSZ+2*5/*spacing*/+10;
 	hei = Math.floor(Place.actions.length/2);
-	if(Place.actions.length % 2)
+	if(Place.actions.length % 3)
 	    hei++;
 	hei *= (Place.ImgSZ+5);
 
@@ -162,7 +167,7 @@ class Place{
 	this.panel.c_svg.setAttribute("opacity", 0);
 	
 	for (var i = 0, j = 0; i < Place.actions.length; i++, j++){
-	    if (i && !(i%2)){
+	    if (i && !(i%3)){
 		j = 0;
 		y += Place.ImgSZ+5/* spacing */;
 	    }

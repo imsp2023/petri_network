@@ -416,3 +416,31 @@ QUnit.test("delete component and its edges when neighbors", assert => {
     assert.equal(layoutUMark, 5, "umark count");
     
 });
+
+QUnit.test("test andsplit", assert => {
+    layout.init(10, 10, 40, 40);
+
+    var t = new Component('transition', {type:'automatic',name: 'foo', x:0, y:0});
+
+    n_tab = 0;
+    layoutClosest = 0;
+    
+    t.addConnector('andsplit');
+    
+    assert.equal(layoutClosest, 4, "closestposition count");
+    assert.equal(n_tab, 8, "register count");
+    });
+
+QUnit.test("test dowhile", assert => {
+    layout.init(10, 10, 40, 40);
+
+    var t = new Component('transition', {type:'automatic',name: 'foo', x:0, y:0});
+
+    n_tab = 0;
+    layoutClosest = 0;
+    
+    t.addConnector('dowhile');
+    
+    assert.equal(layoutClosest, 2, "closestposition count");
+    assert.equal(n_tab, 5, "register count");
+});
