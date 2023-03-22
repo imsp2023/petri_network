@@ -161,14 +161,73 @@ class Component{
 	    this.comp.shape.form.svg.removeChild(this.comp.shape.form.c_svg);
 	    Register.clear(this.comp.shape.uuid);
 	}
-	else if (type == 'setting'){
+	else if(type == 'andsplit'){
+	    var i, lyt, p, t, e, cur, obj={};
+
+	    for(i=0; i<2; i++){
+		cur = this;
+		
+		lyt = layout.getClosestPosition(Math.floor(cur.comp.shape.form.x/layout.cellW),
+						Math.floor(cur.comp.shape.form.y/layout.cellH));
+
+		obj.x = lyt.x*layout.cellW;
+		obj.y = lyt.y*layout.cellH;
+		obj.type = 'intermediary';
+		p = new Component('place', obj);
+		e = new Component('edge', {src: cur.comp.shape.uuid,
+					   dest: p.comp.shape.uuid,
+					   direction: 't2p'});
+		
+		cur = p;
+		lyt = layout.getClosestPosition(Math.floor(cur.comp.shape.form.x/layout.cellW),
+						Math.floor(cur.comp.shape.form.y/layout.cellH));				
+		obj.x = lyt.x*layout.cellW;
+		obj.y = lyt.y*layout.cellH;
+		obj.type = 'dummy';
+		t = new Component('transition', obj);
+		e = new Component('edge', {src: cur.comp.shape.uuid,
+					   dest: t.comp.shape.uuid,
+					   direction: 'p2t'});
+	    }
+	}else if(type == 'dowhile'){
+	    var i, lyt, p, t, e, obj={};
+	    
+	    lyt = layout.getClosestPosition(Math.floor(this.comp.shape.form.x/layout.cellW),
+	    					            Math.floor(this.comp.shape.form.y/layout.cellH));
+
+	    obj.x = lyt.x*layout.cellW;
+	    obj.y = lyt.y*layout.cellH;
+	    obj.type = 'intermediary';
+	    p = new Component('place', obj);
+
+	    lyt = layout.getClosestPosition(Math.floor(p.comp.shape.form.x/layout.cellW),
+	    					            Math.floor(p.comp.shape.form.y/layout.cellH));
+	    obj.x = lyt.x*layout.cellW;
+	    obj.y = lyt.y*layout.cellH;
+	    obj.type = 'dummy';
+	    t = new Component('transition', obj);
+
+        e = new Component('edge', {src: this.comp.shape.uuid,
+	    				           dest: p.comp.shape.uuid,
+	    				           direction: 't2p'});
+
+        e = new Component('edge', {src: p.comp.shape.uuid,
+	    				           dest: this.comp.shape.uuid,
+	    				           direction: 'p2t'});
+
+        e = new Component('edge', {src: p.comp.shape.uuid,
+	    				           dest: t.comp.shape.uuid,
+	    				           direction: 'p2t'});
+
+        this.comp.setGate('xor_join');
+	}else if (type == 'setting'){
 	    var name = window.prompt("Name of the place :");
 	    this.comp.setName(name);
 	    var type = window.prompt("Type of the place :");
 	    this.comp.setType(type);
 	}
     }
-
+    
     onMouseDown(){
 	Component.state = 'moving';
 	Component.x = this.comp.shape.form.x;

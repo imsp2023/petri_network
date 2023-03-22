@@ -1,6 +1,9 @@
 const t_actions = [
     {name: "place", path: "src/images/place.png"},
     {name: "edge", path: "src/images/edge2.png"},
+    {name: "andsplit", path: "src/images/andsplit.png"},
+    {name: "dowhile", path: "src/images/loop2.png"},
+    {name: "multinstance", path: "src/images/multinstance.png"},
     {name: "deletion", path: "src/images/delete.png"}
 ];
 const ImSZ = 20;
@@ -179,7 +182,7 @@ class Transition{
 	this.panelPos = this.shape.form.children.length-1;
 	
 	for (var i = 0, j = 0; i < t_actions.length; i++, j++){
-	    if (i && !(i%2)){
+	    if (i && !(i%3)){
 		j = 0;
 		y += ImSZ+5/* spacing */;
 	    }
