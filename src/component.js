@@ -53,15 +53,18 @@ class Component{
 		             this.comp.shape.uuid, this);
     }
     edgeCompleted(){
+        var e;
 	    if(!Component.line)
 	        return;
 
 	    console.log('completed type='+this.type+ ' x2='+ this.comp.shape.shape.x);
 	    Component.line.removeFromDOM();
 
+        /* Only p2t  and t2p are allowed */
 	    if(Component.src.type != this.type){
+            var count = {count: 0};
 
-	        new Component('edge', {
+	        e = new Component('edge', {
 		        direction:this.type=='place'?'t2p':'p2t',
 		        src: Component.src.comp.shape.uuid,
 		        dest: this.comp.shape.uuid
@@ -71,6 +74,23 @@ class Component{
 			                Math.floor(Component.src.comp.shape.shape.y/layout.cellH),
 			                Math.floor(this.comp.shape.shape.x/layout.cellW),
 			                Math.floor(this.comp.shape.shape.y/layout.cellH));
+
+            /* Set xor_join if transition has more than one place associated */
+            if(this.type == 'transition'){
+                Register.forEach(
+		            (item, data)=>{
+                        console.log('Register');
+                        if(item.type=='edge' &&
+		                   (item.comp.src == this.comp.shape.uuid ||
+			                item.comp.dest == this.comp.shape.uuid)){
+                            data.count++;
+			                //data.push(item);
+		                }
+		            },
+		            count);
+                if(count.count >= 2)
+                    this.comp.setGate('xor_join');
+            }
 	    }
 
 	    Component.line = null;
