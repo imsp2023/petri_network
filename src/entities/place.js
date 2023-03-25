@@ -69,20 +69,20 @@ class Place{
 	if(this.shape && this.shape.type != 'circle')
 	    throw new Error("the shape isn't a circle");
 
-	this.shape.form.removeBoxFromDOM();
+	this.shape.shape.removeBoxFromDOM();
 	
-	this.shape.form.c_svg.setAttribute("fill", "white");
-	this.shape.form.c_svg.setAttribute("stroke-width", pixel);
-	this.shape.form.c_svg.setAttribute("stroke", color);
+	this.shape.shape.c_svg.setAttribute("fill", "white");
+	this.shape.shape.c_svg.setAttribute("stroke-width", pixel);
+	this.shape.shape.c_svg.setAttribute("stroke", color);
 
-	this.shape.form.c_points.map((pt) => {
+	this.shape.shape.c_points.map((pt) => {
 	    pt.c_svg.setAttribute("fill", 'none');
 	});
-	this.shape.form.vertex.map((vt) => {
+	this.shape.shape.vertex.map((vt) => {
 	    vt.c_svg.setAttribute("fill", 'none');
 	});
 
-	this.shape.form.c_svg.addEventListener("mouseover", () => {
+	this.shape.shape.c_svg.addEventListener("mouseover", () => {
 
 	    if(this.state == 'moving')
 		return;
@@ -91,14 +91,14 @@ class Place{
 		this.addPanel();
 	    this.state = 'place';
 	});
-	this.shape.form.c_svg.addEventListener("mouseleave", ()=> {
+	this.shape.shape.c_svg.addEventListener("mouseleave", ()=> {
 	    if(this.state == 'moving')
 		return;
 	    
 	    this.state = '';
 	});
 
-	this.shape.form.c_svg.addEventListener("mousedown", (e)=>{
+	this.shape.shape.c_svg.addEventListener("mousedown", (e)=>{
 	    var target;
 	    console.log('mousedown place');
 	    this.removePanel();
@@ -108,7 +108,7 @@ class Place{
 		target.onMouseDown();
 	});
 	
-	this.shape.form.c_svg.addEventListener("mouseup", (e)=>{
+	this.shape.shape.c_svg.addEventListener("mouseup", (e)=>{
 	    var target;
 	    
 	    if(this.state == 'moving')
@@ -136,22 +136,22 @@ class Place{
 	else if (this.type != "intermediary")
 	    throw new Error("this type is not correct");
 
-	this.shape.form.c_points.map((pt) => {
+	this.shape.shape.c_points.map((pt) => {
 	    pt.c_svg.setAttribute("fill", color);
 	});
-	this.shape.form.c_svg.setAttribute("stroke-width", pixel);
-	this.shape.form.c_svg.setAttribute("stroke", color);
+	this.shape.shape.c_svg.setAttribute("stroke-width", pixel);
+	this.shape.shape.c_svg.setAttribute("stroke", color);
     }
 
     redraw(cwidth, cheight){
-	Place.centerComponent(this.shape.form, cwidth, cheight);
-	this.shape.form.redraw(cwidth, cheight);
+	Place.centerComponent(this.shape.shape, cwidth, cheight);
+	this.shape.shape.redraw(cwidth, cheight);
     }
     
     addPanel(){
 	var img;
-	var x = this.shape.form.x + this.shape.form.r;
-	var y = this.shape.form.y - this.shape.form.r;
+	var x = this.shape.shape.x + this.shape.shape.r;
+	var y = this.shape.shape.y - this.shape.shape.r;
 	var wid, hei, cp;
 
 	wid = 3*Place.ImgSZ+2*5/*spacing*/+10;
@@ -197,20 +197,20 @@ class Place{
 	    this.state = '';
 	});
 	
-	this.shape.form.svg.addEventListener("mouseover", () => {
+	this.shape.shape.svg.addEventListener("mouseover", () => {
 	    if (this.state == '' && this.panel)
 		this.removePanel();
 	});
     }
 
     removePanel(){
-	this.shape.form.children.map(({child}) => {
+	this.shape.shape.children.map(({child}) => {
 	    child.removeFromDOM();
 	});
 
-	this.shape.form.children = [];
+	this.shape.shape.children = [];
 	
-	this.shape.form.svg.removeEventListener("mouseover", () => {});
+	this.shape.shape.svg.removeEventListener("mouseover", () => {});
 	this.panel = null;
 	this.state = '';
 	

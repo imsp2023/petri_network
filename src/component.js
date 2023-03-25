@@ -56,7 +56,7 @@ class Component{
 	if(!Component.line)
 	    return;
 	
-	console.log('completed type='+this.type+ ' x2='+ this.comp.shape.form.x);
+	console.log('completed type='+this.type+ ' x2='+ this.comp.shape.shape.x);
 	Component.line.removeFromDOM();
 
 	if(Component.src.type != this.type){
@@ -66,10 +66,10 @@ class Component{
 		src: Component.src.comp.shape.uuid,
 		dest: this.comp.shape.uuid
 	    });
-	    layout.markEdge(Math.floor(Component.src.comp.shape.form.x/layout.cellW),
-			    Math.floor(Component.src.comp.shape.form.y/layout.cellH),
-			    Math.floor(this.comp.shape.form.x/layout.cellW),
-			    Math.floor(this.comp.shape.form.y/layout.cellH));
+	    layout.markEdge(Math.floor(Component.src.comp.shape.shape.x/layout.cellW),
+			    Math.floor(Component.src.comp.shape.shape.y/layout.cellH),
+			    Math.floor(this.comp.shape.shape.x/layout.cellW),
+			    Math.floor(this.comp.shape.shape.y/layout.cellH));
 	}
 	
 	Component.line = null;
@@ -86,7 +86,7 @@ class Component{
 	    console.log('addconnector edge');
 	    Component.state = 'linking'
 	    Component.src = this;
-	    Component.line = aya.Line(this.comp.shape.form.c_points[0].x, this.comp.shape.form.c_points[0].y);
+	    Component.line = aya.Line(this.comp.shape.shape.c_points[0].x, this.comp.shape.shape.c_points[0].y);
 	    Component.line.draw();
 	    
 	}else if(type == 'transition' || type == 'place'){
@@ -101,8 +101,8 @@ class Component{
 	    props.name = 'generate automatic name';
 	    console.log('addconnector');
 
-	    posx = Math.floor(this.comp.shape.form.x/layout.cellW);
-	    posy = Math.floor(this.comp.shape.form.y/layout.cellH);
+	    posx = Math.floor(this.comp.shape.shape.x/layout.cellW);
+	    posy = Math.floor(this.comp.shape.shape.y/layout.cellH);
 	    if((pos=layout.getClosestPosition(posx, posy))){
 		props.x = pos.x*layout.cellW;
 		props.y = pos.y*layout.cellH;
@@ -146,19 +146,19 @@ class Component{
 
 		console.log(src);
 		console.log(dest);
-		layout.umarkEdge(Math.floor(src.comp.shape.form.x/layout.cellW),
-				 Math.floor(src.comp.shape.form.y/layout.cellH),
-				 Math.floor(dest.comp.shape.form.x/layout.cellW),
-				 Math.floor(dest.comp.shape.form.y/layout.cellH));
+		layout.umarkEdge(Math.floor(src.comp.shape.shape.x/layout.cellW),
+				 Math.floor(src.comp.shape.shape.y/layout.cellH),
+				 Math.floor(dest.comp.shape.shape.x/layout.cellW),
+				 Math.floor(dest.comp.shape.shape.y/layout.cellH));
 		
 		lk.comp.shape.line.removeFromDOM();
 		Register.clear(lk.comp.shape.line.uuid);
 		
 	    });
 
-	    layout.umark(Math.floor(this.comp.shape.form.x/layout.cellW),
-			 Math.floor(this.comp.shape.form.y/layout.cellH));
-	    this.comp.shape.form.svg.removeChild(this.comp.shape.form.c_svg);
+	    layout.umark(Math.floor(this.comp.shape.shape.x/layout.cellW),
+			 Math.floor(this.comp.shape.shape.y/layout.cellH));
+	    this.comp.shape.shape.svg.removeChild(this.comp.shape.shape.c_svg);
 	    Register.clear(this.comp.shape.uuid);
 	}
 	else if(type == 'andsplit'){
@@ -167,8 +167,8 @@ class Component{
 	    for(i=0; i<2; i++){
 		cur = this;
 		
-		lyt = layout.getClosestPosition(Math.floor(cur.comp.shape.form.x/layout.cellW),
-						Math.floor(cur.comp.shape.form.y/layout.cellH));
+		lyt = layout.getClosestPosition(Math.floor(cur.comp.shape.shape.x/layout.cellW),
+						Math.floor(cur.comp.shape.shape.y/layout.cellH));
 
 		obj.x = lyt.x*layout.cellW;
 		obj.y = lyt.y*layout.cellH;
@@ -179,8 +179,8 @@ class Component{
 					   direction: 't2p'});
 		
 		cur = p;
-		lyt = layout.getClosestPosition(Math.floor(cur.comp.shape.form.x/layout.cellW),
-						Math.floor(cur.comp.shape.form.y/layout.cellH));				
+		lyt = layout.getClosestPosition(Math.floor(cur.comp.shape.shape.x/layout.cellW),
+						Math.floor(cur.comp.shape.shape.y/layout.cellH));
 		obj.x = lyt.x*layout.cellW;
 		obj.y = lyt.y*layout.cellH;
 		obj.type = 'dummy';
@@ -192,16 +192,16 @@ class Component{
 	}else if(type == 'dowhile'){
 	    var i, lyt, p, t, e, obj={};
 	    
-	    lyt = layout.getClosestPosition(Math.floor(this.comp.shape.form.x/layout.cellW),
-	    					            Math.floor(this.comp.shape.form.y/layout.cellH));
+	    lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
+	    					            Math.floor(this.comp.shape.shape.y/layout.cellH));
 
 	    obj.x = lyt.x*layout.cellW;
 	    obj.y = lyt.y*layout.cellH;
 	    obj.type = 'intermediary';
 	    p = new Component('place', obj);
 
-	    lyt = layout.getClosestPosition(Math.floor(p.comp.shape.form.x/layout.cellW),
-	    					            Math.floor(p.comp.shape.form.y/layout.cellH));
+	    lyt = layout.getClosestPosition(Math.floor(p.comp.shape.shape.x/layout.cellW),
+	    					            Math.floor(p.comp.shape.shape.y/layout.cellH));
 	    obj.x = lyt.x*layout.cellW;
 	    obj.y = lyt.y*layout.cellH;
 	    obj.type = 'dummy';
@@ -230,8 +230,8 @@ class Component{
     
     onMouseDown(){
 	Component.state = 'moving';
-	Component.x = this.comp.shape.form.x;
-	Component.y = this.comp.shape.form.y;
+	Component.x = this.comp.shape.shape.x;
+	Component.y = this.comp.shape.shape.y;
     }
 
     onMouseUp(uuid){
@@ -239,12 +239,12 @@ class Component{
 	if(Component.state == 'linking')
 	    this.edgeCompleted(uuid);
 	else if(Component.state == 'moving'){
-	    var lyt = layout.fixPoint(this.comp.shape.form.x,
-				      this.comp.shape.form.y);
+	    var lyt = layout.fixPoint(this.comp.shape.shape.x,
+				      this.comp.shape.shape.y);
 	    var edges = [], src, dest, osrc, odest;
 
-	    this.comp.shape.form.x = lyt.x;
-	    this.comp.shape.form.y = lyt.y;
+	    this.comp.shape.shape.x = lyt.x;
+	    this.comp.shape.shape.y = lyt.y;
 	    this.comp.redraw(layout.cellW, layout.cellH);
 
 	    Register.forEach(
@@ -265,23 +265,23 @@ class Component{
 		    if(e.comp.src == this.comp.shape.uuid){
 			dest = Register.find(e.comp.dest);
 			odest = {
-			    x: dest.comp.shape.form.x,
-			    y: dest.comp.shape.form.y
+			    x: dest.comp.shape.shape.x,
+			    y: dest.comp.shape.shape.y
 			};
 			src = this;
 			osrc = {
 			    x: Component.x,
 			    y: Component.y
 			};
-			e.comp.shape.line.x = this.comp.shape.form.c_points[0].x;
-			e.comp.shape.line.y = this.comp.shape.form.c_points[0].y;
+			e.comp.shape.line.x = this.comp.shape.shape.c_points[0].x;
+			e.comp.shape.line.y = this.comp.shape.shape.c_points[0].y;
 
 		    }
 		    else{
 			src = Register.find(e.comp.src);
 			osrc = {
-			    x: src.comp.shape.form.x,
-			    y: src.comp.shape.form.y
+			    x: src.comp.shape.shape.x,
+			    y: src.comp.shape.shape.y
 			};
 			
 			dest = this;
@@ -289,8 +289,8 @@ class Component{
 			    x: Component.x,
 			    y: Component.y
 			};
-			e.comp.shape.line.dest_x = this.comp.shape.form.c_points[0].x;
-			e.comp.shape.line.dest_y = this.comp.shape.form.c_points[0].y;
+			e.comp.shape.line.dest_x = this.comp.shape.shape.c_points[0].x;
+			e.comp.shape.line.dest_y = this.comp.shape.shape.c_points[0].y;
 		    }
 		    
 		    layout.umarkEdge(Math.floor(osrc.x/layout.cellW),
@@ -298,10 +298,10 @@ class Component{
 				     Math.floor(odest.x/layout.cellW),
 				     Math.floor(odest.y/layout.cellH));
 
-		    layout.markEdge(Math.floor(src.comp.shape.form.x/layout.cellW),
-				    Math.floor(src.comp.shape.form.y/layout.cellH),
-				    Math.floor(dest.comp.shape.form.x/layout.cellW),
-				    Math.floor(dest.comp.shape.form.y/layout.cellH));
+		    layout.markEdge(Math.floor(src.comp.shape.shape.x/layout.cellW),
+				    Math.floor(src.comp.shape.shape.y/layout.cellH),
+				    Math.floor(dest.comp.shape.shape.x/layout.cellW),
+				    Math.floor(dest.comp.shape.shape.y/layout.cellH));
 
 		    e.comp.shape.redraw();
 		});
@@ -316,8 +316,8 @@ class Component{
 	    if(e != shape)
 		obj[e] = this.comp[e];
 	});
-	obj.x = this.comp.shape.form.x;
-	obj.y = this.comp.shape.form.y;
+	obj.x = this.comp.shape.shape.x;
+	obj.y = this.comp.shape.shape.y;
 
 	if(this.type == 'transition')
 	    container.transitions.push(obj);
