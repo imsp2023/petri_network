@@ -22,8 +22,8 @@ class Edge {
                                       dest_y: dest.comp.shape.shape.c_points[3].y});
 
 
-	    this.shape = aya.Link(src.comp.shape.shape.c_points[0],
-			                  dest.comp.shape.shape.c_points[0], line.shape);
+	    this.shape = aya.Link(src.comp.shape.shape.c_points[1],
+			                  dest.comp.shape.shape.c_points[3], line.shape);
         this.shape.line.children.map(({child})=>{
             child.setStyles({"fill": "black"});
         });
