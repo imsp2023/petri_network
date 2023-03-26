@@ -283,8 +283,8 @@ QUnit.test("onMouseDown set state attribute", assert => {
 QUnit.test("onMouseDown stores transition position", assert => {
     var t = new Component('transition', {type:'dummy'});
     t.onMouseDown();
-    assert.equal(Component.x, t.comp.shape.form.x, "x value");
-    assert.equal(Component.y, t.comp.shape.form.y, "y value");
+    assert.equal(Component.x, t.comp.shape.shape.x, "x value");
+    assert.equal(Component.y, t.comp.shape.shape.y, "y value");
 });
 
 QUnit.test("onMouseUp fix transition position", assert => {
@@ -326,8 +326,8 @@ QUnit.test("onMouseUp unmarks old edges  when neighbors", assert => {
     layout.init(10, 10, 40, 40);
     registerUserData = [{comp:{shape: {redraw :()=>{},line:{}}}},
 			{comp:{shape: {redraw :()=>{},line:{}}}}];
-    tab = [{comp:{shape: {form:{x: 0, y: 0}}}},
-	   {comp:{shape: {form:{x: 0, y: 0}}}}];
+    tab = [{comp:{shape: {shape:{x: 0, y: 0}}}},
+	   {comp:{shape: {shape:{x: 0, y: 0}}}}];
     n_tab = 0;
     layoutUMark = 0;
     
@@ -349,14 +349,14 @@ QUnit.test("onMouseUp marks edges  when neighbors", assert => {
     
     registerUserData = [{comp:{shape: {redraw :()=>{},line:{}}}},
 			{comp:{shape: {redraw :()=>{},line:{}}}}];
-    tab = [{comp:{shape: {form:{x: 0, y: 0}}}},
-	   {comp:{shape: {form:{x: 0, y: 0}}}}];
+    tab = [{comp:{shape: {shape:{x: 0, y: 0}}}},
+	   {comp:{shape: {shape:{x: 0, y: 0}}}}];
     n_tab = 0;
     layoutUMark = 0;
     Component.state  = 'moving';
     
-    t.comp.shape.form.x = 30;
-    t.comp.shape.form.y = 30;
+    t.comp.shape.shape.x = 30;
+    t.comp.shape.shape.y = 30;
     
     t.onMouseUp();
     assert.equal(layoutMark, 12, "mark count");

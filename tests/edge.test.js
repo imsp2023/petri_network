@@ -41,6 +41,8 @@ QUnit.test("throws an exception when no direction", assert => {
 
 QUnit.test("throws an exception when wrong src", assert => {
     n_tab = 0;
+    tab[0] = null;
+    tab[1] = null;
     assert.throws(
 	function(){
 	    new Edge({src:'foo', dest: 'bar', direction:'p2t'});
@@ -55,14 +57,23 @@ QUnit.test("throws an exception when wrong dest", assert => {
 	    shape: {
 		uuid: 1,
 		type: 'place',
-		form: {
+		shape: {
 		    x: 10,
 		    y: 30,
 		    c_points: [
 			{
 			    x: 10,
 			    y: 30
-			},
+			},	{
+			    x: 10,
+			    y: 30
+			},	{
+			    x: 10,
+			    y: 30
+			},	{
+			    x: 10,
+			    y: 30
+			}
 		    ]
 		}
 	    }
@@ -93,11 +104,20 @@ QUnit.test("edge has a line with an arrow as support shape", assert => {
 	    shape: {
 		uuid: 1,
 		type: 'place',
-		form: {
+		shape: {
 		    x: 10,
 		    y: 30,
 		    c_points: [
 			{
+			    x: 10,
+			    y: 30
+			},	{
+			    x: 10,
+			    y: 30
+			},	{
+			    x: 10,
+			    y: 30
+			},	{
 			    x: 10,
 			    y: 30
 			}
@@ -110,11 +130,20 @@ QUnit.test("edge has a line with an arrow as support shape", assert => {
 	    shape: {
 		uuid: 1,
 		type: 'transition',
-		form: {
+		shape: {
 		    x: 10,
 		    y: 30,
 		    c_points: [
 			{
+			    x: 50,
+			    y: 30
+			},{
+			    x: 50,
+			    y: 30
+			},{
+			    x: 50,
+			    y: 30
+			},{
 			    x: 50,
 			    y: 30
 			}

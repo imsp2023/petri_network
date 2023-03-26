@@ -67,10 +67,10 @@ QUnit.test("the basic shape of a place must be a circle", assert => {
 QUnit.test("Visual representation of a place", assert =>{
     var  p = new Place();
 
-    assert.equal(p.shape.form.r, Place.Radius, "the radius must be 10 px");
-    assert.equal(p.shape.form.fill, "white", "the color must be black");
-    assert.equal(p.shape.form["stroke-width"], Place.IStroke, "the border width must  be 3 px");
-    assert.equal(p.shape.form["stroke"], "black");
+    assert.equal(p.shape.shape.r, Place.Radius, "the radius must be 10 px");
+    assert.equal(p.shape.shape.fill, "white", "the color must be black");
+    assert.equal(p.shape.shape["stroke-width"], Place.IStroke, "the border width must  be 3 px");
+    assert.equal(p.shape.shape["stroke"], "black");
     assert.equal(p.shape.type, "circle", "the shape is a circle");
 });
 
@@ -79,9 +79,9 @@ QUnit.test("Start place has a green circle", assert => {
 
     assert.equal(p.type, "start", "the type of the place is 'start'");
     assert.equal(p.shape.type, "circle", "the shape is a circle");
-    assert.equal(p.shape.form.fill, "white", "the color must be 'green'");
-    assert.equal(p.shape.form["stroke"], Place.SColor, "border color must be green");
-    assert.equal(p.shape.form["stroke-width"], Place.SStroke, "the border width must  be 3 px");
+    assert.equal(p.shape.shape.fill, "white", "the color must be 'green'");
+    assert.equal(p.shape.shape["stroke"], Place.SColor, "border color must be green");
+    assert.equal(p.shape.shape["stroke-width"], Place.SStroke, "the border width must  be 3 px");
 });
 
 QUnit.test("Intermediary place has a black circle", assert => {
@@ -89,9 +89,9 @@ QUnit.test("Intermediary place has a black circle", assert => {
 
     assert.equal(p.type, "intermediary", "the type of the place is 'intermediary'");
     assert.equal(p.shape.type, "circle", "the shape is a circle");
-    assert.equal(p.shape.form.fill, "white", "the color must be 'white'");
-    assert.equal(p.shape.form["stroke"], Place.IColor, "border color must be 'black'");
-    assert.equal(p.shape.form["stroke-width"], Place.IStroke, "the border width must  be 3 px");
+    assert.equal(p.shape.shape.fill, "white", "the color must be 'white'");
+    assert.equal(p.shape.shape["stroke"], Place.IColor, "border color must be 'black'");
+    assert.equal(p.shape.shape["stroke-width"], Place.IStroke, "the border width must  be 3 px");
 });
 
 QUnit.test("End place has a red circle", assert => {
@@ -99,9 +99,9 @@ QUnit.test("End place has a red circle", assert => {
 
     assert.equal(p.type, "end", "place type");
     assert.equal(p.shape.type, "circle", "the shape is a circle");
-    assert.equal(p.shape.form.fill, "white", "the color must be 'white'");
-    assert.equal(p.shape.form["stroke"], Place.EColor, "border color must be 'red'");
-    assert.equal(p.shape.form["stroke-width"], Place.EStroke, "the border width must  be 3 px");
+    assert.equal(p.shape.shape.fill, "white", "the color must be 'white'");
+    assert.equal(p.shape.shape["stroke"], Place.EColor, "border color must be 'red'");
+    assert.equal(p.shape.shape["stroke-width"], Place.EStroke, "the border width must  be 3 px");
 						   });
 
 QUnit.test("throws an exception with wrong type", assert => {
@@ -116,15 +116,15 @@ QUnit.test("throws an exception with wrong type", assert => {
 QUnit.test("default position is (0, 0) when not provided", assert => {
     var p = new Place({});
 
-    assert.equal(p.shape.form.x, 0, "x-axis");
-    assert.equal(p.shape.form.y, 0, "-axis");
+    assert.equal(p.shape.shape.x, 0, "x-axis");
+    assert.equal(p.shape.shape.y, 0, "-axis");
 });
 
 QUnit.test("Ajust place position when cell size is provided", assert => {
     var p = new Place({cWidth: 40, cHeight: 60});
 
-    assert.equal(p.shape.form.x, 20, "x-axis");
-    assert.equal(p.shape.form.y, 30, "-axis");
+    assert.equal(p.shape.shape.x, 20, "x-axis");
+    assert.equal(p.shape.shape.y, 30, "-axis");
 });
 
 /**********************panel of possible action************************/
@@ -143,10 +143,10 @@ QUnit.test("addPanel() opens an empty panel when we hover over a place", assert 
     var p = new Place({});
     p.addPanel();
 
-    assert.ok(p.shape.form.children.length, "the shape has a child");
-    assert.equal(p.shape.form.children[0].child.type, "rectangle", "panel has a rectangle as support");
-    assert.equal(p.shape.form.children[0].child.form["stroke-width"], "0px", "the border width must  be 2 px");
-    assert.equal(p.shape.form.children[0].child.form["opacity"], 0, "panel opacity");
+    assert.ok(p.shape.shape.children.length, "the shape has a child");
+    assert.equal(p.shape.shape.children[0].child.type, "rectangle", "panel has a rectangle as support");
+    assert.equal(p.shape.shape.children[0].child.shape["stroke-width"], "0px", "the border width must  be 2 px");
+    assert.equal(p.shape.shape.children[0].child.shape["opacity"], 0, "panel opacity");
 });
 
 QUnit.test("panel must cover the place", assert => {
@@ -154,10 +154,10 @@ QUnit.test("panel must cover the place", assert => {
 
     p.addPanel();
 
-    assert.ok(p.shape.form.children.length, "the shape has a child");
-    assert.equal(p.shape.form.children[0].child.type, "rectangle", "panel has a rectangle as support");
-    assert.equal(p.shape.form.children[0].child.offsetX, -10, "panel offsetX");
-    assert.equal(p.shape.form.children[0].child.offsetY, 0, "panel offsetY");
+    assert.ok(p.shape.shape.children.length, "the shape has a child");
+    assert.equal(p.shape.shape.children[0].child.type, "rectangle", "panel has a rectangle as support");
+    assert.equal(p.shape.shape.children[0].child.offsetX, -10, "panel offsetX");
+    assert.equal(p.shape.shape.children[0].child.offsetY, 0, "panel offsetY");
 
 });
 
@@ -165,9 +165,9 @@ QUnit.test("add all actions on the panel when we hover over it", assert => {
     var p = new Place({});
     p.addPanel();
 
-    assert.equal(p.shape.form.children.length,
+    assert.equal(p.shape.shape.children.length,
 		 1+Place.actions.length, "children count");
-    p.shape.form.children.map(({child}, index) => {
+    p.shape.shape.children.map(({child}, index) => {
 	if (index != 0){
 	    assert.equal(child.type, "image", "child type");
 	    assert.equal(child.width, Place.ImgSZ, "image width");
@@ -182,7 +182,7 @@ QUnit.test("addpanel a mouseover on the images", assert => {
     var cpt = 0;
     
     p.addPanel();
-    p.shape.form.children.map(({child}, index) => {
+    p.shape.shape.children.map(({child}, index) => {
 	if (index != 0){
 	    for (e of child.events)
 		if (e["mouseover"])
@@ -198,7 +198,7 @@ QUnit.test("addpanel a mouseleave on the images", assert => {
     var cpt = 0;
     
     p.addPanel();
-    p.shape.form.children.map(({child}, index) => {
+    p.shape.shape.children.map(({child}, index) => {
 	if (index != 0){
 	    for (e of child.events)
 		if (e["mouseleave"])
@@ -213,7 +213,7 @@ QUnit.test("addpanel a mousedown on the images", assert => {
     var cpt = 0;
 
     p.addPanel();
-    p.shape.form.children.map(({child}, index) => {
+    p.shape.shape.children.map(({child}, index) => {
 	if (index != 0){
 	    for (e of child.events)
 		if (e["mousedown"])
@@ -227,7 +227,7 @@ QUnit.test("actions are display on two columns", assert => {
     var p = new Place();
 
     p.addPanel();
-    p.shape.form.children.map(({child}, index) => {
+    p.shape.shape.children.map(({child}, index) => {
 	if (index != 0){
 	    assert.equal((child.x+Place.Radius)+Place.ImgSZ,
 			 2*Place.Radius+(index%2)==0?Place.ImgSZ:0,
@@ -247,7 +247,7 @@ QUnit.test("add mouseleave event on panel", assert => {
     p.addPanel();
 
     var ev = null;
-    for (e of p.shape.form.children[0].child.events)
+    for (e of p.shape.shape.children[0].child.events)
 	if (e["mouseleave"])
 	    ev = e;
     assert.ok(ev, "mouseleave event is defined on the rectangle child");

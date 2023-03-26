@@ -21,7 +21,7 @@ class Aya{
 	    uuid : uuid,
 	    events: [],
 	    type : this.ttype ? this.ttype : type,
-	    form : {
+	    shape : {
 		dest_x: props ? props.dest_x : null,
 		dest_y: props ? props.dest_y : null,
 		vertex: [
@@ -37,10 +37,10 @@ class Aya{
 		    this.Point(uuid, 0, 0, 5)
 		],
 		draw(){
-		    Obj.form.c_points.map((pt) => {
+		    Obj.shape.c_points.map((pt) => {
 			pt.draw();
 		    });
-		    Obj.form.vertex.map((vt) => {
+		    Obj.shape.vertex.map((vt) => {
 			vt.draw();
 		    });
 		},
@@ -48,7 +48,7 @@ class Aya{
 		},
 		svg: {
 		    setAttribute: (tag, value) =>{
-			Obj.form[tag] = value;
+			Obj.shape[tag] = value;
 		    },
 		    addEventListener: ()=>{},
 		    removeEventListener: () => {}
@@ -58,7 +58,7 @@ class Aya{
 		removeBoxFromDOM(){},
 		c_svg: {
 		    setAttribute: (tag, value) =>{
-			Obj.form[tag] = value;
+			Obj.shape[tag] = value;
 		    },
 		    addEventListener: (e, callback) => {
 			var ev = {};
@@ -85,7 +85,7 @@ class Aya{
 		    child.centerY = rotate.centerY;
 		    child.angle = rotate.angle;
 		}
-		Obj.form.children.push({child});
+		Obj.shape.children.push({child});
 	    }
 	}
 	return Obj;
@@ -165,10 +165,10 @@ class Aya{
 	    offsetY: "",
 	    children : [
 	    ],
-	    form: {svg:{}},
+	    shape: {svg:{}},
 	    c_svg: {
 		setAttribute: (tag, value) =>{
-		    Obj.form[tag] = value;
+		    Obj.shape[tag] = value;
 		},
 		addEventListener: (e, callback) => {
 		    var ev = {};
@@ -205,7 +205,7 @@ class Aya{
 	    events: [],
 	    c_svg: {
 		setAttribute: (tag, value) =>{
-		    Obj.form[tag] = value;
+		    Obj.shape[tag] = value;
 		},
 		addEventListener: (e, callback) => {
 		    var ev = {};

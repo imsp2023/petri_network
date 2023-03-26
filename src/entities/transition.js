@@ -79,7 +79,8 @@ class Transition{
 
 	if(props.type == 'dummy')
 	    color = 'black';
-	    
+	    //setStyles({"fill": "black"});
+		console.log(this.shape);
 	this.shape.shape.c_svg.setAttribute("fill", color);
 	this.shape.shape.c_svg.setAttribute("stroke-width", "2px");
 	this.shape.shape.vertex.map((v)=>{
