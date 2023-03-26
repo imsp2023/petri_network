@@ -283,3 +283,13 @@ QUnit.test("add mousedown event on place", assert => {
 	    ev = e;
     assert.ok(ev, "mousedown event");
 });
+
+QUnit.test("add onclick event on place", assert => {
+    var p = new Place();
+
+    var ev = null;
+    for (e of p.shape.events)
+	if (e["click"])
+	    ev = e;
+    assert.ok(ev, "onclick event");
+});

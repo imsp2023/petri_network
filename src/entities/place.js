@@ -117,6 +117,13 @@ class Place{
 	    if((target=Register.find(this.shape.uuid)))
 		target.onMouseUp();
 	});
+
+        this.shape.shape.c_svg.addEventListener("click", (e)=>{
+	    var target;
+
+	  if((target=Register.find(this.shape.uuid)))
+		target.onclick();
+	});
     }
 
     setType(type){

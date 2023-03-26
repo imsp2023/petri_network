@@ -156,6 +156,13 @@ class Transition{
 		target.onMouseUp(this.shape.uuid);
 	});
 
+  this.shape.shape.c_svg.addEventListener("click", (e)=>{
+	    var target;
+
+	  if((target=Register.find(this.shape.uuid)))
+		target.onclick();
+	});
+
     }
     redraw(cwidth, cheight){
 	Transition.centerComponent(this.shape.shape, this.shape.shape.width,

@@ -661,7 +661,12 @@ QUnit.test("add mousedown event on transition", assert => {
     assert.ok(ev, "mousedown event");
 });
 
+QUnit.test("add onclick event on transition", assert => {
+    var t = new Transition();
 
-
-
-
+    var ev = null;
+    for (e of t.shape.events)
+	if (e["click"])
+	    ev = e;
+    assert.ok(ev, "click event");
+});

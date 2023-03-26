@@ -316,6 +316,7 @@ QUnit.test("onMouseUp marks transition position  when no link", assert => {
 QUnit.test("onMouseUp looks for component neighbors", assert => {
     var t = new Component('transition', {type:'dummy'});
     registerForEach = 0;
+    registerUserData = [];
     Component.state  = 'moving';
     t.onMouseUp();
     assert.equal(registerForEach, 1, "foreach count");
@@ -443,4 +444,21 @@ QUnit.test("test dowhile", assert => {
     
     assert.equal(layoutClosest, 2, "closestposition count");
     assert.equal(n_tab, 5, "register count");
+});
+
+QUnit.test("onclick set config", assert => {
+    var t = new Component('transition', {type:'dummy'});
+    Component.config  = {node: null};
+    t.onclick();
+    assert.equal(Component.config.node, t, "component to be configured");
+
+});
+
+QUnit.test("onclick clears config when click on actif configuration", assert => {
+    var t = new Component('transition', {type:'dummy'});
+    Component.config  = {node: null};
+    t.onclick();
+    t.onclick();
+    assert.equal(Component.config.node, null, "component to be configured");
+
 });

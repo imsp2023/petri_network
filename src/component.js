@@ -2,6 +2,7 @@ class Component{
     static line = null;
     static src = null;
     static state = null;
+    static config = {};
     static initSvgEvents(svg){
 	    svg.addEventListener("mousemove", (e)=>{
 	        if(Component.line){
@@ -336,7 +337,18 @@ class Component{
 	    Component.state = null;
     }
 
-    save(container){
+    onclick() {
+        if(Component.config.node)
+            Component.config.node = null;
+        else
+            Component.config.node = this;
+
+        console.log('OOONNCLICK');
+        console.log(Component.config.node);
+
+    }
+    
+    save(){
 	    var obj = {};
 	    this.comp.Object.keys.map((e)=>{
 	        if(e != shape)
@@ -345,11 +357,6 @@ class Component{
 	    obj.x = this.comp.shape.shape.x;
 	    obj.y = this.comp.shape.shape.y;
 
-	    if(this.type == 'transition')
-	        container.transitions.push(obj);
-	    else if(this.type == 'place')
-	        container.places.push(obj);
-	    else if(this.type == 'edge')
-	        container.edges.push(obj);
+	    return obj;
     }
 }
