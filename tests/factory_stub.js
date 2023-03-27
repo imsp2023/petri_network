@@ -7,13 +7,15 @@ class Factory{
 	    return null;
 	return {
 	    redraw: ()=>{},
+        setGate: ()=>{},
 	    shape : {
+            redraw: ()=>{},
 		line:{uuid: ''},
-		form: {
+		    shape: {
 		    children: [],
 		    x: props.x,
 		    y: props.y,
-		    c_points: [{x:0,y:0}],
+		    c_points: [{x:0,y:0}, {x:0,y:0}, {x:0,y:0}, {x:0,y:0}],
 		    redraw: ()=>{},
 		    svg: {
 			removeChild: ()=>{

@@ -32,7 +32,7 @@ layout.getClosestPosition = (originX, originY)=>{
 	if(originX+coef*space >= layout.ncols || originX+coef*space < 0)
 	    continue;
 	
-	for(i=0; i < layout.nligs-originY; i+=2){
+	for(i=0; i < layout.nligs-originY; i+=1){
 	    pos1 = originY-i;
 	    pos2 = originY+i;
 

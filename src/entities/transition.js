@@ -1,6 +1,9 @@
 const t_actions = [
     {name: "place", path: "src/images/place.png"},
     {name: "edge", path: "src/images/edge2.png"},
+    {name: "andsplit", path: "src/images/andsplit.png"},
+    {name: "dowhile", path: "src/images/loop2.png"},
+    {name: "multinstance", path: "src/images/multinstance.png"},
     {name: "deletion", path: "src/images/delete.png"}
 ];
 const ImSZ = 20;
@@ -76,26 +79,27 @@ class Transition{
 
 	if(props.type == 'dummy')
 	    color = 'black';
-	    
-	this.shape.form.c_svg.setAttribute("fill", color);
-	this.shape.form.c_svg.setAttribute("stroke-width", "2px");
-	this.shape.form.vertex.map((v)=>{
+	    //setStyles({"fill": "black"});
+		console.log(this.shape);
+	this.shape.shape.c_svg.setAttribute("fill", color);
+	this.shape.shape.c_svg.setAttribute("stroke-width", "2px");
+	this.shape.shape.vertex.map((v)=>{
 	    v.c_svg.setAttribute("fill", 'none');
 	});
-	this.shape.form.c_points.map((c)=>{
+	this.shape.shape.c_points.map((c)=>{
 	    c.c_svg.setAttribute("fill", 'none');
 	});
 	
 	
 	if(props.type == 'asub' || props.type == 'ssub'){
 	    this.shape.addChild(aya.Rectangle(
-		this.shape.form.x,
-		this.shape.form.y,
+		this.shape.shape.x,
+		this.shape.shape.y,
 		20, 50), {x: 5, y: 5}, null);
 	}else if(props.type == 'clock' || props.type == 'event' || props.type == 'manual'){
 	    this.shape.addChild(aya.Image(
-		this.shape.form.x,
-		this.shape.form.y,
+		this.shape.shape.x,
+		this.shape.shape.y,
 		20, 20,
 		props.type=='clock' ? 'src/images/clock.png':
 		    props.type=='event' ? 'src/images/clock.png' :
@@ -103,19 +107,19 @@ class Transition{
 	}
 
 	if(props.type != 'dummy'){
-	    if(this.shape.form.children.length)
+	    if(this.shape.shape.children.length)
 		this.shape.addChild(
-		    aya.Text(this.shape.form.children[0].child.x,
-			     this.shape.form.children[0].child.y, props.name),
+		    aya.Text(this.shape.shape.children[0].child.x,
+			     this.shape.shape.children[0].child.y, props.name),
 		    {x: 0, y: -10}, null);
 	    else
 		this.shape.addChild(
-		    aya.Text(this.shape.form.x,
-			     this.shape.form.y, props.name),
+		    aya.Text(this.shape.shape.x,
+			     this.shape.shape.y, props.name),
 		    {x: 0, y: -10}, null);
 	}
 
-	this.shape.form.c_svg.addEventListener("mouseover", (e)=>{
+	this.shape.shape.c_svg.addEventListener("mouseover", (e)=>{
 	    console.log('mouseover state='+this.state+ ' pos='+this.panelPos);
 	    if(this.state == 'moving')
 		return;
@@ -124,14 +128,14 @@ class Transition{
 	    this.state = 'transition';
 	});
 
-	this.shape.form.c_svg.addEventListener("mouseleave", (e)=>{
+	this.shape.shape.c_svg.addEventListener("mouseleave", (e)=>{
 	    console.log('mouseleave transition');
 	    if(this.state == 'moving')
 		return;
 	    this.state = '';
 	});
 
-	this.shape.form.c_svg.addEventListener("mousedown", (e)=>{
+	this.shape.shape.c_svg.addEventListener("mousedown", (e)=>{
 	    var target;
 	    console.log('mousedown trans');
 	    this.removePanel();
@@ -142,7 +146,7 @@ class Transition{
 	    
 	});
 	
-	this.shape.form.c_svg.addEventListener("mouseup", (e)=>{
+	this.shape.shape.c_svg.addEventListener("mouseup", (e)=>{
 	    var target;
 	    
 	    if(this.state == 'moving')
@@ -152,16 +156,23 @@ class Transition{
 		target.onMouseUp(this.shape.uuid);
 	});
 
+  this.shape.shape.c_svg.addEventListener("click", (e)=>{
+	    var target;
+
+	  if((target=Register.find(this.shape.uuid)))
+		target.onclick();
+	});
+
     }
     redraw(cwidth, cheight){
-	Transition.centerComponent(this.shape.form, this.shape.form.width,
-		this.shape.form.height, cwidth, cheight);
-	this.shape.form.redraw();
+	Transition.centerComponent(this.shape.shape, this.shape.shape.width,
+	this.shape.shape.height, cwidth, cheight);
+	this.shape.shape.redraw();
     }
     
     addPanel(){
-	var x = this.shape.form.x + this.shape.form.width;
-	var y = this.shape.form.y;
+	var x = this.shape.shape.x + this.shape.shape.width;
+	var y = this.shape.shape.y;
 	var wid, hei, panel, img, cp;
 
 	wid = 2*ImSZ+2*5/*spacing*/;
@@ -176,10 +187,10 @@ class Transition{
 	panel.c_svg.setAttribute("stroke-width", "0px");
 	panel.c_svg.setAttribute("opacity", 0);
 	
-	this.panelPos = this.shape.form.children.length-1;
+	this.panelPos = this.shape.shape.children.length-1;
 	
 	for (var i = 0, j = 0; i < t_actions.length; i++, j++){
-	    if (i && !(i%2)){
+	    if (i && !(i%3)){
 		j = 0;
 		y += ImSZ+5/* spacing */;
 	    }
@@ -208,7 +219,7 @@ class Transition{
 	    this.state = '';
 	});
 	
-	this.shape.form.svg.addEventListener("mouseover", () => {
+	this.shape.shape.svg.addEventListener("mouseover", () => {
 	    console.log('mouseover svg');
 	    if (this.state == '' && this.panelPos >= 0)
 		this.removePanel();
@@ -218,24 +229,24 @@ class Transition{
     removePanel(){
 	var i;
 	for(i = this.panelPos; i <= this.panelPos+t_actions.length; i++)
-	    this.shape.form.children[i].child.removeFromDOM();
-	this.shape.form.children.splice(this.panelPos, 1+t_actions.length);
+	    this.shape.shape.children[i].child.removeFromDOM();
+	this.shape.shape.children.splice(this.panelPos, 1+t_actions.length);
 	
 	this.panelPos = -1;
-	this.shape.form.svg.removeEventListener("mouseover", () => {});
+	this.shape.shape.svg.removeEventListener("mouseover", () => {});
     }
     
     setGate(gate){
 	var index;
 	if(this.gate != 'xor_join' && gate == 'xor_join'){
-	    this.shape.addChild(aya.Polyline([this.shape.form.x, this.shape.form.y,
-					      this.shape.form.x-5, this.shape.form.y,
-					      this.shape.form.x-5, this.shape.form.y+this.shape.form.height,
-					      this.shape.form.x, this.shape.form.y+this.shape.form.height,
-					      this.shape.form.x-5, this.shape.form.y+this.shape.form.height/2,
-					      this.shape.form.x, this.shape.form.y]), {x: 0, y: 0}, null);
-	    this.shape.form.redraw();
-	}else if(gate != 'xor_join'){
+	    this.shape.addChild(aya.Polyline([this.shape.shape.x, this.shape.shape.y,
+					      this.shape.shape.x-5, this.shape.shape.y,
+					      this.shape.shape.x-5, this.shape.shape.y+this.shape.shape.height,
+					      this.shape.shape.x, this.shape.shape.y+this.shape.shape.height,
+					      this.shape.shape.x-5, this.shape.shape.y+this.shape.shape.height/2,
+					      this.shape.shape.x, this.shape.shape.y]), {x: 0, y: 0}, null);
+	    this.shape.shape.redraw();
+	}else if(this.gate == 'xor_join' && gate != 'xor_join'){
 	    if(this.type == 'clock' || this.type == 'event' || this.type == 'manual' ||
 	       this.type == 'asub' || this.type == 'ssub')
 		index = 2;
@@ -243,8 +254,8 @@ class Transition{
 		index = 0;
 	    else
 		index = 1;
-	    this.shape.form.children[index].child.removeFromDOM();
-	    this.shape.form.children.length--;
+	    this.shape.shape.children[index].child.removeFromDOM();
+	    this.shape.shape.children.length--;
 	}
 	this.gate = gate;
     }
