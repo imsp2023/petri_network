@@ -283,8 +283,8 @@ QUnit.test("onMouseDown set state attribute", assert => {
 QUnit.test("onMouseDown stores transition position", assert => {
     var t = new Component('transition', {type:'dummy'});
     t.onMouseDown();
-    assert.equal(Component.x, t.comp.shape.form.x, "x value");
-    assert.equal(Component.y, t.comp.shape.form.y, "y value");
+    assert.equal(Component.x, t.comp.shape.shape.x, "x value");
+    assert.equal(Component.y, t.comp.shape.shape.y, "y value");
 });
 
 QUnit.test("onMouseUp fix transition position", assert => {
@@ -316,6 +316,7 @@ QUnit.test("onMouseUp marks transition position  when no link", assert => {
 QUnit.test("onMouseUp looks for component neighbors", assert => {
     var t = new Component('transition', {type:'dummy'});
     registerForEach = 0;
+    registerUserData = [];
     Component.state  = 'moving';
     t.onMouseUp();
     assert.equal(registerForEach, 1, "foreach count");
@@ -326,8 +327,8 @@ QUnit.test("onMouseUp unmarks old edges  when neighbors", assert => {
     layout.init(10, 10, 40, 40);
     registerUserData = [{comp:{shape: {redraw :()=>{},line:{}}}},
 			{comp:{shape: {redraw :()=>{},line:{}}}}];
-    tab = [{comp:{shape: {form:{x: 0, y: 0}}}},
-	   {comp:{shape: {form:{x: 0, y: 0}}}}];
+    tab = [{comp:{shape: {shape:{x: 0, y: 0}}}},
+	   {comp:{shape: {shape:{x: 0, y: 0}}}}];
     n_tab = 0;
     layoutUMark = 0;
     
@@ -349,14 +350,14 @@ QUnit.test("onMouseUp marks edges  when neighbors", assert => {
     
     registerUserData = [{comp:{shape: {redraw :()=>{},line:{}}}},
 			{comp:{shape: {redraw :()=>{},line:{}}}}];
-    tab = [{comp:{shape: {form:{x: 0, y: 0}}}},
-	   {comp:{shape: {form:{x: 0, y: 0}}}}];
+    tab = [{comp:{shape: {shape:{x: 0, y: 0}}}},
+	   {comp:{shape: {shape:{x: 0, y: 0}}}}];
     n_tab = 0;
     layoutUMark = 0;
     Component.state  = 'moving';
     
-    t.comp.shape.form.x = 30;
-    t.comp.shape.form.y = 30;
+    t.comp.shape.shape.x = 30;
+    t.comp.shape.shape.y = 30;
     
     t.onMouseUp();
     assert.equal(layoutMark, 12, "mark count");
@@ -443,4 +444,78 @@ QUnit.test("test dowhile", assert => {
     
     assert.equal(layoutClosest, 2, "closestposition count");
     assert.equal(n_tab, 5, "register count");
+});
+
+QUnit.test("onclick set config", assert => {
+    var t = new Component('transition', {type:'dummy'});
+    Component.config  = {node: null};
+    t.onclick();
+    assert.equal(Component.config.node, t, "component to be configured");
+
+});
+
+QUnit.test("onclick clears config when click on actif configuration", assert => {
+    var t = new Component('transition', {type:'dummy'});
+    Component.config  = {node: null};
+    t.onclick();
+    t.onclick();
+    assert.equal(Component.config.node, null, "component to be configured");
+
+});
+
+QUnit.test("test xorsplit", assert => {
+    layout.init(10, 10, 40, 40);
+
+    var t = new Component('place', {type:'intermediary',name: 'foo', x:0, y:0});
+
+    n_tab = 0;
+    layoutClosest = 0;
+
+    t.addConnector('xorsplit');
+
+    assert.equal(layoutClosest, 3, "closestposition count");
+    assert.equal(n_tab, 7, "register count");
+    });
+
+QUnit.test("test multi choice", assert => {
+    layout.init(10, 10, 40, 40);
+
+    var t = new Component('place', {type:'intermediary',name: 'foo', x:0, y:0});
+
+    n_tab = 0;
+    layoutClosest = 0;
+
+    t.addConnector('multichoice');
+
+    assert.equal(layoutClosest, 10, "closestposition count");
+    assert.equal(n_tab, 23, "register count");
+    });
+
+QUnit.test("test while", assert => {
+    layout.init(10, 10, 40, 40);
+
+    var t = new Component('place', {type:'intermediary',name: 'foo', x:0, y:0});
+
+    n_tab = 0;
+    layoutClosest = 0;
+
+    t.addConnector('while');
+
+    assert.equal(layoutClosest, 2, "closestposition count");
+    assert.equal(n_tab, 5, "register count");
+});
+
+
+QUnit.test("test deferredchoice", assert => {
+    layout.init(10, 10, 40, 40);
+
+    var t = new Component('place', {type:'intermediary',name: 'foo', x:0, y:0});
+
+    n_tab = 0;
+    layoutClosest = 0;
+
+    t.addConnector('deferredchoice');
+
+    assert.equal(layoutClosest, 6, "closestposition count");
+    assert.equal(n_tab, 12, "register count");
 });

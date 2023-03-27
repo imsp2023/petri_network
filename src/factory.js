@@ -17,6 +17,7 @@ class Factory{
 	    else if (type == 'transition')
 		obj = new Transition(props);
 	}catch(e){
+        console.log(e);
 	    return null;
 	}
 
