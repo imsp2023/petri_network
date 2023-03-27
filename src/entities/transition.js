@@ -246,7 +246,7 @@ class Transition{
 					      this.shape.shape.x-5, this.shape.shape.y+this.shape.shape.height/2,
 					      this.shape.shape.x, this.shape.shape.y]), {x: 0, y: 0}, null);
 	    this.shape.shape.redraw();
-	}else if(gate != 'xor_join'){
+	}else if(this.gate == 'xor_join' && gate != 'xor_join'){
 	    if(this.type == 'clock' || this.type == 'event' || this.type == 'manual' ||
 	       this.type == 'asub' || this.type == 'ssub')
 		index = 2;

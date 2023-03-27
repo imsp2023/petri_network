@@ -214,7 +214,138 @@ class Component{
 					                       direction: 'p2t'});
                 e.comp.shape.redraw();
 	        }
-	    }else if(type == 'dowhile'){
+	    }else if(type == 'xorsplit'){
+	        var lyt, p, t, e, cur, obj={};
+
+            lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
+						                        Math.floor(this.comp.shape.shape.y/layout.cellH));
+		    obj.x = lyt.x*layout.cellW;
+		    obj.y = lyt.y*layout.cellH;
+		    obj.type = 'dummy';
+
+            t = new Component('transition', obj);
+		    e = new Component('edge', {src: this.comp.shape.uuid,
+					                   dest: t.comp.shape.uuid,
+					                   direction: 'p2t'});
+            e.comp.shape.redraw();
+
+            lyt = layout.getClosestPosition(Math.floor(t.comp.shape.shape.x/layout.cellW),
+						                        Math.floor(t.comp.shape.shape.y/layout.cellH));
+		    obj.x = lyt.x*layout.cellW;
+		    obj.y = lyt.y*layout.cellH;
+		    obj.type = 'intermediary';
+
+            p = new Component('place', obj);
+		    e = new Component('edge', {src: t.comp.shape.uuid,
+					                   dest: p.comp.shape.uuid,
+					                   direction: 't2p'});
+            e.comp.shape.redraw();
+
+            lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
+						                        Math.floor(this.comp.shape.shape.y/layout.cellH));
+		    obj.x = lyt.x*layout.cellW;
+		    obj.y = lyt.y*layout.cellH;
+		    obj.type = 'dummy';
+
+            t = new Component('transition', obj);
+		    e = new Component('edge', {src: this.comp.shape.uuid,
+					                   dest: t.comp.shape.uuid,
+					                   direction: 'p2t'});
+            e.comp.shape.redraw();
+
+            e = new Component('edge', {src: t.comp.shape.uuid,
+					                   dest: p.comp.shape.uuid,
+					                   direction: 't2p'});
+            e.comp.shape.redraw();
+	    }else if(type == 'multichoice'){
+	        var i, lyt, p, p2, t, t0, t2, t3, e, cur, obj={};
+
+            lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
+						                        Math.floor(this.comp.shape.shape.y/layout.cellH));
+		    obj.x = lyt.x*layout.cellW;
+		    obj.y = lyt.y*layout.cellH;
+		    obj.type = 'dummy';
+
+            t0 = new Component('transition', obj);
+		    e = new Component('edge', {src: this.comp.shape.uuid,
+					                   dest: t0.comp.shape.uuid,
+					                   direction: 'p2t'});
+            e.comp.shape.redraw();
+
+            for(i=0; i<2; i++){
+                lyt = layout.getClosestPosition(Math.floor(t0.comp.shape.shape.x/layout.cellW),
+						                        Math.floor(t0.comp.shape.shape.y/layout.cellH));
+		        obj.x = lyt.x*layout.cellW;
+		        obj.y = lyt.y*layout.cellH;
+		        obj.type = 'intermediary';
+
+                p = new Component('place', obj);
+                e = new Component('edge', {src: t0.comp.shape.uuid,
+					                       dest: p.comp.shape.uuid,
+					                       direction: 't2p'});
+                lyt = layout.getClosestPosition(Math.floor(p.comp.shape.shape.x/layout.cellW),
+						                        Math.floor(p.comp.shape.shape.y/layout.cellH));
+		        obj.x = lyt.x*layout.cellW;
+		        obj.y = lyt.y*layout.cellH;
+		        obj.type = 'automatic';
+                obj.name = 'auto'+i;
+
+                t = new Component('transition', obj);
+
+                lyt = layout.getClosestPosition(Math.floor(p.comp.shape.shape.x/layout.cellW),
+						                        Math.floor(p.comp.shape.shape.y/layout.cellH));
+		        obj.x = lyt.x*layout.cellW;
+		        obj.y = lyt.y*layout.cellH;
+		        obj.type = 'dummy';
+                obj.name = null;
+
+                t2 = new Component('transition', obj);
+
+                e = new Component('edge', {src: p.comp.shape.uuid,
+					                       dest: t.comp.shape.uuid,
+					                       direction: 'p2t'});
+                e.comp.shape.redraw();
+
+                e = new Component('edge', {src: p.comp.shape.uuid,
+					                       dest: t2.comp.shape.uuid,
+					                       direction: 'p2t'});
+                e.comp.shape.redraw();
+
+                lyt = layout.getClosestPosition(Math.floor(t.comp.shape.shape.x/layout.cellW),
+						                        Math.floor(t.comp.shape.shape.y/layout.cellH));
+		        obj.x = lyt.x*layout.cellW;
+		        obj.y = lyt.y*layout.cellH;
+		        obj.type = 'intermediary';
+
+                p = new Component('place', obj);
+
+                e = new Component('edge', {src: t.comp.shape.uuid,
+					                       dest: p.comp.shape.uuid,
+					                       direction: 't2p'});
+                e.comp.shape.redraw();
+
+                e = new Component('edge', {src: t2.comp.shape.uuid,
+					                       dest: p.comp.shape.uuid,
+					                       direction: 't2p'});
+                e.comp.shape.redraw();
+
+                if(!i){
+                    lyt = layout.getClosestPosition(Math.floor(p.comp.shape.shape.x/layout.cellW),
+						                            Math.floor(p.comp.shape.shape.y/layout.cellH));
+		            obj.x = lyt.x*layout.cellW;
+		            obj.y = lyt.y*layout.cellH;
+		            obj.type = 'dummy';
+                    t3 = new Component('transition', obj);
+                    t3.comp.setGate('and_join');
+                }
+
+                e = new Component('edge', {src: p.comp.shape.uuid,
+					                       dest: t3.comp.shape.uuid,
+					                       direction: 'p2t'});
+                e.comp.shape.redraw();
+            }
+        }
+        else if(type == 'dowhile'){
 	        var i, lyt, p, t, e, obj={};
 
 	        lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
@@ -247,11 +378,99 @@ class Component{
 	    				               direction: 'p2t'});
             e.comp.shape.redraw();
             this.comp.setGate('xor_join');
-	    }else if (type == 'setting'){
-	        var name = window.prompt("Name of the place :");
-	        this.comp.setName(name);
-	        var type = window.prompt("Type of the place :");
-	        this.comp.setType(type);
+	    }else if(type == 'while'){
+	        var i, lyt, p, t, e, obj={};
+
+            lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
+	    					                Math.floor(this.comp.shape.shape.y/layout.cellH));
+	        obj.x = lyt.x*layout.cellW;
+	        obj.y = lyt.y*layout.cellH;
+	        obj.type = 'dummy';
+	        t = new Component('transition', obj);
+
+            e = new Component('edge', {src: this.comp.shape.uuid,
+	    				               dest: t.comp.shape.uuid,
+	    				               direction: 't2p'});
+            e.comp.shape.redraw();
+
+	        lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
+	    					                Math.floor(this.comp.shape.shape.y/layout.cellH));
+
+	        obj.x = lyt.x*layout.cellW;
+	        obj.y = lyt.y*layout.cellH;
+	        obj.type = 'dummy';
+	        t = new Component('transition', obj);
+
+            e = new Component('edge', {src: this.comp.shape.uuid,
+	    				               dest: t.comp.shape.uuid,
+	    				               direction: 'p2t'});
+            e.comp.shape.redraw();
+
+            e = new Component('edge', {src: t.comp.shape.uuid,
+	    				               dest: this.comp.shape.uuid,
+	    				               direction: 't2p'});
+            e.comp.shape.redraw();
+
+	    }else if(type == 'deferredchoice'){
+	        var i, lyt, p, p2, t, t2, e, obj={};
+
+            lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
+	    					                Math.floor(this.comp.shape.shape.y/layout.cellH));
+	        obj.x = lyt.x*layout.cellW;
+	        obj.y = lyt.y*layout.cellH;
+	        obj.type = 'dummy';
+	        t = new Component('transition', obj);
+
+            e = new Component('edge', {src: this.comp.shape.uuid,
+	    				               dest: t.comp.shape.uuid,
+	    				               direction: 't2p'});
+            e.comp.shape.redraw();
+
+
+            for(i=0; i<2; i++){
+                lyt = layout.getClosestPosition(Math.floor(t.comp.shape.shape.x/layout.cellW),
+	    					                    Math.floor(t.comp.shape.shape.y/layout.cellH));
+	            obj.x = lyt.x*layout.cellW;
+	            obj.y = lyt.y*layout.cellH;
+	            obj.type = 'intermediary';
+
+                p = new Component('place', obj);
+
+                e = new Component('edge', {src: t.comp.shape.uuid,
+	    				               dest: p.comp.shape.uuid,
+	    				               direction: 't2p'});
+                e.comp.shape.redraw();
+
+                lyt = layout.getClosestPosition(Math.floor(p.comp.shape.shape.x/layout.cellW),
+	    					                    Math.floor(p.comp.shape.shape.y/layout.cellH));
+                obj.x = lyt.x*layout.cellW;
+	            obj.y = lyt.y*layout.cellH;
+	            obj.type = 'automatic';
+                obj.name = 'auto'+i;
+
+                t2 = new Component('transition', obj);
+
+                e = new Component('edge', {src: p.comp.shape.uuid,
+	    				               dest: t2.comp.shape.uuid,
+	    				               direction: 'p2t'});
+                e.comp.shape.redraw();
+
+                if(!i){
+                    lyt = layout.getClosestPosition(Math.floor(t2.comp.shape.shape.x/layout.cellW),
+	    					                        Math.floor(t2.comp.shape.shape.y/layout.cellH));
+	                obj.x = lyt.x*layout.cellW;
+	                obj.y = lyt.y*layout.cellH;
+	                obj.type = 'intermediary';
+                    obj.name = null;
+
+                    p2 = new Component('place', obj);
+                }
+
+                e = new Component('edge', {src: t2.comp.shape.uuid,
+	    				                   dest: p2.comp.shape.uuid,
+	    				                   direction: 't2p'});
+                e.comp.shape.redraw();
+            }
 	    }
     }
     

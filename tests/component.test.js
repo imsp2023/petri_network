@@ -462,3 +462,60 @@ QUnit.test("onclick clears config when click on actif configuration", assert => 
     assert.equal(Component.config.node, null, "component to be configured");
 
 });
+
+QUnit.test("test xorsplit", assert => {
+    layout.init(10, 10, 40, 40);
+
+    var t = new Component('place', {type:'intermediary',name: 'foo', x:0, y:0});
+
+    n_tab = 0;
+    layoutClosest = 0;
+
+    t.addConnector('xorsplit');
+
+    assert.equal(layoutClosest, 3, "closestposition count");
+    assert.equal(n_tab, 7, "register count");
+    });
+
+QUnit.test("test multi choice", assert => {
+    layout.init(10, 10, 40, 40);
+
+    var t = new Component('place', {type:'intermediary',name: 'foo', x:0, y:0});
+
+    n_tab = 0;
+    layoutClosest = 0;
+
+    t.addConnector('multichoice');
+
+    assert.equal(layoutClosest, 10, "closestposition count");
+    assert.equal(n_tab, 23, "register count");
+    });
+
+QUnit.test("test while", assert => {
+    layout.init(10, 10, 40, 40);
+
+    var t = new Component('place', {type:'intermediary',name: 'foo', x:0, y:0});
+
+    n_tab = 0;
+    layoutClosest = 0;
+
+    t.addConnector('while');
+
+    assert.equal(layoutClosest, 2, "closestposition count");
+    assert.equal(n_tab, 5, "register count");
+});
+
+
+QUnit.test("test deferredchoice", assert => {
+    layout.init(10, 10, 40, 40);
+
+    var t = new Component('place', {type:'intermediary',name: 'foo', x:0, y:0});
+
+    n_tab = 0;
+    layoutClosest = 0;
+
+    t.addConnector('deferredchoice');
+
+    assert.equal(layoutClosest, 6, "closestposition count");
+    assert.equal(n_tab, 12, "register count");
+});
