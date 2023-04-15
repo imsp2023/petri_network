@@ -152,7 +152,7 @@ class Place{
 
     redraw(cwidth, cheight){
 	Place.centerComponent(this.shape.shape, cwidth, cheight);
-	this.shape.shape.redraw(cwidth, cheight);
+	this.shape.shape.redraw();
     }
     
     addPanel(){

@@ -521,7 +521,6 @@ class Component{
 			            };
 			            e.comp.shape.line.x = this.comp.shape.shape.c_points[3].x;
 			            e.comp.shape.line.y = this.comp.shape.shape.c_points[3].y;
-
 		            }
 		            else{
 			            src = Register.find(e.comp.src);
@@ -550,7 +549,7 @@ class Component{
 				                    Math.floor(dest.comp.shape.shape.y/layout.cellH));
 
 		            e.comp.shape.redraw();
-                });
+			});
 	        }
 	    }
 	    Component.state = null;

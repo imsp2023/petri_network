@@ -6,8 +6,7 @@
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
    <meta name="viewport" content="initial-scale=1.0">
    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ayajs@1.0.1/build/style.css">
-   <!-- <script type="application/javascript"  src="aya.js"></script> -->
-   <script type="application/javascript"  src="https://cdn.jsdelivr.net/npm/ayajs@2.0.0/build/aya.js"></script>
+   <script type="application/javascript"  src="https://cdn.jsdelivr.net/npm/ayajs@2.0.1/build/aya.js"></script>
 
 
    <script src="./src/entities/place.js"></script>
@@ -26,19 +25,11 @@
   <script>
     console.log(aya);
     try{
-        var aya = new aya.Init(1000, 1000);
+        var aya = new aya.Init(2000, 2000);
       console.log(aya.config);
-      aya.config.line.ends.start.type = ' ';
-        //     remove grid from the svg
-        aya.wtail_px = 40;
-        aya.htail_px = 60;
-        aya.box.shape.children.map(({child}) =>{
-        //aya.svg.removeChild(child.c_svg);
-	        //child.draw();
-        });
-        aya.box.shape.redraw();
+      aya.config.link.end_start = ' ';
         Component.initSvgEvents(aya.svg);
-        layout.init(40, 80, 1000, 1000);
+        layout.init(40, 80, 2000, 2000);
     
 	    var p = new Component("place", {type: 'end', x:100,y:100});
 	    var p = new Component("place", {type: 'start', x:180,y:100});
