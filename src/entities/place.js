@@ -151,7 +151,13 @@ class Place{
     }
 
     redraw(cwidth, cheight){
+	var dx = this.shape.shape.x, dy = this.shape.shape.y;
 	Place.centerComponent(this.shape.shape, cwidth, cheight);
+	dx = this.shape.shape.x - dx;
+	dy = this.shape.shape.y - dy;
+	this.shape.shape.children.map(({child})=>{
+		child.shift(dx, dy);
+	});
 	this.shape.shape.redraw();
     }
     

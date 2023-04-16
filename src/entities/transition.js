@@ -116,7 +116,7 @@ class Transition{
 		this.shape.addChild(
 		    aya.Text(this.shape.shape.x,
 			     this.shape.shape.y, props.name),
-		    {x: 0, y: -10}, null);
+		    {x: -aya.config.text.size/2, y: -10}, null);
 	}
 
 	this.shape.shape.c_svg.addEventListener("mouseover", (e)=>{
@@ -165,8 +165,17 @@ class Transition{
 
     }
     redraw(cwidth, cheight){
+	var dx = this.shape.shape.x, dy = this.shape.shape.y;
+	console.log("redraw");
+	console.log(this.shape.shape.x  + " " + this.shape.shape.y);
 	Transition.centerComponent(this.shape.shape, this.shape.shape.width,
 	this.shape.shape.height, cwidth, cheight);
+	dx = this.shape.shape.x - dx;
+	dy = this.shape.shape.y - dy;
+	console.log(dx + " " + dy);
+	this.shape.shape.children.map(({child})=>{
+		child.shift(dx, dy);
+	});
 	this.shape.shape.redraw();
     }
     

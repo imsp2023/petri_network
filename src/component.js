@@ -174,9 +174,9 @@ class Component{
 				                 Math.floor(dest.comp.shape.shape.x/layout.cellW),
 				                 Math.floor(dest.comp.shape.shape.y/layout.cellH));
 
-		        lk.comp.shape.line.removeFromDOM();
+				console.log(lk.comp);
+		        lk.comp.shape.removeFromDOM();
 		        Register.clear(lk.comp.shape.line.uuid);
-
 	        });
 
 	        layout.umark(Math.floor(this.comp.shape.shape.x/layout.cellW),
@@ -489,8 +489,10 @@ class Component{
 				                      this.comp.shape.shape.y);
 	        var edges = [], src, dest, osrc, odest;
 
-	        this.comp.shape.shape.x = lyt.x;
-	        this.comp.shape.shape.y = lyt.y;
+	        // this.comp.shape.shape.x = lyt.x;
+	        // this.comp.shape.shape.y = lyt.y;
+			this.comp.shape.shape.shift(lyt.x - this.comp.shape.shape.x, 
+										lyt.y - this.comp.shape.shape.y);
 	        this.comp.redraw(layout.cellW, layout.cellH);
 
 	        Register.forEach(
@@ -501,7 +503,7 @@ class Component{
 			            data.push(item);
 		        },
 		        edges);
-
+			console.log(edges);
 	        if(!edges.length){
 		        layout.umark(Math.floor(Component.x/layout.cellW),
 			                 Math.floor(Component.y/layout.cellH));
