@@ -3,6 +3,7 @@ var removeFromDOM = 0;
 class Aya{
     constructor(){
 	this.ttype = null;
+        this.config = {text: {size: 100}};
     }
 
     settype(type){

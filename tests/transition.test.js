@@ -488,8 +488,8 @@ QUnit.test("addPanel() opens an empty panel when we hover over a transition", as
     assert.equal(t.shape.shape.children[0].child.x, t.shape.shape.x+t.shape.shape.width, "panel x-absc");
     assert.equal(t.shape.shape.children[0].child.y, t.shape.shape.y, "panel y-absc");
     
-    assert.equal(t.shape.shape.children[0].child.width,  2*20+10, "panel width");
-    assert.equal(t.shape.shape.children[0].child.height, 2*20+10, "panel height");
+    assert.equal(t.shape.shape.children[0].child.width,  2*ImSZ+2*5, "panel width");
+    assert.equal(t.shape.shape.children[0].child.height, 3*ImSZ+ 3*5, "panel height");
     
     assert.equal(t.shape.shape.children[0].child.shape["stroke-width"], "0px", "the border width must  be 2 px");
     assert.equal(t.shape.shape.children[0].child.shape["opacity"], 0, "panel opacity");
@@ -513,19 +513,14 @@ QUnit.test("add all actions on the panel when we hover over it", assert => {
 
     t.addPanel();
 
-    var action = [
-	{name: "transition", path: "src/images/transition.png"},
-	{name: "edge", path: "src/images/edge2.png"},
-	{name: "deletion", path: "src/images/delete.png"}
-    ];
 
-    assert.equal(t.shape.shape.children.length, 4, "panel has 4 children");
+    assert.equal(t.shape.shape.children.length, t_actions.length+1, "transition children ");
     t.shape.shape.children.map(({child}, index) => {
 	if (index != 0){
 	    assert.equal(child.type, "image", "children are images");
-	    assert.equal(child.width, T_ImSZ, "the width of the child must be 30 px");
-	    assert.equal(child.height, T_ImSZ, "the height of the child must be 30 px");
-	    assert.equal(child.path, action[index - 1].path, "check the correct path of each image");
+	    assert.equal(child.width, ImSZ, "the width of the child must be 30 px");
+	    assert.equal(child.height, ImSZ, "the height of the child must be 30 px");
+	    assert.equal(child.path, t_actions[index - 1].path, "check the correct path of each image");
 	}
     });
 });
@@ -581,26 +576,41 @@ QUnit.test("addpanel a mousedown on the images", assert => {
 
 
 
-QUnit.test("actions are display on two columns", assert => {
+QUnit.test("actions are display on three columns", assert => {
     var t = new Transition();
 
     t.addPanel();
 
-    var action = [
-	{x:  DWidth, y: 0, name: "transition", path: "src/images/transition.png"},
-	{x:  DWidth + T_ImSZ, y: 0, name: "edge", path: "src/images/edge.png" },
-	{x:  DWidth, y: T_ImSZ+5, name: "deletion", path: "src/images/times.png" }
-    ];
+    assert.equal(t.shape.shape.children[1].child.x, 20, "setting the abscissa of the child");
+	assert.equal(t.shape.shape.children[1].child.y, 0, "setting the ordinate of the child");
+	assert.equal(t.shape.shape.children[1].child.offsetX, 5, "setting offsetX");
+	assert.equal(t.shape.shape.children[1].child.offsetY, 0, "setting offsetY");
 
-    t.shape.shape.children.map(({child}, index) => {
-	if (index != 0){
-	    console.log(child);
-	    assert.equal(child.x, action[index - 1].x, "setting the abscissa of the child");
-	    assert.equal(child.y, action[index - 1].y, "setting the ordinate of the child");
-	    assert.equal(child.offsetX, 5, "setting offsetX");
-	    assert.equal(child.offsetY, 0, "setting offsetY");
-	}
-    });
+    assert.equal(t.shape.shape.children[2].child.x, 40, "setting the abscissa of the child");
+	assert.equal(t.shape.shape.children[2].child.y, 0, "setting the ordinate of the child");
+	assert.equal(t.shape.shape.children[2].child.offsetX, 5, "setting offsetX");
+	assert.equal(t.shape.shape.children[2].child.offsetY, 0, "setting offsetY");
+
+    assert.equal(t.shape.shape.children[3].child.x, 60, "setting the abscissa of the child");
+	assert.equal(t.shape.shape.children[3].child.y, 0, "setting the ordinate of the child");
+	assert.equal(t.shape.shape.children[3].child.offsetX, 5, "setting offsetX");
+	assert.equal(t.shape.shape.children[3].child.offsetY, 0, "setting offsetY");
+
+    assert.equal(t.shape.shape.children[4].child.x, 20, "setting the abscissa of the child");
+	assert.equal(t.shape.shape.children[4].child.y, 25, "setting the ordinate of the child");
+	assert.equal(t.shape.shape.children[4].child.offsetX, 5, "setting offsetX");
+	assert.equal(t.shape.shape.children[4].child.offsetY, 0, "setting offsetY");
+
+    assert.equal(t.shape.shape.children[5].child.x, 40, "setting the abscissa of the child");
+	assert.equal(t.shape.shape.children[5].child.y, 25, "setting the ordinate of the child");
+	assert.equal(t.shape.shape.children[5].child.offsetX, 5, "setting offsetX");
+	assert.equal(t.shape.shape.children[5].child.offsetY, 0, "setting offsetY");
+
+    assert.equal(t.shape.shape.children[6].child.x, 60, "setting the abscissa of the child");
+	assert.equal(t.shape.shape.children[6].child.y, 25, "setting the ordinate of the child");
+	assert.equal(t.shape.shape.children[6].child.offsetX, 5, "setting offsetX");
+	assert.equal(t.shape.shape.children[6].child.offsetY, 0, "setting offsetY");
+
 });
 
 
