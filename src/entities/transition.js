@@ -273,6 +273,26 @@ class Transition{
 	    }
 	    this.gate = gate;
     }
+
+    setType(type){
+        var dim;
+        if(this.type == type)
+            return;
+
+        this.type = type;
+        this.shape.shape.children.map(({child})=>{
+            child.removeFromDOM();
+        })
+
+        this.shape.shape.children.length = 0;
+        dim = this.getRectDimension();
+
+        this.shape.shape.width = dim.width;
+        this.shape.shape.height = dim.height;
+
+        this.completeShape();
+
+    }
     
     removeFromDOM(){
     }

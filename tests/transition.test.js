@@ -680,3 +680,47 @@ QUnit.test("add onclick event on transition", assert => {
 	    ev = e;
     assert.ok(ev, "click event");
 });
+
+QUnit.test("setType do nothing when new type is the same as the old one", assert =>{
+    var  t = new Transition({type: "manual", name: "foobar"});
+    t.setType("manual");
+    assert.equal(t.type, "manual", "transition type");
+});
+
+QUnit.test("setType set new type", assert =>{
+    var  t = new Transition({type: "manual", name: "foobar"});
+    t.setType("asub");
+    assert.equal(t.type, 'asub', "transition type");
+});
+
+QUnit.test("setType remove all children first", assert =>{
+    var  t = new Transition({type: "manual", name: "foobar"});
+    t.setType("asub");
+    assert.equal(removeFromDOM, 2, "number of removed children");
+});
+
+QUnit.test("setType set rect shape according to type value", assert =>{
+    var  t = new Transition({type: "asub", name: "foobar"});
+    t.setType("manual");
+
+    assert.equal(t.shape.type, "rectangle", "the shape is a rectangle");
+    assert.equal(t.shape.shape.width, MWidth, "the width must be 15 px");
+    assert.equal(t.shape.shape.height, MHeight, "the height must be 50 px");
+    assert.equal(t.shape.shape.fill, "white", "the color must be black");
+
+    assert.equal(t.shape.shape.children.length, 2, "number of children");
+
+
+    assert.equal(t.shape.shape.children[0].child.type, "image", "type of child is image");
+    assert.equal(t.shape.shape.children[0].child.path, "src/images/arrow.png", "clock image path");
+
+    assert.equal(t.shape.shape.children[0].child.x, t.shape.shape.x, "rectangle and image has same x");
+    assert.equal(t.shape.shape.children[0].child.y, t.shape.shape.x, "rectangle and image has same x");
+    assert.equal(t.shape.shape.children[0].child.offsetX, 0, "iamge offsetX");
+    assert.equal(t.shape.shape.children[0].child.offsetY, -25, "image offsetY");
+
+
+    assert.equal(t.shape.shape.children[1].child.type, "text", "type of child is text");
+    assert.equal(t.shape.shape.children[1].child.text, "foobar", "text value is tranisition name");
+
+});

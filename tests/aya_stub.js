@@ -214,7 +214,10 @@ class Aya{
 		    Obj.events.push(ev);
 		},
 	    },
-	    draw(){}
+	    draw(){},
+        removeFromDOM(){
+		removeFromDOM++;
+	    }
 	};
 
 	return Obj;
@@ -228,7 +231,10 @@ class Aya{
 	    y: y != undefined ? y : null,
 	    text: text ? text : null,
 	    draw(){},
-	    redraw(){}
+	    redraw(){},
+        removeFromDOM(){
+		removeFromDOM++;
+	    }
 	};
 
 	return Obj;
