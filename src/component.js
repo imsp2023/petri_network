@@ -67,12 +67,34 @@ class Component{
 
         /* Only p2t  and t2p are allowed */
 	    if(Component.src.type != this.type){
-            var count = {count: 0};
+            var count = {count: 0, altpath: false};
+
+
+            Register.forEach(
+		        (item, data)=>{
+                    console.log('Register');
+                    if(item.type=='edge' &&
+		               (item.comp.src == this.comp.shape.uuid ||
+			            item.comp.dest == this.comp.shape.uuid)){
+                        if(this.type == 'transition')
+                            data.count++;
+                        if(item.comp.src == Component.src.comp.shape.uuid ||
+			               item.comp.dest == Component.src.comp.shape.uuid)
+			                //  data.push(item);
+                            data.altpath = true;
+		            }
+		        },
+		        count);
+
+            /* Set xor_join if transition has more than one place associated */
+            if(count.count >= 1)
+                this.comp.setGate('xor_join');
 
 	        e = new Component('edge', {
 		        direction:this.type=='place'?'t2p':'p2t',
 		        src: Component.src.comp.shape.uuid,
-		        dest: this.comp.shape.uuid
+		        dest: this.comp.shape.uuid,
+                altpath: count.altpath
 	        });
             e.comp.shape.redraw();
 	        layout.markEdge(Math.floor(Component.src.comp.shape.shape.x/layout.cellW),
@@ -80,22 +102,22 @@ class Component{
 			                Math.floor(this.comp.shape.shape.x/layout.cellW),
 			                Math.floor(this.comp.shape.shape.y/layout.cellH));
 
-            /* Set xor_join if transition has more than one place associated */
-            if(this.type == 'transition'){
-                Register.forEach(
-		            (item, data)=>{
-                        console.log('Register');
-                        if(item.type=='edge' &&
-		                   (item.comp.src == this.comp.shape.uuid ||
-			                item.comp.dest == this.comp.shape.uuid)){
-                            data.count++;
-			                //data.push(item);
-		                }
-		            },
-		            count);
-                if(count.count >= 2)
-                    this.comp.setGate('xor_join');
-            }
+
+
+            // if(this.type == 'transition'){
+            //     Register.forEach(
+		    //         (item, data)=>{
+            //             console.log('Register');
+            //             if(item.type=='edge' &&
+		    //                (item.comp.src == this.comp.shape.uuid ||
+			//                 item.comp.dest == this.comp.shape.uuid)){
+            //                 data.count++;
+			//                 //data.push(item);
+		    //             }
+		    //         },
+		    //         count);
+
+            // }
 	    }
 
 	    Component.line = null;
@@ -368,17 +390,19 @@ class Component{
             e = new Component('edge', {src: this.comp.shape.uuid,
 	    				               dest: p.comp.shape.uuid,
 	    				               direction: 't2p'});
-            e.comp.shape.redraw();
+            //e.comp.shape.redraw();
 
             e = new Component('edge', {src: p.comp.shape.uuid,
 	    				               dest: this.comp.shape.uuid,
-	    				               direction: 'p2t'});
-            e.comp.shape.redraw();
+	    				               direction: 'p2t',
+                                       altpath: true
+                                      });
+            //e.comp.shape.redraw();
 
             e = new Component('edge', {src: p.comp.shape.uuid,
 	    				               dest: t.comp.shape.uuid,
 	    				               direction: 'p2t'});
-            e.comp.shape.redraw();
+            //e.comp.shape.redraw();
             this.comp.setGate('xor_join');
 	    }else if(type == 'while'){
 	        var i, lyt, p, t, e, obj={};
@@ -393,7 +417,7 @@ class Component{
             e = new Component('edge', {src: this.comp.shape.uuid,
 	    				               dest: t.comp.shape.uuid,
 	    				               direction: 't2p'});
-            e.comp.shape.redraw();
+            //e.comp.shape.redraw();
 
 	        lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
 	    					                Math.floor(this.comp.shape.shape.y/layout.cellH));
@@ -406,11 +430,12 @@ class Component{
             e = new Component('edge', {src: this.comp.shape.uuid,
 	    				               dest: t.comp.shape.uuid,
 	    				               direction: 'p2t'});
-            e.comp.shape.redraw();
+            //e.comp.shape.redraw();
 
             e = new Component('edge', {src: t.comp.shape.uuid,
 	    				               dest: this.comp.shape.uuid,
-	    				               direction: 't2p'});
+	    				               direction: 't2p',
+                                       altpath: true});
             e.comp.shape.redraw();
 
 	    }else if(type == 'deferredchoice'){

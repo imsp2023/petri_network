@@ -13,6 +13,7 @@ class Factory{
 			        removeFromDom++;
 			    },
                 redraw: ()=>{},
+                altpath: props.altpath,
 		        line:{uuid: ''},
 		        shape: {
                     shift: (dx, dy)=>{},

@@ -521,3 +521,33 @@ QUnit.test("test deferredchoice", assert => {
     assert.equal(layoutClosest, 6, "closestposition count");
     assert.equal(n_tab, 13, "register count");
 });
+
+
+
+/**TODO: Register refactoring  */
+// QUnit.test("edgeCompleted use alternative path to connect two components with opposite edges", assert => {
+//     layout.init(10, 10, 40, 40);
+
+//     n_tab = 0;
+
+//     var altpath = {altpath=true};
+//     var t = new Component('place', {type:'intermediary',name: 'foo', x:0, y:0});
+//     var p = new Component('transition', {type:'dummy',name: 'foo', x:0, y:0});
+//     var e = new Component('edge', {src: t.comp.shape.shape.uuid,
+//                                  dest: p.comp.shape.shape.uuid,
+
+//                                    direction: 't2p'});
+//     registerUserData = [];
+//     //registerUserData = [t, p, e, null];
+//     // registerUserData[0] = t;
+//     // registerUserData[1] = p;
+//     // registerUserData[2] = e;
+
+//     p.addConnector('edge');
+//     t.edgeCompleted();
+
+
+//     //registerUserData[3] = e;
+
+//     assert.ok(e.comp.shape.altpath, "alternative path");
+// });
