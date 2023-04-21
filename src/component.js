@@ -49,7 +49,11 @@ class Component{
 	        throw new Error ("instantiation failed");
 	    if(type=='transition' || type == 'place')
 	        layout.mark(Math.floor(props.x/layout.cellW), Math.floor(props.y/layout.cellH));
-	    Register.add(this.type == 'edge'?
+
+        console.log('constructor')
+        console.log(this)
+
+        Register.add(this.type == 'edge'?
 		             this.comp.shape.line.uuid :
 		             this.comp.shape.uuid, this);
     }
@@ -167,8 +171,6 @@ class Component{
 		        src = Register.find(lk.comp.src);
 		        dest = Register.find(lk.comp.dest);
 
-		        console.log(src);
-		        console.log(dest);
 		        layout.umarkEdge(Math.floor(src.comp.shape.shape.x/layout.cellW),
 				                 Math.floor(src.comp.shape.shape.y/layout.cellH),
 				                 Math.floor(dest.comp.shape.shape.x/layout.cellW),
@@ -489,9 +491,7 @@ class Component{
 				                      this.comp.shape.shape.y);
 	        var edges = [], src, dest, osrc, odest;
 
-	        // this.comp.shape.shape.x = lyt.x;
-	        // this.comp.shape.shape.y = lyt.y;
-			this.comp.shape.shape.shift(lyt.x - this.comp.shape.shape.x, 
+	        this.comp.shape.shape.shift(lyt.x - this.comp.shape.shape.x,
 										lyt.y - this.comp.shape.shape.y);
 	        this.comp.redraw(layout.cellW, layout.cellH);
 
@@ -521,8 +521,8 @@ class Component{
 			                x: Component.x,
 			                y: Component.y
 			            };
-			            e.comp.shape.line.x = this.comp.shape.shape.c_points[3].x;
-			            e.comp.shape.line.y = this.comp.shape.shape.c_points[3].y;
+			            // e.comp.shape.line.x = this.comp.shape.shape.c_points[3].x;
+			            // e.comp.shape.line.y = this.comp.shape.shape.c_points[3].y;
 		            }
 		            else{
 			            src = Register.find(e.comp.src);
@@ -536,8 +536,8 @@ class Component{
 			                x: Component.x,
 			                y: Component.y
 			            };
-			            e.comp.shape.line.dest_x = this.comp.shape.shape.c_points[3].x;
-			            e.comp.shape.line.dest_y = this.comp.shape.shape.c_points[3].y;
+			            // e.comp.shape.line.dest_x = this.comp.shape.shape.c_points[3].x;
+			            // e.comp.shape.line.dest_y = this.comp.shape.shape.c_points[3].y;
 		            }
 
 		            layout.umarkEdge(Math.floor(osrc.x/layout.cellW),

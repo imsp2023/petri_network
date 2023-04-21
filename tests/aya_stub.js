@@ -23,6 +23,7 @@ class Aya{
 	    events: [],
 	    type : this.ttype ? this.ttype : type,
 	    shape : {
+
 		dest_x: props ? props.dest_x : null,
 		dest_y: props ? props.dest_y : null,
 		vertex: [
@@ -166,7 +167,7 @@ class Aya{
 	    offsetY: "",
 	    children : [
 	    ],
-	    shape: {svg:{}},
+	    shape: {shift: ()=>{}, svg:{}},
 	    c_svg: {
 		setAttribute: (tag, value) =>{
 		    Obj.shape[tag] = value;
@@ -215,7 +216,7 @@ class Aya{
 		},
 	    },
 	    draw(){},
-        removeFromDOM(){
+         removeFromDOM(){
 		removeFromDOM++;
 	    }
 	};

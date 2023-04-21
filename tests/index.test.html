@@ -7,17 +7,18 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/qunit@latest/qunit/qunit.css">
 
     <!-- enitities test  -->
-    <script type="application/javascript" src="aya_stub.js"></script>
-    <script type="application/javascript" src="factory_stub.js"></script>
-    <script type="application/javascript" src="register_stub.js"></script>
-
-    <!-- register test -->
-
-    <!-- component test -->
     <!-- <script type="application/javascript" src="aya_stub.js"></script> -->
     <!-- <script type="application/javascript" src="factory_stub.js"></script> -->
-    <!-- <script type="application/javascript" src="entities_stub.js"></script> -->
     <!-- <script type="application/javascript" src="register_stub.js"></script> -->
+
+    <!-- register test -->
+    <!-- <script type="application/javascript" src="register_stub.js"></script> -->
+
+    <!-- component test -->
+    <script type="application/javascript" src="aya_stub.js"></script>
+    <script type="application/javascript" src="factory_stub.js"></script>
+    <script type="application/javascript" src="entities_stub.js"></script>
+    <script type="application/javascript" src="register_stub.js"></script>
 
     <title>petri network test</title>
 </head>
@@ -31,25 +32,29 @@
         </script>
         <script src="https://cdn.jsdelivr.net/npm/qunit@latest"></script>
 
+        <!-- entities test -->
+	    <!-- <script src="../src/entities/edge.js"></script> -->
+	    <!-- <script src="../src/entities/place.js"></script> -->
+	    <!-- <script src="../src/entities/transition.js"></script> -->
 
-	<!-- <script src="entities_stub.js"></script> -->
-	
-	<!-- <script src="../src/factory.js"></script> -->
-	<!-- <script src="../src/component.js"></script> -->
-	<script src="../src/entities/edge.js"></script>
-	<script src="../src/entities/place.js"></script>
-	<script src="../src/entities/transition.js"></script>
-	<!-- <script src="../src/register.js"></script> -->
-	<!-- <script src="../src/layout.js"></script> -->
+        <!-- <script src="edge.test.js"></script> -->
+	    <!-- <script src="place.test.js"></script> -->
+	    <!-- <script src="transition.test.js"></script> -->
 
-	
-	<!-- <script src="edge.test.js"></script> -->
-	<script src="place.test.js"></script>
-	<!-- <script src="transition.test.js"></script> -->
-	<!-- <script src="component.test.js"></script> -->
-	<!-- <script src="factory.test.js"></script> -->
-	
-	<!-- <script src="register.test.js"></script> -->
-	<!-- <script src="layout.test.js"></script> -->
+        <!-- component test -->
+        <script src="component.test.js"></script>
+        <script src="../src/component.js"></script>
+
+        <!-- factory test -->
+        <!-- <script src="../src/factory.js"></script> -->
+        <!-- <script src="factory.test.js"></script> -->
+
+        <!-- register test -->
+        <!-- <script src="../src/register.js"></script> -->
+	    <!-- <script src="register.test.js"></script> -->
+
+        <!-- layout test -->
+        <!-- <script src="../src/layout.js"></script> -->
+        <!-- <script src="layout.test.js"></script> -->
 </body>
 </html>

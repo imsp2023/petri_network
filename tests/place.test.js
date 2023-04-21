@@ -311,3 +311,14 @@ QUnit.test("add onclick event on place", assert => {
 	    ev = e;
     assert.ok(ev, "onclick event");
 });
+
+/****************************place configuration**********************************/
+QUnit.test("set the type of the place", assert => {
+    var p = new Place();
+
+    assert.equal(p.type, 'intermediary', "by default type is intermediary");
+
+    p.setType('start');
+
+    assert.equal(p.type, 'start', "type is correctly setted");
+ });
