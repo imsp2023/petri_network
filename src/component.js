@@ -126,7 +126,11 @@ class Component{
     }
     
     addConnector(type){
-	    this.comp.removePanel();
+        console.log('addconnector removePanel');
+        console.log(this.comp.shape);
+
+        if(this.comp.shape.panelPos >= 0)
+	        this.comp.removePanel();
 	    if(type == this.type)
 	        return;
 

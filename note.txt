@@ -16,3 +16,8 @@ creation de makefile
 	automatiser le review
 	ajout de tag 
 
+setCA
+app attribut pour task=automatic
+deletion sur les liens (probleme) prendre cela en compte
+suppression d'un element peut se faire sans le panel (look at addconnector)
+(pour david): mettre a jour les attribut de link dans le constructor. (necessaire pour le save)

@@ -139,11 +139,20 @@ QUnit.test("do not mark edge on layout", assert => {
     assert.equal(layoutMark, 0, "Mark count");
 });
 
-QUnit.test("addConnector from transition first removes panel", assert => {
+QUnit.test("addConnector from place first removes panel when exist", assert => {
     removePanel = 0;
-    var cp = new Component("transition", {});
-    cp.addConnector('place');
+    var cp = new Component("place", {});
+    cp.comp.shape.panelPos = 0;
+    cp.addConnector('foobar');
     assert.equal(removePanel, 1, "removepanel count");
+});
+
+QUnit.test("addConnector do not try to remove panel when it does not exist", assert => {
+    removePanel = 0;
+    var cp = new Component("place", {});
+    cp.comp.shape.panelPos = -1;
+    cp.addConnector('foobar');
+    assert.equal(removePanel, 0, "removepanel count");
 });
 
 
@@ -153,7 +162,7 @@ QUnit.test("do nothing when we try to add transition from transition", assert =>
 
     n_tab = 0;
     cp.addConnector('transition');
-    assert.equal(removePanel, 1, "removepanel count");
+    assert.equal(removePanel, 0, "removepanel count");
     /* no component is added to register */
     assert.equal(n_tab, 0, "register count");
 });
@@ -164,7 +173,7 @@ QUnit.test("do nothing when we try to add place from place", assert => {
 
     n_tab = 0;
     cp.addConnector('place');
-    assert.equal(removePanel, 1, "removepanel count");
+    assert.equal(removePanel, 0, "removepanel count");
     /* no component is added to register */
     assert.equal(n_tab, 0, "register count");
 });
@@ -175,7 +184,7 @@ QUnit.test("do nothing when we try to add an edge from edge", assert => {
 
     n_tab = 0;
     cp.addConnector('edge');
-    assert.equal(removePanel, 1, "removepanel count");
+    assert.equal(removePanel, 0, "removepanel count");
     /* no component is added to register */
     assert.equal(n_tab, 0, "register count");
 });
@@ -184,7 +193,7 @@ QUnit.test("addConnector from place first removes panel", assert => {
     removePanel = 0;
     var cp = new Component("place", {});
     cp.addConnector('transition');
-    assert.equal(removePanel, 1, "removepanel count");
+    assert.equal(removePanel, 0, "removepanel count");
 });
 
 
