@@ -102,22 +102,6 @@ class Component{
 			                Math.floor(this.comp.shape.shape.x/layout.cellW),
 			                Math.floor(this.comp.shape.shape.y/layout.cellH));
 
-
-
-            // if(this.type == 'transition'){
-            //     Register.forEach(
-		    //         (item, data)=>{
-            //             console.log('Register');
-            //             if(item.type=='edge' &&
-		    //                (item.comp.src == this.comp.shape.uuid ||
-			//                 item.comp.dest == this.comp.shape.uuid)){
-            //                 data.count++;
-			//                 //data.push(item);
-		    //             }
-		    //         },
-		    //         count);
-
-            // }
 	    }
 
 	    Component.line = null;
@@ -182,18 +166,19 @@ class Component{
 	    else if(type == 'deletion'){
 	        var edges = [], src, dest;
 
-	        Register.forEach(
-		        (item, data)=>{
-		            if(item.type=='edge' &&
-		               (item.comp.src == this.comp.shape.uuid ||
-			            item.comp.dest == this.comp.shape.uuid)){
-			            data.push(item);
-		            }
-		        },
-		        edges);
+            /**  don't look for edges for edge deletion */
+            if(this.type != 'edge')
+	            Register.forEach(
+		            (item, data)=>{
+		                if(item.type=='edge' &&
+		                   (item.comp.src == this.comp.shape.uuid ||
+			                item.comp.dest == this.comp.shape.uuid)){
+			                data.push(item);
+		                }
+		            },
+		            edges);
 
 	        edges.map((lk) => {
-		        console.log('MAP edges');
 		        src = Register.find(lk.comp.src);
 		        dest = Register.find(lk.comp.dest);
 
@@ -207,10 +192,12 @@ class Component{
 		        Register.clear(lk.comp.shape.line.uuid);
 	        });
 
-	        layout.umark(Math.floor(this.comp.shape.shape.x/layout.cellW),
-			             Math.floor(this.comp.shape.shape.y/layout.cellH));
-	        this.comp.shape.shape.svg.removeChild(this.comp.shape.shape.c_svg);
-	        Register.clear(this.comp.shape.uuid);
+            if(this.type != 'edge'){
+	            layout.umark(Math.floor(this.comp.shape.shape.x/layout.cellW),
+			                 Math.floor(this.comp.shape.shape.y/layout.cellH));
+	            this.comp.shape.shape.svg.removeChild(this.comp.shape.shape.c_svg);
+	            Register.clear(this.comp.shape.uuid);
+            }/* TODO: voir avec David pour la suppression des edges */
 	    }
 	    else if(type == 'andsplit'){
 	        var i, lyt, p, t, e, cur, obj={};
@@ -443,7 +430,7 @@ class Component{
             e.comp.shape.redraw();
 
 	    }else if(type == 'deferredchoice'){
-	        var i, lyt, p, p2, t, t2, e, obj={};
+	        var i, lyt, p, p2, t, t2, e, obj={}, ca = [null, null];
 
             lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
 	    					                Math.floor(this.comp.shape.shape.y/layout.cellH));
@@ -480,6 +467,7 @@ class Component{
                 obj.name = 'auto'+i;
 
                 t2 = new Component('transition', obj);
+                ca[i] = t2;
 
                 e = new Component('edge', {src: p.comp.shape.uuid,
 	    				               dest: t2.comp.shape.uuid,
@@ -503,6 +491,14 @@ class Component{
                 e.comp.shape.redraw();
             }
 	    }
+
+        ca[0].comp.ca = ca[1].comp.name;
+        ca[0].comp.cauid = ca[1].comp.shape.shape.uuid;
+
+        ca[1].comp.ca = ca[0].comp.name;
+        ca[1].comp.cauid = ca[O].comp.shape.shape.uuid;
+
+        /* TODO: mettre le lien cancel activity */
     }
     
     onMouseDown(){

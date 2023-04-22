@@ -63,6 +63,16 @@ QUnit.test("automatic transition must be defined with its name and type", assert
     assert.equal(t.name, "foobar", "automtic transition name");
 });
 
+QUnit.test("transition declares app attribute when not define within props", assert =>{
+    var  t = new Transition({name: "foobar", type: "automatic"});
+    assert.ok(t.app, "app attribute");
+});
+
+QUnit.test("transition uses app attribute defined within props", assert =>{
+    var  t = new Transition({name: "foobar", type: "automatic", app: 2});
+    assert.equal(t.app, 2, "app attribute");
+});
+
 QUnit.test("the name of manual name is required", assert =>{
     assert.throws(
 	function() {
@@ -693,11 +703,21 @@ QUnit.test("setType set new type", assert =>{
     assert.equal(t.type, 'asub', "transition type");
 });
 
-QUnit.test("setType remove all children first", assert =>{
+QUnit.test("setType removes all children first", assert =>{
     var  t = new Transition({type: "manual", name: "foobar"});
+    removeFromDOM = 0;
     t.setType("asub");
     assert.equal(removeFromDOM, 2, "number of removed children");
 });
+
+QUnit.test("setType clears app attribute", assert =>{
+    var  t = new Transition({type: "manual", name: "foobar"});
+    t.app.toto = 'too'
+
+    assert.equal(Object.keys(t.app).length, 1, "app attribute length");
+    t.setType("asub");
+    assert.equal(Object.keys(t.app).length, 0, "app attribute length");
+    });
 
 QUnit.test("setType set rect shape according to type value", assert =>{
     var  t = new Transition({type: "asub", name: "foobar"});

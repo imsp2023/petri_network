@@ -106,6 +106,10 @@ class Transition{
 	    this.state = '';
 	    this.type = props.type;
 	    this.name = props.name;
+        if(!props.app)
+            this.app = {};
+        else
+            this.app = props.app;
 
         dim = this.getRectDimension();
 
@@ -280,6 +284,7 @@ class Transition{
             return;
 
         this.type = type;
+        this.app = {};
         this.shape.shape.children.map(({child})=>{
             child.removeFromDOM();
         })
