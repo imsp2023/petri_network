@@ -215,7 +215,7 @@ class Component{
 		        e = new Component('edge', {src: cur.comp.shape.uuid,
 					                       dest: p.comp.shape.uuid,
 					                       direction: 't2p'});
-                e.comp.shape.redraw();
+                //e.comp.shape.redraw();
 
 		        cur = p;
 		        lyt = layout.getClosestPosition(Math.floor(cur.comp.shape.shape.x/layout.cellW),
@@ -227,7 +227,7 @@ class Component{
 		        e = new Component('edge', {src: cur.comp.shape.uuid,
 					                       dest: t.comp.shape.uuid,
 					                       direction: 'p2t'});
-                e.comp.shape.redraw();
+                //e.comp.shape.redraw();
 	        }
 	    }else if(type == 'xorsplit'){
 	        var lyt, p, t, e, cur, obj={};
@@ -241,8 +241,8 @@ class Component{
             t = new Component('transition', obj);
 		    e = new Component('edge', {src: this.comp.shape.uuid,
 					                   dest: t.comp.shape.uuid,
-					                   direction: 'p2t'});
-            e.comp.shape.redraw();
+					                   direction: 'p2t', cond:''});
+            //e.comp.shape.redraw();
 
             lyt = layout.getClosestPosition(Math.floor(t.comp.shape.shape.x/layout.cellW),
 						                        Math.floor(t.comp.shape.shape.y/layout.cellH));
@@ -254,7 +254,7 @@ class Component{
 		    e = new Component('edge', {src: t.comp.shape.uuid,
 					                   dest: p.comp.shape.uuid,
 					                   direction: 't2p'});
-            e.comp.shape.redraw();
+            //e.comp.shape.redraw();
 
             lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
 						                        Math.floor(this.comp.shape.shape.y/layout.cellH));
@@ -265,8 +265,8 @@ class Component{
             t = new Component('transition', obj);
 		    e = new Component('edge', {src: this.comp.shape.uuid,
 					                   dest: t.comp.shape.uuid,
-					                   direction: 'p2t'});
-            e.comp.shape.redraw();
+					                   direction: 'p2t', cond:''});
+            //e.comp.shape.redraw();
 
             e = new Component('edge', {src: t.comp.shape.uuid,
 					                   dest: p.comp.shape.uuid,
@@ -318,12 +318,12 @@ class Component{
 
                 e = new Component('edge', {src: p.comp.shape.uuid,
 					                       dest: t.comp.shape.uuid,
-					                       direction: 'p2t'});
-                e.comp.shape.redraw();
+					                       direction: 'p2t', cond:''});
+                //e.comp.shape.redraw();
 
                 e = new Component('edge', {src: p.comp.shape.uuid,
 					                       dest: t2.comp.shape.uuid,
-					                       direction: 'p2t'});
+					                       direction: 'p2t', cond:''});
                 e.comp.shape.redraw();
 
                 lyt = layout.getClosestPosition(Math.floor(t.comp.shape.shape.x/layout.cellW),
@@ -386,13 +386,13 @@ class Component{
             e = new Component('edge', {src: p.comp.shape.uuid,
 	    				               dest: this.comp.shape.uuid,
 	    				               direction: 'p2t',
-                                       altpath: true
+                                       altpath: true, cond:''
                                       });
             //e.comp.shape.redraw();
 
             e = new Component('edge', {src: p.comp.shape.uuid,
 	    				               dest: t.comp.shape.uuid,
-	    				               direction: 'p2t'});
+	    				               direction: 'p2t', cond:''});
             //e.comp.shape.redraw();
             this.comp.setGate('xor_join');
 	    }else if(type == 'while'){
@@ -407,7 +407,7 @@ class Component{
 
             e = new Component('edge', {src: this.comp.shape.uuid,
 	    				               dest: t.comp.shape.uuid,
-	    				               direction: 't2p'});
+	    				               direction: 'p2t'});
             //e.comp.shape.redraw();
 
 	        lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
@@ -420,13 +420,13 @@ class Component{
 
             e = new Component('edge', {src: this.comp.shape.uuid,
 	    				               dest: t.comp.shape.uuid,
-	    				               direction: 'p2t'});
+	    				               direction: 'p2t', cond:''});
             //e.comp.shape.redraw();
 
             e = new Component('edge', {src: t.comp.shape.uuid,
 	    				               dest: this.comp.shape.uuid,
 	    				               direction: 't2p',
-                                       altpath: true});
+                                       altpath: true, cond:''});
             e.comp.shape.redraw();
 
 	    }else if(type == 'deferredchoice'){
