@@ -16,7 +16,7 @@ layout.init = function(cellW, cellH, gridW, gridH){
     layout.nligs = Math.floor(gridH/cellH);
     layout.grid = [];
     for(i = 0; i < layout.ncols*layout.nligs; i++)
-	layout.grid.push(0);
+	layout.grid.push(false);
     return true;
 };
 
@@ -67,17 +67,17 @@ layout.getClosestPosition = (originX, originY)=>{
 layout.clear = ()=>{
     var i;
     for(i=0; i< layout.grid.length; i++)
-	layout.grid[i] = 0;
+	layout.grid[i] = false;
 };
 
-layout.mark = (col, lig)=>{
+layout.mark = (col, lig, comp)=>{
     console.log('mark x1='+col+' y1='+lig);
-    layout.grid[lig*layout.ncols+col] = 1;
+    layout.grid[lig*layout.ncols+col] = comp ? comp: true;
 };
 
 layout.umark = (col, lig)=>{
     console.log('umark x1='+col+' y1='+lig);
-    layout.grid[lig*layout.ncols+col] = 0;
+    layout.grid[lig*layout.ncols+col] = false;
 };
 
 layout.fixPoint = (x, y)=>{

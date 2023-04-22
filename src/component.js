@@ -48,7 +48,9 @@ class Component{
 	    if(this.comp == null)
 	        throw new Error ("instantiation failed");
 	    if(type=='transition' || type == 'place')
-	        layout.mark(Math.floor(props.x/layout.cellW), Math.floor(props.y/layout.cellH));
+	        layout.mark(Math.floor(props.x/layout.cellW),
+                        Math.floor(props.y/layout.cellH),
+                        this.comp.shape.shape.uuid);
 
         console.log('constructor')
         console.log(this)
@@ -96,7 +98,7 @@ class Component{
 		        dest: this.comp.shape.uuid,
                 altpath: count.altpath
 	        });
-            e.comp.shape.redraw();
+            //e.comp.shape.redraw();
 	        layout.markEdge(Math.floor(Component.src.comp.shape.shape.x/layout.cellW),
 			                Math.floor(Component.src.comp.shape.shape.y/layout.cellH),
 			                Math.floor(this.comp.shape.shape.x/layout.cellW),
