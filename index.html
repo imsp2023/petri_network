@@ -2,47 +2,72 @@
 <html lang="en">
 
 <head>
-   <meta charset="UTF-8">
-   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-   <meta name="viewport" content="initial-scale=1.0">
-   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ayajs@2.0.2/build/style.css">
-   <script type="application/javascript"  src="https://cdn.jsdelivr.net/npm/ayajs@2.0.2/build/aya.js"></script>
-   <!-- <script type="application/javascript"  src="aya.js"></script> -->
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ayajs@2.0.2/build/style.css">
+  <script src="https://unpkg.com/mithril/mithril.js"></script>
+  <script type="application/javascript" src="https://cdn.jsdelivr.net/npm/ayajs@2.0.2/build/aya.js"></script>
+  <!-- <script type="application/javascript"  src="aya.js"></script> -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style type="text/tailwindcss">
+    input,
+    select {
+    	@apply bg-white border-gray-400 border-2 w-full rounded p-2 mb-8 disabled:bg-gray-200 disabled:cursor-not-allowed
+    }
+  </style>
+  <script src="./src/entities/place.js"></script>
+  <script src="./src/entities/transition.js"></script>
+  <script src="./src/entities/edge.js"></script>
 
+  <script src="./src/register.js"></script>
+  <script src="./src/layout.js"></script>
+  <script src="./src/factory.js"></script>
+  <script src="./src/component.js"></script>
 
+  <script src="icon.js"></script>
+  <script src="config.js"></script>
 
-   <script src="./src/entities/place.js"></script>
-   <script src="./src/entities/transition.js"></script>
-   <script src="./src/entities/edge.js"></script>
-      <script src="./src/entities/lasso.js"></script>
+   <!-- <script src="./src/entities/place.js"></script> -->
+<!--    <script src="./src/entities/transition.js"></script> -->
+<!--    <script src="./src/entities/edge.js"></script> -->
+<!--       <script src="./src/entities/lasso.js"></script> -->
 
-   <script src="./src/register.js"></script>
-   <script src="./src/layout.js"></script>
-   <script src="./src/factory.js"></script>
-   <script src="./src/component.js"></script>
-   
-   <title>petri network</title>
+<!--    <script src="./src/register.js"></script> -->
+<!--    <script src="./src/layout.js"></script> -->
+<!--    <script src="./src/factory.js"></script> -->
+<!--    <script src="./src/component.js"></script> -->
+
+<!--    <title>petri network</title> -->
+<!-- </head> -->
+
+<!-- <body > -->
+<!--   <script> -->
+<!--     console.log(aya); -->
+<!--     try{ -->
+<!--         var aya = new aya.Init(2000, 2000); -->
+<!--       console.log(aya.config); -->
+<!--       aya.config.link.end_start = ' '; -->
+<!--         Component.initSvgEvents(aya.svg); -->
+<!--         layout.init(40, 80, 2000, 2000); -->
+
+<!-- 	    // var p = new Component("place", {type: 'end', x:100,y:100}); -->
+<!-- 	    // var p = new Component("place", {type: 'start', x:180,y:100}); -->
+
+<!--         // var t = new Component('transition', {type:'dummy'}); -->
+
+<!--       new Lasso({width:100, height: 100}); -->
+<!--     }catch(e){console.log(e);} -->
+
+<!--       document.body.append(aya.svg); -->
+<!--    </script> -->
+
+  <title>petri network</title>
 </head>
 
-<body >
-  <script>
-    console.log(aya);
-    try{
-        var aya = new aya.Init(2000, 2000);
-      console.log(aya.config);
-      aya.config.link.end_start = ' ';
-        Component.initSvgEvents(aya.svg);
-        layout.init(40, 80, 2000, 2000);
-    
-	    // var p = new Component("place", {type: 'end', x:100,y:100});
-	    // var p = new Component("place", {type: 'start', x:180,y:100});
-	
-        // var t = new Component('transition', {type:'dummy'});
-      
-      new Lasso({width:100, height: 100});
-    }catch(e){console.log(e);}
-    
-      document.body.append(aya.svg);
-   </script>
+<body>
+  <script src="editor.js"></script>
+  <script src="index.js"></script>
 </body>
+
 </html>

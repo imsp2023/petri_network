@@ -597,12 +597,15 @@ class Component{
     
     save(){
 	    var obj = {};
-	    this.comp.Object.keys.map((e)=>{
-	        if(e != shape)
+	    Object.keys(this.comp.shape).map((e)=>{
+	        if(e != 'shape')
 		        obj[e] = this.comp[e];
+					else {
+						obj.uuid = this.comp[e].shape.uuid
+				    obj.x = this.comp[e].shape.x;
+				    obj.y = this.comp[e].shape.y;
+					}
 	    });
-	    obj.x = this.comp.shape.shape.x;
-	    obj.y = this.comp.shape.shape.y;
 
 	    return obj;
     }
