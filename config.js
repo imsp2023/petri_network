@@ -17,9 +17,9 @@ const edge = () => {
           m("label.block.mb-3", "Direction"),
           m("input[disabled]", { value: node.comp.direction, onchange: (e) => node.comp.direction = e.target.value })
         ]),
-        node.comp.condition && m("", [
+        node.comp.cond && m("", [
           m("label.block.mb-3", "Condition"),
-          m("input", { value: node.comp.condition, onchange: (e) => node.comp.condition = e.target.value })
+          m("input", { value: node.comp.cond, onchange: (e) => node.comp.cond = e.target.value })
         ]),
       ])
     }
@@ -66,7 +66,7 @@ const transition = {
   view(vnode) {
     var node = vnode.attrs.node
     console.log(node)
-    const types = ["automatic", "event", "manual", "clock", "ssub", "asub"];
+    const types = ["dummy","automatic", "event", "manual", "clock", "ssub", "asub"];
     const rnames = ["get", "put", "post", "delete"];
     const gateways = ["and_join", "xor_join"];
     return m(".grid.grid-cols-2", [
@@ -92,9 +92,9 @@ const transition = {
                 }, type))
             ),
           ]),
-          m("", [
+          node.comp.ca && m("", [
             m("label.block.mb-3", "Cancel activity"),
-            m("input", { value: node.comp.ca, onchange: (e) => node.comp.setCA(e.target.value) })
+            m("input", { value: node.comp.ca, disabled: true})
           ]),
           node.comp.type == "automatic" && m("", [
             m("label.block.mb-3", "Resource name"),
@@ -116,7 +116,10 @@ const transition = {
       m(".p-2", m(".flex.flex-col.px-4", [
         m("", [
           m("label.block.mb-3", "Name"),
-          m("input", { value: node.comp.name, onchange: (e) => node.comp.name = e.target.value })
+          m("input", {
+            value: node.comp.name,
+            onchange: (e) => {node.comp.setName(e.target.value);}
+          })
         ]),
         m("", [
           m("label.block.mb-3", "Gateway"),
@@ -133,7 +136,7 @@ const transition = {
                 selected: node.comp.gate == gateway || (gateway == "and_join" && node.comp.gate == undefined),
               }, gateway))
           ),
-          node.comp.type == "automatic" && m("", [
+          node.comp.type == "manual" && m("", [
             m("label.block.mb-3", "Role"),
             m("input", { value: node.comp.app.role, onchange: (e) => node.comp.app.role = e.target.value })
           ]),
@@ -168,9 +171,9 @@ const config = {
             m("label.text-xl.font-medium", node.type),
             m("button.btn.rounded-xl.w-fit.self-end", {
               onclick: () => {
-                console.log(vnode.attrs.config)
                 vnode.attrs.config.node.addConnector('deletion');
                 vnode.attrs.config.node = null;
+
               }
             }, m(Icon.Delete, {
               class: "text-red-300 hover:text-red-500 active:text-red-600 focus:test-red-400"

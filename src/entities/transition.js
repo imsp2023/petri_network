@@ -27,12 +27,10 @@ class Transition{
     getRectDimension(){
         var dim = {width: 20, height: 50};
 
-        if(this.type == 'clock' || this.type == 'event' || this.type == 'manual')
-		    dim.height = 40;
-	    else if(this.type == 'asub' || this.type == 'ssub'){
+        if(this.type == 'asub' || this.type == 'ssub'){
 		    dim.width = 30;
 		    dim.height = 60;
-	    }
+	       }
 
         return dim;
     }
@@ -58,27 +56,24 @@ class Transition{
 		        this.shape.shape.x,
 		        this.shape.shape.y,
 		        20, 50), {x: 5, y: 5}, null);
-	    }else if(this.type == 'clock' || this.type == 'event' || this.type == 'manual'){
+	    }else if(this.type == 'clock' || this.type == 'event' ||
+                 this.type == 'manual' || this.type == 'automatic'){
 	        this.shape.addChild(aya.Image(
 		        this.shape.shape.x,
 		        this.shape.shape.y,
 		        20, 20,
-		        this.type=='clock' ? 'src/images/clock.png':
-		            this.type=='event' ? 'src/images/clock.png' :
-		            'src/images/arrow.png'), {x: 0, y: -25}, null);
+		        this.type=='clock' ? 'src/images/clock2.png':
+		            this.type=='event' ? 'src/images/envelope.png' :
+		            this.type=='manual' ? 'src/images/user1.png':
+                    'src/images/service2.png'  ), {x: 0, y: 0}, null);
 	    }
 
-	    if(this.type != 'dummy'){
-	        if(this.shape.shape.children.length)
-		        this.shape.addChild(
-		            aya.Text(this.shape.shape.children[0].child.x,
-			                 this.shape.shape.children[0].child.y, this.name),
-		            {x: 0, y: -10}, null);
-	        else
-		        this.shape.addChild(
-		            aya.Text(this.shape.shape.x,
-			                 this.shape.shape.y, this.name),
-		            {x: -aya.config.text.size/2, y: -10}, null);
+	    if(this.type == 'asub' || this.type == 'ssub' ||
+           this.type == 'automatic' || this.type == 'manual'){
+	        this.shape.addChild(
+		        aya.Text(this.shape.shape.x,
+			             this.shape.shape.y, this.name),
+		        {x: -aya.config.text.size/2, y: -10}, null);
 	    }
 
     }
@@ -102,7 +97,7 @@ class Transition{
 	    }else
 	        throw new Error("wrong transition type");
 
-
+        this.panelPos = -1;
 	    this.state = '';
 	    this.type = props.type;
 	    this.name = props.name;
@@ -132,7 +127,7 @@ class Transition{
 	        console.log('mouseover state='+this.state+ ' pos='+this.panelPos);
 	        if(this.state == 'moving')
 		        return;
-	        else if(this.panelPos==undefined || this.panelPos < 0)
+	        else if(this.panelPos < 0)
 	    	    this.addPanel();
 	        this.state = 'transition';
 	    });
@@ -207,7 +202,7 @@ class Transition{
 
 	    this.panelPos = this.shape.shape.children.length-1;
 
-	    for (var i = 0, j = 0; i < t_actions.length; i++, j++){
+        for (var i = 0, j = 0; i < t_actions.length; i++, j++){
 	        if (i && !(i%3)){
 		        j = 0;
 		        y += ImSZ+5/* spacing */;
@@ -246,7 +241,10 @@ class Transition{
 
     removePanel(){
 	    var i;
-	    for(i = this.panelPos; i <= this.panelPos+t_actions.length; i++)
+        if(this.panelPos < 0)
+            return;
+
+        for(i = this.panelPos; i <= this.panelPos+t_actions.length; i++)
 	        this.shape.shape.children[i].child.removeFromDOM();
 	    this.shape.shape.children.splice(this.panelPos, 1+t_actions.length);
 
@@ -265,7 +263,7 @@ class Transition{
 					                          this.shape.shape.x, this.shape.shape.y]), {x: 0, y: 0}, null);
 	        this.shape.shape.redraw();
 	    }else if(this.gate == 'xor_join' && gate != 'xor_join'){
-	        if(this.type == 'clock' || this.type == 'event' || this.type == 'manual' ||
+	        if(this.type == 'manual' || this.type == 'automatic' ||
 	           this.type == 'asub' || this.type == 'ssub')
 		        index = 2;
 	        else if(this.type == 'dummy')
@@ -278,6 +276,14 @@ class Transition{
 	    this.gate = gate;
     }
 
+    setName(name){
+        this.name = name;
+        if(this.ca)
+            Register.find(this.cauuid).comp.ca = name;
+
+        this.shape.shape.redraw();
+    }
+    
     setType(type){
         var dim;
         if(this.type == type)
@@ -294,6 +300,9 @@ class Transition{
 
         this.shape.shape.width = dim.width;
         this.shape.shape.height = dim.height;
+
+        console.log('SETTYPE');
+        console.log(dim)  ;
 
         this.completeShape();
 
