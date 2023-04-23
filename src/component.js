@@ -48,8 +48,14 @@ class Component{
 	    if(this.comp == null)
 	        throw new Error ("instantiation failed");
 	    if(type=='transition' || type == 'place')
-	        layout.mark(Math.floor(props.x/layout.cellW), Math.floor(props.y/layout.cellH));
-	    Register.add(this.type == 'edge'?
+	        layout.mark(Math.floor(props.x/layout.cellW),
+                        Math.floor(props.y/layout.cellH),
+                        this.comp.shape.shape.uuid);
+
+        console.log('constructor')
+        console.log(this)
+
+        Register.add(this.type == 'edge'?
 		             this.comp.shape.line.uuid :
 		             this.comp.shape.uuid, this);
     }
@@ -63,35 +69,41 @@ class Component{
 
         /* Only p2t  and t2p are allowed */
 	    if(Component.src.type != this.type){
-            var count = {count: 0};
+            var count = {count: 0, altpath: false};
+
+
+            Register.forEach(
+		        (item, data)=>{
+                    console.log('Register');
+                    if(item.type=='edge' &&
+		               (item.comp.src == this.comp.shape.uuid ||
+			            item.comp.dest == this.comp.shape.uuid)){
+                        if(this.type == 'transition')
+                            data.count++;
+                        if(item.comp.src == Component.src.comp.shape.uuid ||
+			               item.comp.dest == Component.src.comp.shape.uuid)
+			                //  data.push(item);
+                            data.altpath = true;
+		            }
+		        },
+		        count);
+
+            /* Set xor_join if transition has more than one place associated */
+            if(count.count >= 1)
+                this.comp.setGate('xor_join');
 
 	        e = new Component('edge', {
 		        direction:this.type=='place'?'t2p':'p2t',
 		        src: Component.src.comp.shape.uuid,
-		        dest: this.comp.shape.uuid
+		        dest: this.comp.shape.uuid,
+                altpath: count.altpath
 	        });
-            e.comp.shape.redraw();
+            //e.comp.shape.redraw();
 	        layout.markEdge(Math.floor(Component.src.comp.shape.shape.x/layout.cellW),
 			                Math.floor(Component.src.comp.shape.shape.y/layout.cellH),
 			                Math.floor(this.comp.shape.shape.x/layout.cellW),
 			                Math.floor(this.comp.shape.shape.y/layout.cellH));
 
-            /* Set xor_join if transition has more than one place associated */
-            if(this.type == 'transition'){
-                Register.forEach(
-		            (item, data)=>{
-                        console.log('Register');
-                        if(item.type=='edge' &&
-		                   (item.comp.src == this.comp.shape.uuid ||
-			                item.comp.dest == this.comp.shape.uuid)){
-                            data.count++;
-			                //data.push(item);
-		                }
-		            },
-		            count);
-                if(count.count >= 2)
-                    this.comp.setGate('xor_join');
-            }
 	    }
 
 	    Component.line = null;
@@ -100,7 +112,11 @@ class Component{
     }
     
     addConnector(type){
-	    this.comp.removePanel();
+        console.log('addconnector removePanel');
+        console.log(this.comp.shape);
+
+        if(this.comp.shape.panelPos >= 0)
+	        this.comp.removePanel();
 	    if(type == this.type)
 	        return;
 
@@ -152,23 +168,22 @@ class Component{
 	    else if(type == 'deletion'){
 	        var edges = [], src, dest;
 
-	        Register.forEach(
-		        (item, data)=>{
-		            if(item.type=='edge' &&
-		               (item.comp.src == this.comp.shape.uuid ||
-			            item.comp.dest == this.comp.shape.uuid)){
-			            data.push(item);
-		            }
-		        },
-		        edges);
+            /**  don't look for edges for edge deletion */
+            if(this.type != 'edge')
+	            Register.forEach(
+		            (item, data)=>{
+		                if(item.type=='edge' &&
+		                   (item.comp.src == this.comp.shape.uuid ||
+			                item.comp.dest == this.comp.shape.uuid)){
+			                data.push(item);
+		                }
+		            },
+		            edges);
 
 	        edges.map((lk) => {
-		        console.log('MAP edges');
 		        src = Register.find(lk.comp.src);
 		        dest = Register.find(lk.comp.dest);
 
-		        console.log(src);
-		        console.log(dest);
 		        layout.umarkEdge(Math.floor(src.comp.shape.shape.x/layout.cellW),
 				                 Math.floor(src.comp.shape.shape.y/layout.cellH),
 				                 Math.floor(dest.comp.shape.shape.x/layout.cellW),
@@ -179,10 +194,12 @@ class Component{
 		        Register.clear(lk.comp.shape.line.uuid);
 	        });
 
-	        layout.umark(Math.floor(this.comp.shape.shape.x/layout.cellW),
-			             Math.floor(this.comp.shape.shape.y/layout.cellH));
-	        this.comp.shape.shape.svg.removeChild(this.comp.shape.shape.c_svg);
-	        Register.clear(this.comp.shape.uuid);
+            if(this.type != 'edge'){
+	            layout.umark(Math.floor(this.comp.shape.shape.x/layout.cellW),
+			                 Math.floor(this.comp.shape.shape.y/layout.cellH));
+	            this.comp.shape.shape.svg.removeChild(this.comp.shape.shape.c_svg);
+	            Register.clear(this.comp.shape.uuid);
+            }/* TODO: voir avec David pour la suppression des edges */
 	    }
 	    else if(type == 'andsplit'){
 	        var i, lyt, p, t, e, cur, obj={};
@@ -200,7 +217,7 @@ class Component{
 		        e = new Component('edge', {src: cur.comp.shape.uuid,
 					                       dest: p.comp.shape.uuid,
 					                       direction: 't2p'});
-                e.comp.shape.redraw();
+                //e.comp.shape.redraw();
 
 		        cur = p;
 		        lyt = layout.getClosestPosition(Math.floor(cur.comp.shape.shape.x/layout.cellW),
@@ -212,7 +229,7 @@ class Component{
 		        e = new Component('edge', {src: cur.comp.shape.uuid,
 					                       dest: t.comp.shape.uuid,
 					                       direction: 'p2t'});
-                e.comp.shape.redraw();
+                //e.comp.shape.redraw();
 	        }
 	    }else if(type == 'xorsplit'){
 	        var lyt, p, t, e, cur, obj={};
@@ -226,8 +243,8 @@ class Component{
             t = new Component('transition', obj);
 		    e = new Component('edge', {src: this.comp.shape.uuid,
 					                   dest: t.comp.shape.uuid,
-					                   direction: 'p2t'});
-            e.comp.shape.redraw();
+					                   direction: 'p2t', cond:''});
+            //e.comp.shape.redraw();
 
             lyt = layout.getClosestPosition(Math.floor(t.comp.shape.shape.x/layout.cellW),
 						                        Math.floor(t.comp.shape.shape.y/layout.cellH));
@@ -239,7 +256,7 @@ class Component{
 		    e = new Component('edge', {src: t.comp.shape.uuid,
 					                   dest: p.comp.shape.uuid,
 					                   direction: 't2p'});
-            e.comp.shape.redraw();
+            //e.comp.shape.redraw();
 
             lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
 						                        Math.floor(this.comp.shape.shape.y/layout.cellH));
@@ -250,8 +267,8 @@ class Component{
             t = new Component('transition', obj);
 		    e = new Component('edge', {src: this.comp.shape.uuid,
 					                   dest: t.comp.shape.uuid,
-					                   direction: 'p2t'});
-            e.comp.shape.redraw();
+					                   direction: 'p2t', cond:''});
+            //e.comp.shape.redraw();
 
             e = new Component('edge', {src: t.comp.shape.uuid,
 					                   dest: p.comp.shape.uuid,
@@ -303,12 +320,12 @@ class Component{
 
                 e = new Component('edge', {src: p.comp.shape.uuid,
 					                       dest: t.comp.shape.uuid,
-					                       direction: 'p2t'});
-                e.comp.shape.redraw();
+					                       direction: 'p2t', cond:''});
+                //e.comp.shape.redraw();
 
                 e = new Component('edge', {src: p.comp.shape.uuid,
 					                       dest: t2.comp.shape.uuid,
-					                       direction: 'p2t'});
+					                       direction: 'p2t', cond:''});
                 e.comp.shape.redraw();
 
                 lyt = layout.getClosestPosition(Math.floor(t.comp.shape.shape.x/layout.cellW),
@@ -366,17 +383,19 @@ class Component{
             e = new Component('edge', {src: this.comp.shape.uuid,
 	    				               dest: p.comp.shape.uuid,
 	    				               direction: 't2p'});
-            e.comp.shape.redraw();
+            //e.comp.shape.redraw();
 
             e = new Component('edge', {src: p.comp.shape.uuid,
 	    				               dest: this.comp.shape.uuid,
-	    				               direction: 'p2t'});
-            e.comp.shape.redraw();
+	    				               direction: 'p2t',
+                                       altpath: true, cond:''
+                                      });
+            //e.comp.shape.redraw();
 
             e = new Component('edge', {src: p.comp.shape.uuid,
 	    				               dest: t.comp.shape.uuid,
-	    				               direction: 'p2t'});
-            e.comp.shape.redraw();
+	    				               direction: 'p2t', cond:''});
+            //e.comp.shape.redraw();
             this.comp.setGate('xor_join');
 	    }else if(type == 'while'){
 	        var i, lyt, p, t, e, obj={};
@@ -390,8 +409,8 @@ class Component{
 
             e = new Component('edge', {src: this.comp.shape.uuid,
 	    				               dest: t.comp.shape.uuid,
-	    				               direction: 't2p'});
-            e.comp.shape.redraw();
+	    				               direction: 'p2t'});
+            //e.comp.shape.redraw();
 
 	        lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
 	    					                Math.floor(this.comp.shape.shape.y/layout.cellH));
@@ -403,16 +422,17 @@ class Component{
 
             e = new Component('edge', {src: this.comp.shape.uuid,
 	    				               dest: t.comp.shape.uuid,
-	    				               direction: 'p2t'});
-            e.comp.shape.redraw();
+	    				               direction: 'p2t', cond:''});
+            //e.comp.shape.redraw();
 
             e = new Component('edge', {src: t.comp.shape.uuid,
 	    				               dest: this.comp.shape.uuid,
-	    				               direction: 't2p'});
+	    				               direction: 't2p',
+                                       altpath: true, cond:''});
             e.comp.shape.redraw();
 
 	    }else if(type == 'deferredchoice'){
-	        var i, lyt, p, p2, t, t2, e, obj={};
+	        var i, lyt, p, p2, t, t2, e, obj={}, ca = [null, null];
 
             lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
 	    					                Math.floor(this.comp.shape.shape.y/layout.cellH));
@@ -449,6 +469,7 @@ class Component{
                 obj.name = 'auto'+i;
 
                 t2 = new Component('transition', obj);
+                ca[i] = t2;
 
                 e = new Component('edge', {src: p.comp.shape.uuid,
 	    				               dest: t2.comp.shape.uuid,
@@ -472,6 +493,14 @@ class Component{
                 e.comp.shape.redraw();
             }
 	    }
+
+        ca[0].comp.ca = ca[1].comp.name;
+        ca[0].comp.cauid = ca[1].comp.shape.shape.uuid;
+
+        ca[1].comp.ca = ca[0].comp.name;
+        ca[1].comp.cauid = ca[O].comp.shape.shape.uuid;
+
+        /* TODO: mettre le lien cancel activity */
     }
     
     onMouseDown(){
@@ -489,9 +518,7 @@ class Component{
 				                      this.comp.shape.shape.y);
 	        var edges = [], src, dest, osrc, odest;
 
-	        // this.comp.shape.shape.x = lyt.x;
-	        // this.comp.shape.shape.y = lyt.y;
-			this.comp.shape.shape.shift(lyt.x - this.comp.shape.shape.x, 
+	        this.comp.shape.shape.shift(lyt.x - this.comp.shape.shape.x,
 										lyt.y - this.comp.shape.shape.y);
 	        this.comp.redraw(layout.cellW, layout.cellH);
 
@@ -521,8 +548,8 @@ class Component{
 			                x: Component.x,
 			                y: Component.y
 			            };
-			            e.comp.shape.line.x = this.comp.shape.shape.c_points[3].x;
-			            e.comp.shape.line.y = this.comp.shape.shape.c_points[3].y;
+			            // e.comp.shape.line.x = this.comp.shape.shape.c_points[3].x;
+			            // e.comp.shape.line.y = this.comp.shape.shape.c_points[3].y;
 		            }
 		            else{
 			            src = Register.find(e.comp.src);
@@ -536,8 +563,8 @@ class Component{
 			                x: Component.x,
 			                y: Component.y
 			            };
-			            e.comp.shape.line.dest_x = this.comp.shape.shape.c_points[3].x;
-			            e.comp.shape.line.dest_y = this.comp.shape.shape.c_points[3].y;
+			            // e.comp.shape.line.dest_x = this.comp.shape.shape.c_points[3].x;
+			            // e.comp.shape.line.dest_y = this.comp.shape.shape.c_points[3].y;
 		            }
 
 		            layout.umarkEdge(Math.floor(osrc.x/layout.cellW),

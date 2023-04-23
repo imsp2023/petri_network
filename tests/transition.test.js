@@ -63,6 +63,16 @@ QUnit.test("automatic transition must be defined with its name and type", assert
     assert.equal(t.name, "foobar", "automtic transition name");
 });
 
+QUnit.test("transition declares app attribute when not define within props", assert =>{
+    var  t = new Transition({name: "foobar", type: "automatic"});
+    assert.ok(t.app, "app attribute");
+});
+
+QUnit.test("transition uses app attribute defined within props", assert =>{
+    var  t = new Transition({name: "foobar", type: "automatic", app: 2});
+    assert.equal(t.app, 2, "app attribute");
+});
+
 QUnit.test("the name of manual name is required", assert =>{
     assert.throws(
 	function() {
@@ -488,8 +498,8 @@ QUnit.test("addPanel() opens an empty panel when we hover over a transition", as
     assert.equal(t.shape.shape.children[0].child.x, t.shape.shape.x+t.shape.shape.width, "panel x-absc");
     assert.equal(t.shape.shape.children[0].child.y, t.shape.shape.y, "panel y-absc");
     
-    assert.equal(t.shape.shape.children[0].child.width,  2*20+10, "panel width");
-    assert.equal(t.shape.shape.children[0].child.height, 2*20+10, "panel height");
+    assert.equal(t.shape.shape.children[0].child.width,  2*ImSZ+2*5, "panel width");
+    assert.equal(t.shape.shape.children[0].child.height, 3*ImSZ+ 3*5, "panel height");
     
     assert.equal(t.shape.shape.children[0].child.shape["stroke-width"], "0px", "the border width must  be 2 px");
     assert.equal(t.shape.shape.children[0].child.shape["opacity"], 0, "panel opacity");
@@ -513,19 +523,14 @@ QUnit.test("add all actions on the panel when we hover over it", assert => {
 
     t.addPanel();
 
-    var action = [
-	{name: "transition", path: "src/images/transition.png"},
-	{name: "edge", path: "src/images/edge2.png"},
-	{name: "deletion", path: "src/images/delete.png"}
-    ];
 
-    assert.equal(t.shape.shape.children.length, 4, "panel has 4 children");
+    assert.equal(t.shape.shape.children.length, t_actions.length+1, "transition children ");
     t.shape.shape.children.map(({child}, index) => {
 	if (index != 0){
 	    assert.equal(child.type, "image", "children are images");
-	    assert.equal(child.width, T_ImSZ, "the width of the child must be 30 px");
-	    assert.equal(child.height, T_ImSZ, "the height of the child must be 30 px");
-	    assert.equal(child.path, action[index - 1].path, "check the correct path of each image");
+	    assert.equal(child.width, ImSZ, "the width of the child must be 30 px");
+	    assert.equal(child.height, ImSZ, "the height of the child must be 30 px");
+	    assert.equal(child.path, t_actions[index - 1].path, "check the correct path of each image");
 	}
     });
 });
@@ -581,26 +586,41 @@ QUnit.test("addpanel a mousedown on the images", assert => {
 
 
 
-QUnit.test("actions are display on two columns", assert => {
+QUnit.test("actions are display on three columns", assert => {
     var t = new Transition();
 
     t.addPanel();
 
-    var action = [
-	{x:  DWidth, y: 0, name: "transition", path: "src/images/transition.png"},
-	{x:  DWidth + T_ImSZ, y: 0, name: "edge", path: "src/images/edge.png" },
-	{x:  DWidth, y: T_ImSZ+5, name: "deletion", path: "src/images/times.png" }
-    ];
+    assert.equal(t.shape.shape.children[1].child.x, 20, "setting the abscissa of the child");
+	assert.equal(t.shape.shape.children[1].child.y, 0, "setting the ordinate of the child");
+	assert.equal(t.shape.shape.children[1].child.offsetX, 5, "setting offsetX");
+	assert.equal(t.shape.shape.children[1].child.offsetY, 0, "setting offsetY");
 
-    t.shape.shape.children.map(({child}, index) => {
-	if (index != 0){
-	    console.log(child);
-	    assert.equal(child.x, action[index - 1].x, "setting the abscissa of the child");
-	    assert.equal(child.y, action[index - 1].y, "setting the ordinate of the child");
-	    assert.equal(child.offsetX, 5, "setting offsetX");
-	    assert.equal(child.offsetY, 0, "setting offsetY");
-	}
-    });
+    assert.equal(t.shape.shape.children[2].child.x, 40, "setting the abscissa of the child");
+	assert.equal(t.shape.shape.children[2].child.y, 0, "setting the ordinate of the child");
+	assert.equal(t.shape.shape.children[2].child.offsetX, 5, "setting offsetX");
+	assert.equal(t.shape.shape.children[2].child.offsetY, 0, "setting offsetY");
+
+    assert.equal(t.shape.shape.children[3].child.x, 60, "setting the abscissa of the child");
+	assert.equal(t.shape.shape.children[3].child.y, 0, "setting the ordinate of the child");
+	assert.equal(t.shape.shape.children[3].child.offsetX, 5, "setting offsetX");
+	assert.equal(t.shape.shape.children[3].child.offsetY, 0, "setting offsetY");
+
+    assert.equal(t.shape.shape.children[4].child.x, 20, "setting the abscissa of the child");
+	assert.equal(t.shape.shape.children[4].child.y, 25, "setting the ordinate of the child");
+	assert.equal(t.shape.shape.children[4].child.offsetX, 5, "setting offsetX");
+	assert.equal(t.shape.shape.children[4].child.offsetY, 0, "setting offsetY");
+
+    assert.equal(t.shape.shape.children[5].child.x, 40, "setting the abscissa of the child");
+	assert.equal(t.shape.shape.children[5].child.y, 25, "setting the ordinate of the child");
+	assert.equal(t.shape.shape.children[5].child.offsetX, 5, "setting offsetX");
+	assert.equal(t.shape.shape.children[5].child.offsetY, 0, "setting offsetY");
+
+    assert.equal(t.shape.shape.children[6].child.x, 60, "setting the abscissa of the child");
+	assert.equal(t.shape.shape.children[6].child.y, 25, "setting the ordinate of the child");
+	assert.equal(t.shape.shape.children[6].child.offsetX, 5, "setting offsetX");
+	assert.equal(t.shape.shape.children[6].child.offsetY, 0, "setting offsetY");
+
 });
 
 
@@ -669,4 +689,58 @@ QUnit.test("add onclick event on transition", assert => {
 	if (e["click"])
 	    ev = e;
     assert.ok(ev, "click event");
+});
+
+QUnit.test("setType do nothing when new type is the same as the old one", assert =>{
+    var  t = new Transition({type: "manual", name: "foobar"});
+    t.setType("manual");
+    assert.equal(t.type, "manual", "transition type");
+});
+
+QUnit.test("setType set new type", assert =>{
+    var  t = new Transition({type: "manual", name: "foobar"});
+    t.setType("asub");
+    assert.equal(t.type, 'asub', "transition type");
+});
+
+QUnit.test("setType removes all children first", assert =>{
+    var  t = new Transition({type: "manual", name: "foobar"});
+    removeFromDOM = 0;
+    t.setType("asub");
+    assert.equal(removeFromDOM, 2, "number of removed children");
+});
+
+QUnit.test("setType clears app attribute", assert =>{
+    var  t = new Transition({type: "manual", name: "foobar"});
+    t.app.toto = 'too'
+
+    assert.equal(Object.keys(t.app).length, 1, "app attribute length");
+    t.setType("asub");
+    assert.equal(Object.keys(t.app).length, 0, "app attribute length");
+    });
+
+QUnit.test("setType set rect shape according to type value", assert =>{
+    var  t = new Transition({type: "asub", name: "foobar"});
+    t.setType("manual");
+
+    assert.equal(t.shape.type, "rectangle", "the shape is a rectangle");
+    assert.equal(t.shape.shape.width, MWidth, "the width must be 15 px");
+    assert.equal(t.shape.shape.height, MHeight, "the height must be 50 px");
+    assert.equal(t.shape.shape.fill, "white", "the color must be black");
+
+    assert.equal(t.shape.shape.children.length, 2, "number of children");
+
+
+    assert.equal(t.shape.shape.children[0].child.type, "image", "type of child is image");
+    assert.equal(t.shape.shape.children[0].child.path, "src/images/arrow.png", "clock image path");
+
+    assert.equal(t.shape.shape.children[0].child.x, t.shape.shape.x, "rectangle and image has same x");
+    assert.equal(t.shape.shape.children[0].child.y, t.shape.shape.x, "rectangle and image has same x");
+    assert.equal(t.shape.shape.children[0].child.offsetX, 0, "iamge offsetX");
+    assert.equal(t.shape.shape.children[0].child.offsetY, -25, "image offsetY");
+
+
+    assert.equal(t.shape.shape.children[1].child.type, "text", "type of child is text");
+    assert.equal(t.shape.shape.children[1].child.text, "foobar", "text value is tranisition name");
+
 });

@@ -56,7 +56,7 @@ components/actions can be associated to place:
 - add edge; its representation is an arrow
 - configure
 
-*** TODO transition configuration
+*** DONE transition configuration
  When clicking on confiure action, a window (popup) must be appear to
 configure a panel. Transition configuration consists in specifying the
 values of the name, type and gate attributes. The values of the
@@ -91,7 +91,7 @@ applied:
 The configuration of an edge consists in specifying its direction and
 a condition to pass through
 
-*** TODO generate a json structure to save edge
+*** REVIEW generate a json structure to save edge
 The object must contain uuid of both ends.
 
 
@@ -130,26 +130,26 @@ this action must only delete the specified edge. This action do not delete the e
 *** TODO 'configure' action
 see edge configuration section
 * Implementation of composite composants
-** TODO multi choice
+** REVIEW multi choice
 #+CAPTION: mc image
 #+ATTR_HTML: :width 300px
 [[doc/images/multichoice.png]] This action is associated to a place. The
 components of the multi choice start just after the place.
 
-** TODO while
+** REVIEW while
 #+CAPTION: mc image
 #+ATTR_HTML: :width 300px
 [[doc/images/while.png]] This action is associated to a place. The
 components of the "while" start just after the  place.
 
-** TODO do while
+** REVIEW do while
 #+CAPTION: mc image
 #+ATTR_HTML: :width 300px
 [[doc/images/multichoice.png]] This action is associated to a
 transition. The "do while" starts with the transition.  The transition
 represents the transition to be executed at least once.
 
-** TODO deferrd choice
+** REVIEW deferrd choice
 #+CAPTION: mc image
 #+ATTR_HTML: :width 300px
 [[doc/images/multichoice.png]] This action is associated to a place. The

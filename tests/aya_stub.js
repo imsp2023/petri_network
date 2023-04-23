@@ -3,6 +3,7 @@ var removeFromDOM = 0;
 class Aya{
     constructor(){
 	this.ttype = null;
+        this.config = {text: {size: 100}};
     }
 
     settype(type){
@@ -22,6 +23,7 @@ class Aya{
 	    events: [],
 	    type : this.ttype ? this.ttype : type,
 	    shape : {
+
 		dest_x: props ? props.dest_x : null,
 		dest_y: props ? props.dest_y : null,
 		vertex: [
@@ -165,7 +167,7 @@ class Aya{
 	    offsetY: "",
 	    children : [
 	    ],
-	    shape: {svg:{}},
+	    shape: {shift: ()=>{}, svg:{}},
 	    c_svg: {
 		setAttribute: (tag, value) =>{
 		    Obj.shape[tag] = value;
@@ -213,7 +215,10 @@ class Aya{
 		    Obj.events.push(ev);
 		},
 	    },
-	    draw(){}
+	    draw(){},
+         removeFromDOM(){
+		removeFromDOM++;
+	    }
 	};
 
 	return Obj;
@@ -227,7 +232,10 @@ class Aya{
 	    y: y != undefined ? y : null,
 	    text: text ? text : null,
 	    draw(){},
-	    redraw(){}
+	    redraw(){},
+        removeFromDOM(){
+		removeFromDOM++;
+	    }
 	};
 
 	return Obj;

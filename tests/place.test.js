@@ -223,22 +223,40 @@ QUnit.test("addpanel a mousedown on the images", assert => {
     assert.equal(cpt, Place.actions.length, "mousedown count");
 });
 
-QUnit.test("actions are display on two columns", assert => {
+QUnit.test("actions are display on three columns", assert => {
     var p = new Place();
 
     p.addPanel();
-    p.shape.shape.children.map(({child}, index) => {
-	if (index != 0){
-	    assert.equal((child.x+Place.Radius)+Place.ImgSZ,
-			 2*Place.Radius+(index%2)==0?Place.ImgSZ:0,
-			 "X-axis");
-	    assert.equal(child.y,
-			 (Place.ImgSZ+5)*(1-Math.ceil(index/2)),
-			 "Y-axis");
-	    assert.equal(child.offsetX, 5, "setting offsetX");
-	    assert.equal(child.offsetY, 0, "setting offsetY");
-	}
-    });
+
+    assert.equal(p.shape.shape.children[1].child.x, 20, "setting the abscissa of the child");
+	assert.equal(p.shape.shape.children[1].child.y, -20, "setting the ordinate of the child");
+	assert.equal(p.shape.shape.children[1].child.offsetX, 5, "setting offsetX");
+	assert.equal(p.shape.shape.children[1].child.offsetY, 0, "setting offsetY");
+
+    assert.equal(p.shape.shape.children[2].child.x, 40, "setting the abscissa of the child");
+	assert.equal(p.shape.shape.children[2].child.y, -20, "setting the ordinate of the child");
+	assert.equal(p.shape.shape.children[2].child.offsetX, 5, "setting offsetX");
+	assert.equal(p.shape.shape.children[2].child.offsetY, 0, "setting offsetY");
+
+    assert.equal(p.shape.shape.children[3].child.x, 60, "setting the abscissa of the child");
+	assert.equal(p.shape.shape.children[3].child.y, -20, "setting the ordinate of the child");
+	assert.equal(p.shape.shape.children[3].child.offsetX, 5, "setting offsetX");
+	assert.equal(p.shape.shape.children[3].child.offsetY, 0, "setting offsetY");
+
+    assert.equal(p.shape.shape.children[4].child.x, 20, "setting the abscissa of the child");
+	assert.equal(p.shape.shape.children[4].child.y, 5, "setting the ordinate of the child");
+	assert.equal(p.shape.shape.children[4].child.offsetX, 5, "setting offsetX");
+	assert.equal(p.shape.shape.children[4].child.offsetY, 0, "setting offsetY");
+
+    assert.equal(p.shape.shape.children[5].child.x, 40, "setting the abscissa of the child");
+	assert.equal(p.shape.shape.children[5].child.y, 5, "setting the ordinate of the child");
+	assert.equal(p.shape.shape.children[5].child.offsetX, 5, "setting offsetX");
+	assert.equal(p.shape.shape.children[5].child.offsetY, 0, "setting offsetY");
+
+    assert.equal(p.shape.shape.children[6].child.x, 60, "setting the abscissa of the child");
+	assert.equal(p.shape.shape.children[6].child.y, 5, "setting the ordinate of the child");
+	assert.equal(p.shape.shape.children[6].child.offsetX, 5, "setting offsetX");
+	assert.equal(p.shape.shape.children[6].child.offsetY, 0, "setting offsetY");
 });
 
 QUnit.test("add mouseleave event on panel", assert => {
@@ -293,3 +311,14 @@ QUnit.test("add onclick event on place", assert => {
 	    ev = e;
     assert.ok(ev, "onclick event");
 });
+
+/****************************place configuration**********************************/
+QUnit.test("set the type of the place", assert => {
+    var p = new Place();
+
+    assert.equal(p.type, 'intermediary', "by default type is intermediary");
+
+    p.setType('start');
+
+    assert.equal(p.type, 'start', "type is correctly setted");
+ });

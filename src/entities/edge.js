@@ -17,7 +17,8 @@ class Edge {
 	    this.direction = props.direction;
 
 	    this.shape = aya.Link(src.comp.shape.shape.uuid,
-			                  dest.comp.shape.shape.uuid);
+			                  dest.comp.shape.shape.uuid,
+                              props.altpath);
         this.shape.line.children.map(({child})=>{
             child.setStyles({"fill": "black"});
         });

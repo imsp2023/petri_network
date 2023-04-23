@@ -16,3 +16,7 @@ creation de makefile
 	automatiser le review
 	ajout de tag 
 
+
+(pour david): mettre a jour les attribut de link dans le constructor. (necessaire pour le save	)
+mettre des titles pour les actions
+[CA] à finaliser
