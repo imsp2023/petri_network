@@ -1,7 +1,8 @@
 try {
 	var aya = new aya.Init(2000, 2000);
 	aya.config.link.end_start = ' ';
-	Component.initSvgEvents(aya.svg);
+    console.log(aya.config);
+    Component.initSvgEvents(aya.svg);
 	layout.init(40, 80, 2000, 2000);
 }
 catch (e) {

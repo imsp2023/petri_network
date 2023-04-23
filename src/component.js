@@ -112,11 +112,10 @@ class Component{
     }
     
     addConnector(type){
-        console.log('addconnector removePanel');
-        console.log(this.comp.shape);
+        /*  test in case of edge */
+        if(this.comp.removePanel)
+            this.comp.removePanel();
 
-        if(this.comp.shape.panelPos >= 0)
-	        this.comp.removePanel();
 	    if(type == this.type)
 	        return;
 
@@ -198,8 +197,14 @@ class Component{
 	            layout.umark(Math.floor(this.comp.shape.shape.x/layout.cellW),
 			                 Math.floor(this.comp.shape.shape.y/layout.cellH));
 	            this.comp.shape.shape.svg.removeChild(this.comp.shape.shape.c_svg);
-	            Register.clear(this.comp.shape.uuid);
-            }/* TODO: voir avec David pour la suppression des edges */
+
+            }else/** TODO: voir avec David pour la suppression des edges
+                  * harmoniser la suppression pour tous
+                  * */
+                this.comp.shape.removeFromDOM();
+            Register.clear(this.type != 'edge' ?
+                           this.comp.shape.uuid:
+                           this.comp.shape.line.uuid);
 	    }
 	    else if(type == 'andsplit'){
 	        var i, lyt, p, t, e, cur, obj={};
@@ -217,9 +222,7 @@ class Component{
 		        e = new Component('edge', {src: cur.comp.shape.uuid,
 					                       dest: p.comp.shape.uuid,
 					                       direction: 't2p'});
-                //e.comp.shape.redraw();
-
-		        cur = p;
+            	cur = p;
 		        lyt = layout.getClosestPosition(Math.floor(cur.comp.shape.shape.x/layout.cellW),
 						                        Math.floor(cur.comp.shape.shape.y/layout.cellH));
 		        obj.x = lyt.x*layout.cellW;
@@ -229,8 +232,7 @@ class Component{
 		        e = new Component('edge', {src: cur.comp.shape.uuid,
 					                       dest: t.comp.shape.uuid,
 					                       direction: 'p2t'});
-                //e.comp.shape.redraw();
-	        }
+            }
 	    }else if(type == 'xorsplit'){
 	        var lyt, p, t, e, cur, obj={};
 
@@ -244,7 +246,6 @@ class Component{
 		    e = new Component('edge', {src: this.comp.shape.uuid,
 					                   dest: t.comp.shape.uuid,
 					                   direction: 'p2t', cond:''});
-            //e.comp.shape.redraw();
 
             lyt = layout.getClosestPosition(Math.floor(t.comp.shape.shape.x/layout.cellW),
 						                        Math.floor(t.comp.shape.shape.y/layout.cellH));
@@ -256,7 +257,6 @@ class Component{
 		    e = new Component('edge', {src: t.comp.shape.uuid,
 					                   dest: p.comp.shape.uuid,
 					                   direction: 't2p'});
-            //e.comp.shape.redraw();
 
             lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
 						                        Math.floor(this.comp.shape.shape.y/layout.cellH));
@@ -267,14 +267,12 @@ class Component{
             t = new Component('transition', obj);
 		    e = new Component('edge', {src: this.comp.shape.uuid,
 					                   dest: t.comp.shape.uuid,
-					                   direction: 'p2t', cond:''});
-            //e.comp.shape.redraw();
+					                   direction: 'p2t', cond:'foo'});
 
             e = new Component('edge', {src: t.comp.shape.uuid,
 					                   dest: p.comp.shape.uuid,
 					                   direction: 't2p'});
-            e.comp.shape.redraw();
-	    }else if(type == 'multichoice'){
+        }else if(type == 'multichoice'){
 	        var i, lyt, p, p2, t, t0, t2, t3, e, cur, obj={};
 
             lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
@@ -287,7 +285,6 @@ class Component{
 		    e = new Component('edge', {src: this.comp.shape.uuid,
 					                   dest: t0.comp.shape.uuid,
 					                   direction: 'p2t'});
-            e.comp.shape.redraw();
 
             for(i=0; i<2; i++){
                 lyt = layout.getClosestPosition(Math.floor(t0.comp.shape.shape.x/layout.cellW),
@@ -321,12 +318,10 @@ class Component{
                 e = new Component('edge', {src: p.comp.shape.uuid,
 					                       dest: t.comp.shape.uuid,
 					                       direction: 'p2t', cond:''});
-                //e.comp.shape.redraw();
 
                 e = new Component('edge', {src: p.comp.shape.uuid,
 					                       dest: t2.comp.shape.uuid,
 					                       direction: 'p2t', cond:''});
-                e.comp.shape.redraw();
 
                 lyt = layout.getClosestPosition(Math.floor(t.comp.shape.shape.x/layout.cellW),
 						                        Math.floor(t.comp.shape.shape.y/layout.cellH));
@@ -359,7 +354,6 @@ class Component{
                 e = new Component('edge', {src: p.comp.shape.uuid,
 					                       dest: t3.comp.shape.uuid,
 					                       direction: 'p2t'});
-                e.comp.shape.redraw();
             }
         }
         else if(type == 'dowhile'){
@@ -383,19 +377,17 @@ class Component{
             e = new Component('edge', {src: this.comp.shape.uuid,
 	    				               dest: p.comp.shape.uuid,
 	    				               direction: 't2p'});
-            //e.comp.shape.redraw();
 
             e = new Component('edge', {src: p.comp.shape.uuid,
 	    				               dest: this.comp.shape.uuid,
 	    				               direction: 'p2t',
                                        altpath: true, cond:''
                                       });
-            //e.comp.shape.redraw();
 
             e = new Component('edge', {src: p.comp.shape.uuid,
 	    				               dest: t.comp.shape.uuid,
 	    				               direction: 'p2t', cond:''});
-            //e.comp.shape.redraw();
+
             this.comp.setGate('xor_join');
 	    }else if(type == 'while'){
 	        var i, lyt, p, t, e, obj={};
@@ -410,7 +402,6 @@ class Component{
             e = new Component('edge', {src: this.comp.shape.uuid,
 	    				               dest: t.comp.shape.uuid,
 	    				               direction: 'p2t'});
-            //e.comp.shape.redraw();
 
 	        lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
 	    					                Math.floor(this.comp.shape.shape.y/layout.cellH));
@@ -423,7 +414,6 @@ class Component{
             e = new Component('edge', {src: this.comp.shape.uuid,
 	    				               dest: t.comp.shape.uuid,
 	    				               direction: 'p2t', cond:''});
-            //e.comp.shape.redraw();
 
             e = new Component('edge', {src: t.comp.shape.uuid,
 	    				               dest: this.comp.shape.uuid,
@@ -445,7 +435,6 @@ class Component{
 	    				               dest: t.comp.shape.uuid,
 	    				               direction: 't2p'});
             e.comp.shape.redraw();
-
 
             for(i=0; i<2; i++){
                 lyt = layout.getClosestPosition(Math.floor(t.comp.shape.shape.x/layout.cellW),
@@ -474,8 +463,6 @@ class Component{
                 e = new Component('edge', {src: p.comp.shape.uuid,
 	    				               dest: t2.comp.shape.uuid,
 	    				               direction: 'p2t'});
-                e.comp.shape.redraw();
-
                 if(!i){
                     lyt = layout.getClosestPosition(Math.floor(t2.comp.shape.shape.x/layout.cellW),
 	    					                        Math.floor(t2.comp.shape.shape.y/layout.cellH));
@@ -490,17 +477,20 @@ class Component{
                 e = new Component('edge', {src: t2.comp.shape.uuid,
 	    				                   dest: p2.comp.shape.uuid,
 	    				                   direction: 't2p'});
-                e.comp.shape.redraw();
             }
+
+            ca[0].comp.ca = ca[1].comp.name;
+            ca[0].comp.cauuid = ca[1].comp.shape.shape.uuid;
+
+            ca[1].comp.ca = ca[0].comp.name;
+            ca[1].comp.cauuid = ca[0].comp.shape.shape.uuid;
+
+            e = new Component('edge', {src: ca[0].comp.shape.shape.uuid,
+	            			           dest: ca[1].comp.shape.shape.uuid,
+	            			           direction: 'ca'});
 	    }
 
-        ca[0].comp.ca = ca[1].comp.name;
-        ca[0].comp.cauid = ca[1].comp.shape.shape.uuid;
 
-        ca[1].comp.ca = ca[0].comp.name;
-        ca[1].comp.cauid = ca[O].comp.shape.shape.uuid;
-
-        /* TODO: mettre le lien cancel activity */
     }
     
     onMouseDown(){
@@ -585,14 +575,10 @@ class Component{
     }
 
     onclick() {
-        if(Component.config.node)
+        if(Component.config.node == this)
             Component.config.node = null;
         else
             Component.config.node = this;
-
-        console.log('OOONNCLICK');
-        console.log(Component.config.node);
-
     }
     
     save(){
