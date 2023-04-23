@@ -30,11 +30,15 @@ class Place {
 var layout = {
     grid: [],
     init : (cw, ch, w, h)=>{
-	var i;
-	layout.cellW = cw; layout.cellH = ch;
-	layout.gridW = w; layout.gridH = h;
-	for(i=0; i < w*h; i++)
-	    layout.grid.push(0);
+	    var i;
+	    layout.cellW = cw; layout.cellH = ch;
+	    layout.gridW = w; layout.gridH = h;
+	    layout.gridW = w; layout.gridH = h;
+        layout.ncols = layout.gridW/layout.cellW;
+        layout.nligs = layout.gridH/layout.cellH;
+
+	    for(i=0; i < layout.ncols*layout.nligs; i++)
+	        layout.grid.push(false);
     },
     getClosestPosition: (x, y)=>{layoutClosest++; return {x:x+2,y:y+2}},
     mark: (x, y)=>{layoutMark++; console.log('mark');},
