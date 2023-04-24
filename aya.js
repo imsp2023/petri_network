@@ -42,34 +42,39 @@
 	    },
 
 	    line : {
-	        fill : "black",
-	        strokeWidth : "1pt",
-	        strokeDasharray : "4"
+	        stroke: "black",
+	        fill : "white",
+	        strokeWidth : "1px",
+	        strokeDasharray : "4",
+	        strokelinejoin: "round"
 	    },
 	    link: {
 		type: "broke",
-	        end_start : "triangle",
+	        end_start : "cirle",
 	        end_dest : "triangle",
 	    },
 	    text : {
 	        fill : "black",
-	        fontfamily: "helvetica",
-	        fontsize: 15,
-	        size: 80,
-	        fillOpacity : "100",
-	        stroke : "black",
-	        strokeWidth : "0.5pt",
-	        strokeOpacity : 100,
-	        strokeDasharray : 10.5,
-	        strokeDashoffset : 10.5,
+	        fontfamily: "sans-serif",
+	        fontstyle: "normal", // normal || italic || oblic
+	        fontsize: "medium", // smaller || value in em unit
+	        fontweight: "normal", // normal || bold || bolder || lighter
+	        size: 100,
+	        textanchor: "middle",  //start || middle || end 
 	    },
 	    ends : {
 	        tri: {
-	            h: 10,
-	            base: 10,
+	            h: 8,
+	            base: 8,
+	            fill: "black",
+	            stroke: "black",
+	            strokeWidth: "1px"
 	        },
 	        circle: {
-	            r: 10
+	            r: 3.5,
+	            fill: "white",
+	            stroke: "black",
+	            strokeWidth: "1px"
 	        },
 	        lozenge: {
 
@@ -337,13 +342,58 @@
 	    }
 	    
 	    setPath(points = [{}]){
-		this.path_is_set = true;
+	        this.path_is_set = true;
 	        this.p = "M "+  (this.x) + ","+ (this.y) + " ";
 
 	        points.map((pt)=>{
-	            this.p += "L"  + (pt.x) + ","+ (pt.y) + " ";
+	            this.p +=  "L "  + (pt.x) + ","+ (pt.y) + " ";
 	        });
-	        this.p += "L" + (this.dest_x)  + "," + (this.dest_y);
+	        this.p += "L " +  (this.dest_x)  + "," + (this.dest_y);
+	    }
+
+	    setPathCur(points = [{}]){
+	        this.path_is_set = true;
+	        var vertical = false;
+	        var y_inverse = 1;
+	        var x_inverse = 1;
+	        var i_inverse = 1;
+	        var i_xinverse = 1;
+	        this.p = "M "+  (this.x) + ","+ (this.y) + " ";
+
+	        if ((this.y < points[0].y && this.dest_y < points[1].y) ||
+	            (this.y > points[0].y && this.dest_y > points[1].y))
+	            i_inverse = -1;
+
+	        if ((this.x < points[0].x && this.dest_x < points[1].x) ||
+	            (this.x > points[0].x && this.dest_x > points[1].x))
+	            i_xinverse = -1;
+
+	        if (this.x > this.dest_x)
+	            x_inverse = -1;
+
+	        if (this.dest_y > this.y)
+	            y_inverse = -1;
+
+	        if (points[0].x == points[1].x)
+	            vertical = true;
+	        
+	        for (var i = 0; i < points.length; i++){
+	            if (vertical){
+	                this.p += "L " + (points[i].x - 5 * (i == 0) * x_inverse * i_xinverse) + "," + (points[i].y + 5 * i * y_inverse) + " ";
+
+	                this.p += "C " + (points[i].x - 2.5 * (i == 0) * x_inverse * i_xinverse) + "," + (points[i].y + 2.5 * i * y_inverse) + " , " + 
+	                                (points[i].x  + 2.5 * i * x_inverse) + "," + (points[i].y - 2.5 * (i == 0) * y_inverse) + " , " + 
+	                                (points[i].x + 5 * i * x_inverse) + "," + (points[i].y - 5 * (i == 0) * y_inverse); 
+	            }
+	            else {
+	                this.p += "L " + (points[i].x - 5 * i * x_inverse) + "," + (points[i].y + 5 * y_inverse *  !i) + " ";
+	        
+	                this.p += "C " + (points[i].x - 2.5 * i * x_inverse) + "," + (points[i].y + 2.5 * y_inverse * !i) + " , " + 
+	                                (points[i].x + 2.5 * x_inverse * !i) + "," + (points[i].y -( 2.5 * y_inverse * i * i_inverse)) + " , " + 
+	                                (points[i].x + 5 * x_inverse * !i) + "," + (points[i].y - 5 * y_inverse * i * i_inverse); 
+	            }
+	        }
+	        this.p += "L " + (this.dest_x) + "," + (this.dest_y) + " ";
 	    }
 
 	    draw(){
@@ -378,6 +428,7 @@
 	        });
 	        this.addEvent("mouseover", (e) => {
 	            Events.mouseovercb(e);
+	            this.c_svg.setAttribute("class","move");
 	        });
 	    }
 
@@ -552,6 +603,188 @@
 	}
 
 	/**
+	 * @class
+	 * 
+	 * @description
+	 * 
+	 */
+	class Text{
+	    constructor(uuid, x = 0, y = 0, text = "text", size = 0, dest_x, dest_y){
+
+	        this.uuid = uuid;
+
+	        this.x = x;
+	        this.y = y;
+
+	        if (dest_x && dest_y){
+	            this.dest_x = dest_x;
+	            this.dest_y =dest_y;
+	        }
+	        else if (size)
+	            this.size = size;
+	        else 
+	            this.size = config.text.size;
+
+	        this.text = text;
+
+	        this.type = 'text';
+
+	        this.svg = config.svg;
+	        
+	        
+	        this.events = {};
+	        
+	        this.offsetX = 0;
+	        this.offsetY = 0;
+	        
+	        this.centerX = 0;
+	        this.centerY = 0;
+	        
+	        this.angle = 0;
+	        
+	        this.title = "";
+	        
+	        this.c_svg = null;
+	        this.textPath = null;
+	        this.path_text = null;
+	    };
+
+	    addEvent(event, callback){
+	        this.c_svg.addEventListener(event, callback);
+	        this.events[event] = callback;
+	    }
+	    
+	    deleteEvent(event){
+	        var callback = this.events[event];
+	        this.c_svg.removeEventListener(event, callback);
+	        delete this.events[event];
+	    }
+
+	    /**
+	     * *@description
+	     * This method allows us to delete all events defined on the c_svg property.
+	     */
+	    deleteAllEvents(){
+	        Object.keys(this.events).map((event) => {
+	            this.deleteEvent(event);
+	        });
+	    }
+
+	    setStyles(o){
+	        if (o.fill)
+	          this.c_svg.setAttribute("fill", o.fill);
+	        if (o.stroke)
+	          this.c_svg.setAttribute("stroke", o.stroke);
+	        if (o.strokewidth)
+	          this.c_svg.setAttribute("stroke-width", o.strokewidth);
+	        if (o.fillopacity)
+	          this.c_svg.setAttribute("fill-opacity", o.fillopacity);
+	        if (o.strokeopacity)
+	          this.c_svg.setAttribute("stroke-opacity", o.strokeopacity);
+	          if (o.strokedasharray)
+	          this.c_svg.setAttribute("stroke-dasharray", o.strokedasharray);
+	        if (o.strokedashoffset)
+	          this.c_svg.setAttribute("stroke-dashoffset", o.strokedashoffset);
+	        if (o.fontsize)
+	            this.c_svg.setAttribute("font-size", o.fontsize);
+	        if (o.fontfamily)
+	            this.c_svg.setAttribute("font-family", o.fontfamily);
+	        if (o.fontstyle)        
+	            this.c_svg.setAttribute("font-style", o.fontstyle);
+	        if (o.wordspacing)
+	            this.c_svg.setAttribute("word-spacing", o.wordspacing);
+	        if (o.letterspacing)
+	            this.c_svg.setAttribute("letter-spacing", o.letterspacing);
+	        if (o.textlength)
+	            this.c_svg.setAttributeNS(null, "textLength", o.textlength);
+	    }
+
+	    draw(){
+	        const ns = "http://www.w3.org/2000/svg";
+	        var p = "M " + this.x + "," + this.y + " ";
+
+	        if (this.dest_x)
+	            p += this.dest_x + "," + this.dest_y;
+	        else
+	            p += this.x + this.size + "," + this.y;
+
+	        this.path_text = document.createElementNS(ns,'path');
+	        this.path_text.setAttribute("id", _uuid.generate());
+	        this.path_text.setAttribute("d", p);
+	        this.path_text.setAttribute("stroke", "red");
+
+	        this.svg.appendChild(this.path_text);
+
+	        this.c_svg = document.createElementNS(ns, "text");
+	        this.c_svg.setAttribute("id", _uuid.generate());
+	        this.c_svg.setAttributeNS(null, "letter-spacing", "0");
+	        this.c_svg.setAttributeNS(null, "font-family", config.text.fontfamily);
+	        this.c_svg.setAttributeNS(null, "font-size", config.text.fontsize);
+	        this.c_svg.setAttributeNS(null, "font-style", config.text.fontstyle);
+
+	        this.textPath = document.createElementNS(ns, "textPath");
+	        this.textPath.setAttribute("id", _uuid.generate());
+	        this.textPath.setAttribute("href", "#" + this.path_text.getAttribute("id"));
+	        this.textPath.setAttribute("startOffset", "50%");
+	        this.textPath.setAttribute("text-anchor", config.text.textanchor);
+	        this.textPath.textContent = this.text;
+
+	        this.c_svg.appendChild(this.textPath);
+	        this.svg.appendChild(this.c_svg);
+
+	        this.title = document.createElementNS(ns, "title");
+
+	        this.title.textContent = this.text;
+
+	        this.c_svg.appendChild(this.title);
+
+	        this.svg.appendChild(this.c_svg);
+	    }
+
+	    redraw(){
+	        this.path_text.remove();
+	        this.c_svg.remove();
+	        this.textPath.remove();
+	        this.draw();
+	    }
+	    
+	    shift(dx, dy){
+	        this.x += dx;
+	        this.y += dy;
+	        if (this.dest_x){
+	            this.dest_x += dx;
+	            this.dest_y += dy;
+	        }
+	    }
+	    
+	    removeFromDOM(){
+	        this.path_text.remove();
+	        this.c_svg.remove();
+	        this.textPath.remove();
+	    }
+
+	    setOffsetX(x){
+	        this.offsetX = x;
+	    }
+
+	    setOffsetY(y){
+	        this.offsetY = y;
+	    }
+
+	    setText(text){
+	        this.text = text;
+	    }
+
+	    getOffsetX(){
+	        return this.offsetX;
+	    }
+
+	    getOffsetY(){
+	        return this.offsetY;
+	    }
+	}
+
+	/**
 	 * @class Link
 	 */
 	class Link
@@ -587,6 +820,7 @@
 		else
 		    this.end_dest = config.link.end_dest;
 
+	    this.altpath = userconfig.altpath ? true : false;
 
 		if (this.subtype != "broke")
 		    obj = this.optimal(src, dest);
@@ -620,168 +854,303 @@
 		if (this.end_dest)
 		    this.addEnd(this.end_dest, "destination");
 
+	    this.text = null;
+	    this.text_c_svg = null;
 		_Register.add(this);
 	    }
 
 	    addEnd(type, target){
-		if (type != "triangle")
-		    return;
-		var x, y, h, base, angle, dxa, dya, dx, dy, obj = {};
-		var line_x, line_y, line_dest_x, line_dest_y;
+	        var x, y, line_x, line_y, line_dest_x, line_dest_y, obj = {}, angle, c_svg = null;
+	        var r = config.ends.circle.r, h = config.ends.tri.h;	
 
-		line_x = this.line.x;
-		line_y = this.line.y;
-		line_dest_x = this.line.dest_x;
-		line_dest_y = this.line.dest_y;
+	        const ns = "http://www.w3.org/2000/svg";
 
-		if (type == "triangle"){
-		    h = config.ends.tri.h;
-		    base = config.ends.tri.base;
-		    angle = this.line.inclination();
-	   	}
-		if (target == "source"){
-		    x = this.line.x;
-		    y = this.line.y;
+	        line_x = this.line.x;
+	        line_y = this.line.y;
+	        line_dest_x = this.line.dest_x;
+	        line_dest_y = this.line.dest_y;
+	        angle = this.line.inclination();
 
-		    if (this.src_end_csvg)
-			this.src_end_csvg.remove();
+	        if (type != "triangle" && type != "circle")
+	            return;
 
-		    if ((this.line.x != this.line.c1.x &&
-	                this.line.c1.x == (this.line.x + this.line.dest_x)/2 &&
-	                this.line.x != this.line.dest_x) ||
-	                (this.line.y != this.line.c1.y &&
-	                this.line.c1.y == (this.line.y + this.line.dest_y)/2 &&
-	                this.line.x != this.line.dest_x)){
+	        if (target == "source"){
+	            x = this.line.x;
+	            y = this.line.y;
 
-	                line_dest_x = this.line.c1.x;
-	                line_dest_y = this.line.c1.y;
-	            }
-		}
-		else if (target == "destination"){
-		    x = this.line.dest_x;
-		    y = this.line.dest_y;
-		    h = -h;
+	            if (this.src_end_csvg)
+	                this.src_end_csvg.remove();
 
-		    if (this.dest_end_csvg)
-			this.dest_end_csvg.remove();
+	            if (this.line.x != this.line.c1.x &&
+	                this.line.y != this.line.c1.y){
+	    
+	                    line_dest_x = this.line.c1.x;
+	                    line_dest_y = this.line.c1.y;
+	                }
+	        }
+	        else if (target == "destination"){
+	            x = this.line.dest_x;
+	            y = this.line.dest_y;
+	            h = -h;
+	            r = -r;
 
-		    if ((this.line.dest_x != this.line.c2.x &&
-			 this.line.c2.x == (this.line.x + this.line.dest_x)/2 &&
-	                 this.line.x != this.line.dest_x) ||
-	                (this.line.dest_y != this.line.c2.y &&
-	                 this.line.c2.y == (this.line.y + this.line.dest_y)/2 &&
-	                 this.line.x != this.line.dest_x)){
-
-	                line_x = this.line.c2.x;
-	                line_y = this.line.c2.y;
-		    }
-		}
-	        if (line_y == line_dest_y){
-	            if (line_x < line_dest_x){
-	                obj.x1 = x;
-	                obj.y1 = y;
-
-	                obj.x2 = x + h;
-	                obj.y2 = y - base / 2;
-
-	                obj.x3 = x + h;
-	                obj.y3 = y + base / 2;
-	            }
-	            else {
-	                obj.x1 = x;
-	                obj.y1 = y;
-
-	                obj.x2 = x - h;
-	                obj.y2 = y + base / 2;
-
-	                obj.x3 = x - h;
-	                obj.y3 = y - base / 2;
+	            if (this.dest_end_csvg)
+	                this.dest_end_csvg.remove();
+	            if (this.line.x != this.line.c2.x &&
+	                this.line.y != this.line.c2.y){
+	    
+	                    line_x = this.line.c2.x;
+	                    line_y = this.line.c2.y;
 	            }
 	        }
-	        else if (line_x == line_dest_x){
-	            if (line_y < line_dest_y){
-	                obj.x1 = x;
-	                obj.y1 = y;
 
-	                obj.x2 = x + base / 2;
-	                obj.y2 = y + h;
+	        if (type == "triangle"){
+	            var base, dxa, dya, dx, dy;
 
-	                obj.x3 = x - base / 2;
-	                obj.y3 = y + h;
+	            base = config.ends.tri.base;
+
+	            if (line_y == line_dest_y){
+	                if (line_x < line_dest_x){
+	                    obj.x1 = x;
+	                    obj.y1 = y;
+	    
+	                    obj.x2 = x + h;
+	                    obj.y2 = y - base / 2;
+	    
+	                    obj.x3 = x + h;
+	                    obj.y3 = y + base / 2;
+	                }
+	                else {
+	                    obj.x1 = x;
+	                    obj.y1 = y;
+	    
+	                    obj.x2 = x - h;
+	                    obj.y2 = y + base / 2;
+	    
+	                    obj.x3 = x - h;
+	                    obj.y3 = y - base / 2;
+	                }
+	            }
+	            else if (line_x == line_dest_x){
+	                if (line_y < line_dest_y){
+	                    obj.x1 = x;
+	                    obj.y1 = y;
+	    
+	                    obj.x2 = x + base / 2;
+	                    obj.y2 = y + h;
+	    
+	                    obj.x3 = x - base / 2;
+	                    obj.y3 = y + h;
+	                }
+	                else {
+	                    obj.x1 = x;
+	                    obj.y1 = y;
+	    
+	                    obj.x2 = x - base / 2;
+	                    obj.y2 = y - h;
+	    
+	                    obj.x3 = x + base / 2;
+	                    obj.y3 = y - h;
+	                }
 	            }
 	            else {
-	                obj.x1 = x;
-	                obj.y1 = y;
-
-	                obj.x2 = x - base / 2;
-	                obj.y2 = y - h;
-
-	                obj.x3 = x + base / 2;
-	                obj.y3 = y - h;
+	                dxa = h * Math.cos(angle);
+	                dya = h * Math.sin(angle < 0 ? - angle : angle);
+	    
+	                dy = (base / 2) * Math.cos(angle);
+	                dx = (base / 2) * Math.sin(angle < 0 ? - angle : angle);
+	    
+	                if (angle < 0){
+	                    if (line_x < line_dest_x){
+	                        obj.x1 = x;
+	                        obj.y1 = y;
+	    
+	                        obj.x2 = x + dxa + dx;
+	                        obj.y2 = y + dya - dy;
+	    
+	                        obj.x3 = x + dxa - dx;
+	                        obj.y3 = y + dya + dy;
+	                    }
+	                    else if (line_x > line_dest_x){
+	                        obj.x1 = x;
+	                        obj.y1 = y;
+	    
+	                        obj.x2 = x - dxa + dx;
+	                        obj.y2 = y - dya - dy;
+	    
+	                        obj.x3 = x - dxa - dx;
+	                        obj.y3 = y - dya + dy;
+	                    }
+	                }
+	                else {
+	                    if (line_x < line_dest_x){
+	                        obj.x1 = x;
+	                        obj.y1 = y;
+	    
+	                        obj.x2 = x + dxa - dx;
+	                        obj.y2 = y - dya - dy;
+	    
+	                        obj.x3 = x + dxa + dx;
+	                        obj.y3 = y - dya + dy;
+	                    }
+	                    else if (line_x > line_dest_x){
+	                        obj.x1 = x;
+	                        obj.y1 = y;
+	    
+	                        obj.x2 = x - dxa + dx;
+	                        obj.y2 = y + dya + dy;
+	    
+	                        obj.x3 = x - dxa - dx;
+	                        obj.y3 = y + dya - dy;
+	                    }
+	                }
 	            }
+	           
+	            c_svg = document.createElementNS(ns, "path");
+	            var p = "M " + obj.x1 +  "," + obj.y1 + " " + "L " + obj.x2 + "," + obj.y2 + " " + "L " + obj.x3 + "," + obj.y3 + " Z";
+	            c_svg.setAttribute("d", p);
+	            c_svg.setAttribute("id", _uuid.generate());
+	            c_svg.setAttribute("fill", config.ends.tri.fill);
+	            c_svg.setAttribute("stroke", config.ends.tri.stroke);
+	            c_svg.setAttribute("stroke-width", config.ends.tri.strokeWidth);
+	        }
+	        else if (type == "circle"){
+
+	            if (line_y == line_dest_y){
+	                if (line_x < line_dest_x){
+	                   obj.x = x + r;
+	                   obj.y = y;
+	                }
+	                else {
+	                    obj.x = x - r;
+	                    obj.y = y;
+	                }
+	            }
+	            else if (line_x == line_dest_x){
+	                if (line_y < line_dest_y){
+	                    obj.x = x;
+	                    obj.y = y + r;
+	                }
+	                else {
+	                    obj.x = x;
+	                    obj.y = y - r;
+	                }
+	            }
+	            else {
+	                var slope = (line_dest_y - line_y) / (line_dest_x - line_x);
+
+	                if (angle < 0){
+	                    if (line_x < line_dest_x){
+	                        obj.x = x + r * Math.cos(angle);
+	                        obj.y = slope * obj.x + (line_y - slope * line_x);
+	                    }
+	                    else if (line_x > line_dest_x){
+	                        obj.x = x - r * Math.cos(angle);
+	                        obj.y = slope * obj.x + (line_y - slope * line_x);
+	                    }
+	                }
+	                else {
+	                    if (line_x < line_dest_x){
+	                        obj.x = x + r * Math.cos(angle);
+	                        obj.y = slope * obj.x + (line_y - slope * line_x);
+	                    }
+	                    else if (line_x > line_dest_x){
+	                        obj.x = x - r * Math.cos(angle);
+	                        obj.y = slope * obj.x + (line_y - slope * line_x);
+	                    }
+	                }
+	            }
+	            c_svg = document.createElementNS(ns, "circle");
+	            c_svg.setAttribute("cx", obj.x);
+	            c_svg.setAttribute("cy", obj.y);
+	            c_svg.setAttribute("r", config.ends.circle.r);
+	            c_svg.setAttribute("fill", config.ends.circle.fill);
+	            c_svg.setAttribute("stroke", config.ends.circle.stroke);
+	            c_svg.setAttribute("stroke-width", config.ends.circle.strokeWidth);
+	            c_svg.setAttribute("id", _uuid.generate());
+	        }
+	        config.svg.appendChild(c_svg);
+	        if (target == "source")
+	            this.src_end_csvg = c_svg;
+	        if (target == "destination")
+	            this.dest_end_csvg = c_svg;
+	    }
+
+	    addText(text, position){
+	        if (!text)
+	            return;
+	        this.text = text;
+	        if (position != "top" && position != "bottom" && position != "middle")
+	            position = "top";
+	        this.position = position;
+	        if (!this.text_c_svg){
+	            var coordonate = this.textCoordonate();
+	            this.text_c_svg = new Text(_uuid.generate(), coordonate.x, coordonate.y, 
+	                                        this.text, 0, coordonate.dest_x, coordonate.dest_y);
+	            this.text_c_svg.draw();
 	        }
 	        else {
-	            dxa = h * Math.cos(angle);
-	            dya = h * Math.sin(angle < 0 ? - angle : angle);
+	            var coordonate = this.textCoordonate();
+	            this.text_c_svg.x = coordonate.x;
+	            this.text_c_svg.y = coordonate.y;
+	            this.text_c_svg.dest_x = coordonate.dest_x;
+	            this.text_c_svg.dest_y = coordonate.dest_y;
+	            this.text_c_svg.text = this.text;
+	            this.text_c_svg.redraw();
+	        }
+	    }
 
-	            dy = (base / 2) * Math.cos(angle);
-	            dx = (base / 2) * Math.sin(angle < 0 ? - angle : angle);
+	    textCoordonate(){
+	        var c = {
+	            x: 0,
+	            y: 0,
+	            dest_x: 0,
+	            dest_y: 0
+	        };
 
-	            if (angle < 0){
-	                if (line_x < line_dest_x){
-	                    obj.x1 = x;
-	                    obj.y1 = y;
-
-	                    obj.x2 = x + dxa + dx;
-	                    obj.y2 = y + dya - dy;
-
-	                    obj.x3 = x + dxa - dx;
-	                    obj.y3 = y + dya + dy;
-	                }
-	                else if (line_x > line_dest_x){
-	                    obj.x1 = x;
-	                    obj.y1 = y;
-
-	                    obj.x2 = x - dxa + dx;
-	                    obj.y2 = y - dya - dy;
-
-	                    obj.x3 = x - dxa - dx;
-	                    obj.y3 = y - dya + dy;
-	                }
+	        if (this.subtype == "broke"){
+	            if (this.line.c2.y == this.line.dest_y && this.line.dest_x > this.line.c2.x){
+	                //path c2 dest
+	                c.x = this.line.c2.x;
+	                c.y = this.line.c2.y;
+	                c.dest_x = this.line.dest_x;
+	                c.dest_y = this.line.dest_y;
+	            }
+	            else if (this.line.c2.y == this.line.dest_y && this.line.dest_x < this.line.c2.x){
+	                //path c2 dest
+	                c.x = this.line.dest_x;
+	                c.y = this.line.dest_y;
+	                c.dest_x = this.line.c2.x;
+	                c.dest_y = this.line.c2.y;
+	            }
+	            else if (this.line.c1.x < this.line.c2.x){
+	                // path c1 c2
+	                c.x = this.line.c1.x;
+	                c.y = this.line.c1.y;
+	                c.dest_x = this.line.c2.x;
+	                c.dest_y = this.line.c2.y;
 	            }
 	            else {
-	                if (line_x < line_dest_x){
-	                    obj.x1 = x;
-	                    obj.y1 = y;
-
-	                    obj.x2 = x + dxa - dx;
-	                    obj.y2 = y - dya - dy;
-
-	                    obj.x3 = x + dxa + dx;
-	                    obj.y3 = y - dya + dy;
-	                }
-	                else if (line_x > line_dest_x){
-	                    obj.x1 = x;
-	                    obj.y1 = y;
-
-	                    obj.x2 = x - dxa + dx;
-	                    obj.y2 = y + dya + dy;
-
-	                    obj.x3 = x - dxa - dx;
-	                    obj.y3 = y + dya - dy;
-	                }
+	                //path c2 c1
+	                c.x = this.line.c2.x;
+	                c.y = this.line.c2.y;
+	                c.dest_x = this.line.c1.x;
+	                c.dest_y = this.line.c1.y;
+	            }
+	            if (this.position == "top"){
+	                c.y -= 10;
+	                c.dest_y -= 10;
+	            }
+	            else if (this.position == "bottom"){
+	                c.y += 10 + 12; 
+	                c.dest_y += 10 + 12; // 12 for text height
+	            }
+	            else {
+	                c.y += 15/2 - 3;
+	                c.dest_y += 15/2 - 3;
 	            }
 	        }
-		const ns = "http://www.w3.org/2000/svg";
-		var c_svg = document.createElementNS(ns, "path");
-		var p = "M " + obj.x1 +  "," + obj.y1 + " " + "L " + obj.x2 + "," + obj.y2 + " " + "L " + obj.x3 + "," + obj.y3 + " Z";
-		c_svg.setAttribute("d", p);
-		c_svg.setAttribute("id", _uuid.generate());
-		this.line.svg.appendChild(c_svg);
-		if (target == "source")
-		    this.src_end_csvg = c_svg;
-		if (target == "destination")
-		    this.dest_end_csvg = c_svg;
+	        return c;
 	    }
 
 	    removeFromDOM(){
@@ -790,6 +1159,8 @@
 	            config.svg.removeChild(this.src_end_csvg);
 	        if (this.dest_end_csvg)
 	            config.svg.removeChild(this.dest_end_csvg);
+	        if (this.text)
+	            this.text_c_svg.removeFromDOM();
 	        var lk = _Register.find(this.uuid);
 	        _Register.clear(lk.uuid);
 	    }
@@ -799,7 +1170,7 @@
 		    src: 1,
 		    dest: 3,
 		    c1: {},
-		    c2: {}
+		    c2: {},
 		};
 		var inflexion = "horizontal";
 
@@ -814,38 +1185,77 @@
 			obj.dest = 1;
 		    }
 		    if (source.shape.c_points[obj.src].y > destination.shape.c_points[obj.dest].y){
-	                if ((Math.abs(destination.shape.c_points[obj.dest].x - source.shape.c_points[obj.src].x) <= 2 * config.ends.minspace)){
-	                    obj.src = 0;
-	                    obj.dest = 2;
-	                    inflexion = "vertical";
-	                }
+	            if ((Math.abs(destination.shape.c_points[obj.dest].x - source.shape.c_points[obj.src].x) <= 2 * config.ends.minspace)){
+	                obj.src = 0;
+	                obj.dest = 2;
+	                inflexion = "vertical";
+	            }
+	        }
+	        else {
+	            if (Math.abs(destination.shape.c_points[obj.dest].x - source.shape.c_points[obj.src].x) <= 2 * config.ends.minspace){
+	                obj.src = 2;
+	                obj.dest = 0;
+	                inflexion = "vertical";
+	            }
+	        }
+		}
+	    if (this.altpath){
+	        if ((obj.src == 1 && obj.dest == 3) ||
+	            (obj.src == 3 && obj.dest == 1)){
+	            if (source.shape.c_points[obj.src].y < destination.shape.c_points[obj.dest].y){
+	                obj.src = 2;
+	                obj.dest = 2;
 	            }
 	            else {
-	                if (Math.abs(destination.shape.c_points[obj.dest].x - source.shape.c_points[obj.src].x) <= 2 * config.ends.minspace){
-	                    obj.src = 2;
-	                    obj.dest = 0;
-	                    inflexion = "vertical";
-	                }
+	                obj.src = 0;
+	                obj.dest = 0;
 	            }
-		}
+	        }
+	        else if ((obj.src == 0 && obj.dest == 2) ||
+	                (obj.src == 2 && obj.dest == 0)){
+	            obj.src = 3;
+	            obj.dest = 3;
+	        }
+	        inflexion = "altpath";
+	    }
 		if (inflexion == "vertical"){
 	            obj.c1.x = source.shape.c_points[obj.src].x;
 	            obj.c1.y = (source.shape.c_points[obj.src].y + destination.shape.c_points[obj.dest].y) / 2;
 	            obj.c2.x = destination.shape.c_points[obj.dest].x;
 	            obj.c2.y =  (source.shape.c_points[obj.src].y + destination.shape.c_points[obj.dest].y) / 2;
 	        }
-	        else if (inflexion == "horizontal"){
-	            obj.c1.x =  (source.shape.c_points[obj.src].x + destination.shape.c_points[obj.dest].x) / 2;
-	            obj.c1.y = source.shape.c_points[obj.src].y;
-	            obj.c2.x =  (source.shape.c_points[obj.src].x + destination.shape.c_points[obj.dest].x) / 2;
-	            obj.c2.y = destination.shape.c_points[obj.dest].y;
+	    else if (inflexion == "horizontal"){
+	        obj.c1.x =  (source.shape.c_points[obj.src].x + destination.shape.c_points[obj.dest].x) / 2;
+	        obj.c1.y = source.shape.c_points[obj.src].y;
+	        obj.c2.x =  (source.shape.c_points[obj.src].x + destination.shape.c_points[obj.dest].x) / 2;
+	        obj.c2.y = destination.shape.c_points[obj.dest].y;
+	    }
+	    else if (inflexion == "altpath"){
+	        if(obj.src == 0){
+	            obj.c1.x =  source.shape.c_points[obj.src].x;
+	            obj.c1.y = destination.shape.c_points[obj.dest].y - 2 * config.ends.minspace;
+	            obj.c2.x =  destination.shape.c_points[obj.dest].x;
+	            obj.c2.y = destination.shape.c_points[obj.dest].y - 2 * config.ends.minspace;
+	        }
+	        else if (obj.src == 2){
+	            obj.c1.x =  source.shape.c_points[obj.src].x;
+	            obj.c1.y = destination.shape.c_points[obj.dest].y + 2 * config.ends.minspace;
+	            obj.c2.x =  destination.shape.c_points[obj.dest].x;
+	            obj.c2.y = destination.shape.c_points[obj.dest].y + 2 * config.ends.minspace;
 	        }
 	        else {
-	            obj.c1.x = source.shape.c_points[obj.src].x;
+	            obj.c1.x =  source.shape.c_points[obj.src].x - 3 * config.ends.minspace;
 	            obj.c1.y = source.shape.c_points[obj.src].y;
-	            obj.c2.x = destination.shape.c_points[obj.dest].x;
+	            obj.c2.x =  source.shape.c_points[obj.src].x - 3 * config.ends.minspace;
 	            obj.c2.y = destination.shape.c_points[obj.dest].y;
 	        }
+	    }
+	    else {
+	        obj.c1.x = source.shape.c_points[obj.src].x;
+	        obj.c1.y = source.shape.c_points[obj.src].y;
+	        obj.c2.x = source.shape.c_points[obj.src].x;
+	        obj.c2.y = source.shape.c_points[obj.src].y;
+	    }   
 		return obj;
 	    }
 
@@ -868,21 +1278,34 @@
 	        this.line.dest_x = this.destination.x;
 	        this.line.dest_y = this.destination.y;
 
-		if (this.subtype == "broke"){
-		    this.line.c1.x = obj.c1.x;
+		if (this.subtype == "broke"){ 
+	            this.line.c1.x = obj.c1.x;
 	            this.line.c1.y = obj.c1.y;
 	            this.line.c2.x = obj.c2.x;
 	            this.line.c2.y = obj.c2.y;
-		    this.line.setPath([this.line.c1, this.line.c2]);
-		}
+	        if (Math.abs(this.line.y - this.line.dest_y) > 9  &&
+	            (obj.c1.x != obj.c2.x || obj.c1.y != obj.c2.y))
+	            this.line.setPathCur([this.line.c1, this.line.c2]);
+	        else
+	            this.line.setPath([this.line.c1, this.line.c2]);
+	    }
 
-		this.line.redraw();
+	        this.line.redraw();
 
-		if (this.end_start)
-		    this.addEnd(this.end_start, "source");
+	        if (this.end_start)
+	            this.addEnd(this.end_start, "source");
 
-		if (this.end_dest)
-		    this.addEnd(this.end_dest, "destination");
+	        if (this.end_dest)
+	            this.addEnd(this.end_dest, "destination");
+
+	        if (this.text != undefined){ // text must be different of ""
+	            var c = this.textCoordonate();
+	            this.text_c_svg.x = c.x;
+	            this.text_c_svg.y = c.y;
+	            this.text_c_svg.dest_x = c.dest_x;
+	            this.text_c_svg.dest_y = c.dest_y;
+	            this.text_c_svg.redraw();
+	        }
 	    }
 
 	    optimal(src, dest){
@@ -3269,232 +3692,6 @@
 	}
 
 	/**
-	 * @class
-	 * 
-	 * @description
-	 * 
-	 */
-	class Text{
-	    constructor(uuid, x = 0, y = 0, text = "text", size = 0){
-
-	        this.uuid = uuid;
-
-	        this.x = x;
-	        this.y = y;
-
-	        this.size = size;
-
-	        this.text = text;
-
-	        this.type = 'text';
-
-	        this.config = config;
-
-	        this.svg = this.config.svg;
-	        this.c_svg = "";
-
-	        this.events = {};
-
-	        this.offsetX = 0;
-	        this.offsetY = 0;
-
-	        this.centerX = 0;
-	        this.centerY = 0;
-
-	        this.parentWidth = 0;
-	        this.parentHeight = 0;
-
-	        this.parentX = 0;
-	        this.parentY = 0;
-
-	        this.angle = 0;
-
-	        this.tspan = "";
-	        this.title = "";
-
-	        this.path_id = null;
-	    };
-
-	    addEvent(event, callback){
-	        this.c_svg.addEventListener(event, callback);
-	        this.events[event] = callback;
-	    }
-	    
-	    deleteEvent(event){
-	        var callback = this.events[event];
-	        this.c_svg.removeEventListener(event, callback);
-	        delete this.events[event];
-	    }
-
-	    /**
-	     * *@description
-	     * This method allows us to delete all events defined on the c_svg property.
-	     */
-	    deleteAllEvents(){
-	        Object.keys(this.events).map((event) => {
-	            this.deleteEvent(event);
-	        });
-	    }
-
-	    setRotateCenter(centerX, centerY){
-	        this.centerX = centerX;
-	        this.centerY = centerY;
-	    }
-
-	    setRotateAngle(angle){
-	        this.angle = angle;
-	    }
-
-	    setPath(id){
-	        this.path_id = id;
-	    }
-
-	    setStyles(o){
-	        if (o.fill)
-	          this.c_svg.setAttribute("fill", o.fill);
-	        if (o.stroke)
-	          this.c_svg.setAttribute("stroke", o.stroke);
-	        if (o.strokewidth)
-	          this.c_svg.setAttribute("stroke-width", o.strokewidth);
-	        if (o.fillopacity)
-	          this.c_svg.setAttribute("fill-opacity", o.fillopacity);
-	        if (o.strokeopacity)
-	          this.c_svg.setAttribute("stroke-opacity", o.strokeopacity);
-	          if (o.strokedasharray)
-	          this.c_svg.setAttribute("stroke-dasharray", o.strokedasharray);
-	        if (o.strokedashoffset)
-	          this.c_svg.setAttribute("stroke-dashoffset", o.strokedashoffset);
-	        if (o.fontsize)
-	            this.c_svg.setAttribute("font-size", o.fontsize);
-	        if (o.fontfamily)
-	            this.c_svg.setAttribute("font-family", o.fontfamily);
-	        if (o.fontstyle)        
-	            this.c_svg.setAttribute("font-style", o.fontstyle);
-	        if (o.wordspacing)
-	            this.c_svg.setAttribute("word-spacing", o.wordspacing);
-	        if (o.letterspacing)
-	            this.c_svg.setAttribute("letter-spacing", o.letterspacing);
-	        if (o.textlength)
-	            this.c_svg.setAttributeNS(null, "textLength", o.textlength);
-	    }
-	    
-
-	    draw(){
-	        const svgns = "http://www.w3.org/2000/svg";
-
-	        this.c_svg = document.createElementNS(svgns, "text");
-	        this.c_svg.setAttributeNS(null, "x", this.x + this.offsetX);
-	        this.c_svg.setAttributeNS(null, "y", this.y + this.offsetY);
-	        this.c_svg.setAttributeNS(null, "textLength", this.size || this.config.text.size);
-	        this.c_svg.setAttributeNS(null, "id", this.uuid);
-	        this.c_svg.setAttribute("font-family", this.config.text.fontfamily);
-	        this.c_svg.setAttribute("font-size", this.config.text.fontsize);
-	        this.c_svg.setAttributeNS(null, "fill", this.config.text.fill);
-	        this.c_svg.setAttributeNS(null, "stroke", this.config.text.stroke);
-	        this.c_svg.setAttributeNS(null, "stroke-width", this.config.text.strokeWidth);
-	        this.c_svg.setAttributeNS(null, "fill-opacity", this.config.text.fillOpacity);
-	        this.c_svg.setAttributeNS(null, "stroke-dasharray", this.config.text.strokeDasharray);
-	        this.c_svg.setAttributeNS(null, "stroke-dashoffset", this.config.text.strokeDashoffset);
-	        this.c_svg.setAttribute("transform", "rotate(" + `${this.angle}` + "," + `${this.centerX}` + "," + `${this.centerY}` + ")");
-
-	        this.title = document.createElementNS(svgns, "title");
-
-	        this.title.textContent = this.text;
-
-	        this.c_svg.textContent = this.text;
-
-	        this.c_svg.appendChild(this.title);
-
-	        // this.updateWidthText();
-	        this.svg.appendChild(this.c_svg);
-	    }
-
-	    redraw(){
-	    	this.c_svg.setAttributeNS(null, "x", this.x + this.offsetX);
-	        this.c_svg.setAttributeNS(null, "y", this.y + this.offsetY);
-	        this.c_svg.setAttributeNS(null, "textLength", this.size);
-		    this.c_svg.textContent = this.text;
-	        this.c_svg.setAttribute("transform", "rotate(" + `${this.angle}` + "," + `${this.centerX}` + "," + `${this.centerY}` + ")");
-	    }
-	    
-
-	    updateWidthText(marge =  5){
-	        var subString = "", isSoLong = false;
-	        // lenght of text in pixels  || 6 pixels wide by 8 pixels high. 
-	        var validLength = this.parentWidth + this.parentX - this.offsetX;
-	        var deltaLength =( validLength < (this.text.length * 6) ) ? (validLength / 6) : 0;
-
-	        if(deltaLength == 0){
-	            marge = 0;
-	            subString = this.text.substring(0,(this.text.length));
-	        }
-	        else {
-	            subString = this.text.substring(0,(deltaLength  - marge));
-	            isSoLong  = true;
-	        }
-
-	        if(isSoLong)
-	            subString = subString.concat('...');
-
-	        this.tspan.textContent = subString;
-	        this.title.textContent = this.text;
-	    }
-
-	    shift(dx, dy){
-	        this.x += dx;
-	        this.y += dy;
-	    }
-	    
-	    removeFromDOM(){
-	        this.c_svg.textContent = "";
-	    }
-
-	    setOffsetX(x){
-	        this.offsetX = x;
-	    }
-
-	    setOffsetY(y){
-	        this.offsetY = y;
-	    }
-
-	    setText(text){
-	        this.text = text;
-	    }
-
-	    getOffsetX(){
-	        return this.offsetX;
-	    }
-
-	    getOffsetY(){
-	        return this.offsetY;
-	    }
-
-	    getParentWidth(){
-	        return this.parentWidth;
-	    }
-
-	    setParentWidth(width){
-	        this.parentWidth = width;
-	    }
-
-	    getParentHeight(){
-	        return this.parentHeight;
-	    }
-
-	    setParentHeight(height){
-	        this.parentHeight = height;
-	    }
-
-	    setParentX(x){
-	        this.parentX = x;
-	    }
-
-	    setParentY(y){
-	        this.parentY = y;
-	    }
-	}
-
-	/**
 	 * @class FactoryShape
 	 */
 	class Factory
@@ -3802,7 +3999,7 @@
 	        this.grid.redraw();
 	    }
 
-	    _uuid(){
+	    uuid(){
 	        return _uuid;
 	    }
 
@@ -3826,8 +4023,8 @@
 	        return new Circle(_uuid.generate(), x, y, r);
 	    }
 
-	    Text(x = 0, y = 0, text = "text", size = 100){
-	        return new Text(_uuid.generate(), x, y, text, size);
+	    Text(x = 0, y = 0, text = "text", size = 100, dest_x, dest_y){
+	        return new Text(_uuid.generate(), x, y, text, size, dest_x, dest_y);
 	    }
 
 	    Line(x=0, y=0, dest_x = x, dest_y = y){

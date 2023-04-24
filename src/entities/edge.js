@@ -15,7 +15,7 @@ class Edge {
 	    this.src = props.src;
 	    this.dest = props.dest;
 	    this.direction = props.direction;
-        if(props.cond)
+        if(props.cond || props.cond == "")
             this.cond = props.cond;
 
         if(props.direction == 'ca'){
@@ -27,6 +27,11 @@ class Edge {
 	    this.shape = aya.Link(src.comp.shape.shape.uuid,
 			                  dest.comp.shape.shape.uuid,
                               props);
+        if (this.cond != undefined){
+            this.shape.addText(this.cond == '' ? 'a' : this.cond, "top");
+            // if (this.cond == '')
+            //     this.shape.line.setStyles({strokedasharray: "2"});
+        }
         this.shape.line.children.map(({child})=>{
             child.setStyles({"fill": "black"});
         });
