@@ -28,9 +28,12 @@ class Edge {
 			                  dest.comp.shape.shape.uuid,
                               props);
         if (this.cond != undefined){
-            this.shape.addText(this.cond == '' ? 'a' : this.cond, "top");
-            // if (this.cond == '')
-            //     this.shape.line.setStyles({strokedasharray: "2"});
+            //this.shape.addText(this.cond, "top");
+            if (this.cond == '')
+                //this.shape.line.setStyles({strokedasharray: "2"});
+		this.shape.line.setStyles({stroke: "red"});
+	    else
+		this.shape.line.setStyles({stroke: "blue"});
         }
         this.shape.line.children.map(({child})=>{
             child.setStyles({"fill": "black"});
@@ -45,5 +48,13 @@ class Edge {
 		            target.onclick();
 	        });
 
+    }
+
+    setCond(cond){
+	this.cond = cond;
+	if (this.cond == '')
+            this.shape.line.setStyles({stroke: "red"});
+	else
+	    this.shape.line.setStyles({stroke: "blue"});
     }
 }

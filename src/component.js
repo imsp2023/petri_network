@@ -267,7 +267,7 @@ class Component{
             t = new Component('transition', obj);
 		    e = new Component('edge', {src: this.comp.shape.uuid,
 					                   dest: t.comp.shape.uuid,
-					                   direction: 'p2t', cond:"set your condition here"});
+					                   direction: 'p2t', cond:""});
 
             e = new Component('edge', {src: t.comp.shape.uuid,
 					                   dest: p.comp.shape.uuid,
@@ -381,7 +381,7 @@ class Component{
             e = new Component('edge', {src: p.comp.shape.uuid,
 	    				               dest: this.comp.shape.uuid,
 	    				               direction: 'p2t',
-                                       altpath: true, cond:'set your condition here'
+                                       altpath: true, cond:''
                                       });
 
             e = new Component('edge', {src: p.comp.shape.uuid,
@@ -402,7 +402,7 @@ class Component{
 
             e = new Component('edge', {src: this.comp.shape.uuid,
 	    				               dest: t.comp.shape.uuid,
-	    				               direction: 'p2t', cond:"set your condition here"});
+	    				               direction: 'p2t', cond:""});
 
             e = new Component('edge', {src: t.comp.shape.uuid,
 	    				               dest: this.comp.shape.uuid,
