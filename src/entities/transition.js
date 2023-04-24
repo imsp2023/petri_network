@@ -52,10 +52,12 @@ class Transition{
 
 
 	    if(this.type == 'asub' || this.type == 'ssub'){
-	        this.shape.addChild(aya.Rectangle(
-		        this.shape.shape.x,
-		        this.shape.shape.y,
-		        20, 50), {x: 5, y: 5}, null);
+			var child = aya.Rectangle(
+						this.shape.shape.x,
+						this.shape.shape.y,
+						20, 50);
+	        this.shape.addChild(child, {x: 5, y: 5}, null);
+			child.setStyles({fill: "none"});
 	    }else if(this.type == 'clock' || this.type == 'event' ||
                  this.type == 'manual' || this.type == 'automatic'){
 	        this.shape.addChild(aya.Image(
@@ -71,13 +73,14 @@ class Transition{
 	    if(this.type == 'asub' || this.type == 'ssub' ||
            this.type == 'automatic' || this.type == 'manual'){
 	        this.shape.addChild(
-		        aya.Text(this.shape.shape.x,
-			             this.shape.shape.y, this.name),
-		        {x: -aya.config.text.size/2, y: -10}, null);
+		        aya.Text(this.shape.shape.x - 60,
+			             this.shape.shape.y - 10, this.name, 0, this.shape.shape.x + this.shape.shape.width + 60, this.shape.shape.y - 10),
+		        {x: 0, y: 0}, null);
 	    }
 
     }
-    constructor(props={type: 'dummy'}){
+
+	constructor(props={type: 'dummy'}){
 	    var state = '';
 	    //var color = 'white';
         var dim;
@@ -280,7 +283,8 @@ class Transition{
         this.name = name;
         if(this.ca)
             Register.find(this.cauuid).comp.ca = name;
-
+		if (this.shape.shape.children.length == 2)
+			this.shape.shape.children[1].child.text = name;
         this.shape.shape.redraw();
     }
     
@@ -305,7 +309,7 @@ class Transition{
         console.log(dim)  ;
 
         this.completeShape();
-
+		this.shape.shape.redraw();
     }
     
     removeFromDOM(){

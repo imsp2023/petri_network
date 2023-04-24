@@ -245,7 +245,7 @@ class Component{
             t = new Component('transition', obj);
 		    e = new Component('edge', {src: this.comp.shape.uuid,
 					                   dest: t.comp.shape.uuid,
-					                   direction: 'p2t', cond:''});
+					                   direction: 'p2t', cond:""});
 
             lyt = layout.getClosestPosition(Math.floor(t.comp.shape.shape.x/layout.cellW),
 						                        Math.floor(t.comp.shape.shape.y/layout.cellH));
@@ -267,7 +267,7 @@ class Component{
             t = new Component('transition', obj);
 		    e = new Component('edge', {src: this.comp.shape.uuid,
 					                   dest: t.comp.shape.uuid,
-					                   direction: 'p2t', cond:'foo'});
+					                   direction: 'p2t', cond:"set your condition here"});
 
             e = new Component('edge', {src: t.comp.shape.uuid,
 					                   dest: p.comp.shape.uuid,
@@ -381,7 +381,7 @@ class Component{
             e = new Component('edge', {src: p.comp.shape.uuid,
 	    				               dest: this.comp.shape.uuid,
 	    				               direction: 'p2t',
-                                       altpath: true, cond:''
+                                       altpath: true, cond:'set your condition here'
                                       });
 
             e = new Component('edge', {src: p.comp.shape.uuid,
@@ -391,17 +391,6 @@ class Component{
             this.comp.setGate('xor_join');
 	    }else if(type == 'while'){
 	        var i, lyt, p, t, e, obj={};
-
-            lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
-	    					                Math.floor(this.comp.shape.shape.y/layout.cellH));
-	        obj.x = lyt.x*layout.cellW;
-	        obj.y = lyt.y*layout.cellH;
-	        obj.type = 'dummy';
-	        t = new Component('transition', obj);
-
-            e = new Component('edge', {src: this.comp.shape.uuid,
-	    				               dest: t.comp.shape.uuid,
-	    				               direction: 'p2t'});
 
 	        lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
 	    					                Math.floor(this.comp.shape.shape.y/layout.cellH));
@@ -413,13 +402,25 @@ class Component{
 
             e = new Component('edge', {src: this.comp.shape.uuid,
 	    				               dest: t.comp.shape.uuid,
-	    				               direction: 'p2t', cond:''});
+	    				               direction: 'p2t', cond:"set your condition here"});
 
             e = new Component('edge', {src: t.comp.shape.uuid,
 	    				               dest: this.comp.shape.uuid,
 	    				               direction: 't2p',
-                                       altpath: true, cond:''});
-            e.comp.shape.redraw();
+                                       altpath: true});
+			
+			lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
+			Math.floor(this.comp.shape.shape.y/layout.cellH));
+			
+			obj.x = lyt.x*layout.cellW;
+			obj.y = lyt.y*layout.cellH;
+			obj.type = 'dummy';
+			
+			t = new Component('transition', obj);
+
+			e = new Component('edge', {src: this.comp.shape.uuid,
+										dest: t.comp.shape.uuid,
+								  direction: 'p2t', cond: ""});
 
 	    }else if(type == 'deferredchoice'){
 	        var i, lyt, p, p2, t, t2, e, obj={}, ca = [null, null];
