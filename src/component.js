@@ -4,51 +4,51 @@ class Component{
     static state = null;
     static config = {};
     static initSvgEvents(svg){
-	    svg.addEventListener("mousemove", (e)=>{
-	        if(Component.line){
-		        Component.line.dest_x = e.clientX;
-		        Component.line.dest_y = e.clientY;
-		        Component.line.redraw();
-	        }
-	    });
+	svg.addEventListener("mousemove", (e)=>{
+	    if(Component.line){
+		Component.line.dest_x = e.clientX;
+		Component.line.dest_y = e.clientY;
+		Component.line.redraw();
+	    }
+	});
 
-	    svg.addEventListener("mouseup", (e)=>{
-	        console.log('mouseUP SVG');
-	        if(Component.line){
-		        Component.line.removeFromDOM();
-		        Component.line = null;
-		        Component.src = null;
-		        Component.state = null;
-	        }
-	    });
+	svg.addEventListener("mouseup", (e)=>{
+	    console.log('mouseUP SVG');
+	    if(Component.line){
+		Component.line.removeFromDOM();
+		Component.line = null;
+		Component.src = null;
+		Component.state = null;
+	    }
+	});
     }
     constructor(type, props){
 
-	    if (!type || !props)
-	        throw new Error("missing parameter");
-	    else if ((type != 'place' && type != 'edge' && type != 'transition') ||
-		         typeof props != 'object')
-	        throw new Error("wrong parameter");
+	if (!type || !props)
+	    throw new Error("missing parameter");
+	else if ((type != 'place' && type != 'edge' && type != 'transition') ||
+		 typeof props != 'object')
+	    throw new Error("wrong parameter");
 
-	    this.type = type;
+	this.type = type;
 
-	    if(props.x >= 0 && props.y >= 0){
-	        var lyt = layout.fixPoint(props.x, props.y);
-	        props.x = lyt.x;
-	        props.y = lyt.y;
-	    }else{
-	        props.x = 0;
-	        props.y = 0;
+	if(props.x >= 0 && props.y >= 0){
+	    var lyt = layout.fixPoint(props.x, props.y);
+	    props.x = lyt.x;
+	    props.y = lyt.y;
+	}else{
+	    props.x = 0;
+	    props.y = 0;
 
-	    }
+	}
 
-	    props.cWidth = layout.cellW;
-	    props.cHeight = layout.cellH;
-	    this.comp = Factory.getShape(type, props);
-	    if(this.comp == null)
-	        throw new Error ("instantiation failed");
-	    if(type=='transition' || type == 'place')
-	        layout.mark(Math.floor(props.x/layout.cellW),
+	props.cWidth = layout.cellW;
+	props.cHeight = layout.cellH;
+	this.comp = Factory.getShape(type, props);
+	if(this.comp == null)
+	    throw new Error ("instantiation failed");
+	if(type=='transition' || type == 'place')
+	    layout.mark(Math.floor(props.x/layout.cellW),
                         Math.floor(props.y/layout.cellH),
                         this.comp.shape.shape.uuid);
 
@@ -56,59 +56,60 @@ class Component{
         console.log(this)
 
         Register.add(this.type == 'edge'?
-		             this.comp.shape.line.uuid :
-		             this.comp.shape.uuid, this);
+		     this.comp.shape.line.uuid :
+		     this.comp.shape.uuid, this);
+	
     }
     edgeCompleted(){
         var e;
-	    if(!Component.line)
-	        return;
+	if(!Component.line)
+	    return;
 
-	    console.log('completed type='+this.type+ ' x2='+ this.comp.shape.shape.x);
-	    Component.line.removeFromDOM();
+	console.log('completed type='+this.type+ ' x2='+ this.comp.shape.shape.x);
+	Component.line.removeFromDOM();
 
         /* Only p2t  and t2p are allowed */
-	    if(Component.src.type != this.type){
+	if(Component.src.type != this.type){
             var count = {count: 0, altpath: false};
 
 
             Register.forEach(
-		        (item, data)=>{
+		(item, data)=>{
                     console.log('Register');
                     if(item.type=='edge' &&
-		               (item.comp.src == this.comp.shape.uuid ||
-			            item.comp.dest == this.comp.shape.uuid)){
+		       (item.comp.src == this.comp.shape.uuid ||
+			item.comp.dest == this.comp.shape.uuid)){
                         if(this.type == 'transition')
                             data.count++;
                         if(item.comp.src == Component.src.comp.shape.uuid ||
-			               item.comp.dest == Component.src.comp.shape.uuid)
-			                //  data.push(item);
+			   item.comp.dest == Component.src.comp.shape.uuid)
+			    //  data.push(item);
                             data.altpath = true;
-		            }
-		        },
-		        count);
+		    }
+		},
+		count);
 
             /* Set xor_join if transition has more than one place associated */
             if(count.count >= 1)
                 this.comp.setGate('xor_join');
 
-	        e = new Component('edge', {
-		        direction:this.type=='place'?'t2p':'p2t',
-		        src: Component.src.comp.shape.uuid,
-		        dest: this.comp.shape.uuid,
+	    e = new Component('edge', {
+		direction:this.type=='place'?'t2p':'p2t',
+		src: Component.src.comp.shape.uuid,
+		dest: this.comp.shape.uuid,
                 altpath: count.altpath
-	        });
+	    });
             //e.comp.shape.redraw();
-	        layout.markEdge(Math.floor(Component.src.comp.shape.shape.x/layout.cellW),
-			                Math.floor(Component.src.comp.shape.shape.y/layout.cellH),
-			                Math.floor(this.comp.shape.shape.x/layout.cellW),
-			                Math.floor(this.comp.shape.shape.y/layout.cellH));
+	    layout.markEdge(Math.floor(Component.src.comp.shape.shape.x/layout.cellW),
+			    Math.floor(Component.src.comp.shape.shape.y/layout.cellH),
+			    Math.floor(this.comp.shape.shape.x/layout.cellW),
+			    Math.floor(this.comp.shape.shape.y/layout.cellH));
 
-	    }
+	}
 
-	    Component.line = null;
-	    Component.src = null;
-	    Component.state = null;
+	Component.line = null;
+	Component.src = null;
+	Component.state = null;
     }
     
     addConnector(type){
@@ -116,87 +117,87 @@ class Component{
         if(this.comp.removePanel)
             this.comp.removePanel();
 
-	    if(type == this.type)
-	        return;
+	if(type == this.type)
+	    return;
 
-	    if(type == 'edge'){
-	        console.log('addconnector edge');
-	        Component.state = 'linking'
-	        Component.src = this;
-	        Component.line = aya.Line(this.comp.shape.shape.c_points[0].x, this.comp.shape.shape.c_points[0].y);
-	        Component.line.draw();
+	if(type == 'edge'){
+	    console.log('addconnector edge');
+	    Component.state = 'linking'
+	    Component.src = this;
+	    Component.line = aya.Line(this.comp.shape.shape.c_points[0].x, this.comp.shape.shape.c_points[0].y);
+	    Component.line.draw();
 
-	    }else if(type == 'transition' || type == 'place'){
-	        var props = {}, tr, pos, edge, step, i, posx, posy;
+	}else if(type == 'transition' || type == 'place'){
+	    var props = {}, tr, pos, edge, step, i, posx, posy;
 
-	        if(type == 'place')
-		        props.type = 'intermediary';
-	        else
-		        props.type = 'dummy'
+	    if(type == 'place')
+		props.type = 'intermediary';
+	    else
+		props.type = 'dummy'
 
-	        /* TODO: genereate name*/
-	        props.name = 'generate automatic name';
-	        console.log('addconnector');
+	    /* TODO: genereate name*/
+	    props.name = 'generate automatic name';
+	    console.log('addconnector');
 
-	        posx = Math.floor(this.comp.shape.shape.x/layout.cellW);
-	        posy = Math.floor(this.comp.shape.shape.y/layout.cellH);
-	        if((pos=layout.getClosestPosition(posx, posy))){
-		        props.x = pos.x*layout.cellW;
-		        props.y = pos.y*layout.cellH;
-	        }else{
-		        props.x = 0;
-		        props.y = 0;
+	    posx = Math.floor(this.comp.shape.shape.x/layout.cellW);
+	    posy = Math.floor(this.comp.shape.shape.y/layout.cellH);
+	    if((pos=layout.getClosestPosition(posx, posy))){
+		props.x = pos.x*layout.cellW;
+		props.y = pos.y*layout.cellH;
+	    }else{
+		props.x = 0;
+		props.y = 0;
 
-		        pos.x = 0;
-		        pos.y = 0;
-	        }
-
-	        props.cWidth = layout.cellW;
-	        props.cheight = layout.cellH;
-
-	        layout.markEdge(posx, posy, pos.x, pos.y);
-
-	        tr = new Component(type, props);
-	        edge = new Component('edge', {
-		        direction: type=='transition'? 'p2t': 't2p',
-		        src: this.comp.shape.uuid,
-		        dest: tr.comp.shape.uuid
-	        });
-            edge.comp.shape.redraw();
+		pos.x = 0;
+		pos.y = 0;
 	    }
-	    else if(type == 'deletion'){
-	        var edges = [], src, dest;
+
+	    props.cWidth = layout.cellW;
+	    props.cheight = layout.cellH;
+
+	    layout.markEdge(posx, posy, pos.x, pos.y);
+
+	    tr = new Component(type, props);
+	    edge = new Component('edge', {
+		direction: type=='transition'? 'p2t': 't2p',
+		src: this.comp.shape.uuid,
+		dest: tr.comp.shape.uuid
+	    });
+            edge.comp.shape.redraw();
+	}
+	else if(type == 'deletion'){
+	    var edges = [], src, dest;
 
             /**  don't look for edges for edge deletion */
             if(this.type != 'edge')
-	            Register.forEach(
-		            (item, data)=>{
-		                if(item.type=='edge' &&
-		                   (item.comp.src == this.comp.shape.uuid ||
-			                item.comp.dest == this.comp.shape.uuid)){
-			                data.push(item);
-		                }
-		            },
-		            edges);
+	        Register.forEach(
+		    (item, data)=>{
+		        if(item.type=='edge' &&
+		           (item.comp.src == this.comp.shape.uuid ||
+			    item.comp.dest == this.comp.shape.uuid)){
+			    data.push(item);
+		        }
+		    },
+		    edges);
 
-	        edges.map((lk) => {
-		        src = Register.find(lk.comp.src);
-		        dest = Register.find(lk.comp.dest);
+	    edges.map((lk) => {
+		src = Register.find(lk.comp.src);
+		dest = Register.find(lk.comp.dest);
 
-		        layout.umarkEdge(Math.floor(src.comp.shape.shape.x/layout.cellW),
-				                 Math.floor(src.comp.shape.shape.y/layout.cellH),
-				                 Math.floor(dest.comp.shape.shape.x/layout.cellW),
-				                 Math.floor(dest.comp.shape.shape.y/layout.cellH));
+		layout.umarkEdge(Math.floor(src.comp.shape.shape.x/layout.cellW),
+				 Math.floor(src.comp.shape.shape.y/layout.cellH),
+				 Math.floor(dest.comp.shape.shape.x/layout.cellW),
+				 Math.floor(dest.comp.shape.shape.y/layout.cellH));
 
-				console.log(lk.comp);
-		        lk.comp.shape.removeFromDOM();
-		        Register.clear(lk.comp.shape.line.uuid);
-	        });
+		console.log(lk.comp);
+		lk.comp.shape.removeFromDOM();
+		Register.clear(lk.comp.shape.line.uuid);
+	    });
 
             if(this.type != 'edge'){
-	            layout.umark(Math.floor(this.comp.shape.shape.x/layout.cellW),
-			                 Math.floor(this.comp.shape.shape.y/layout.cellH));
-	            this.comp.shape.shape.svg.removeChild(this.comp.shape.shape.c_svg);
+	        layout.umark(Math.floor(this.comp.shape.shape.x/layout.cellW),
+			     Math.floor(this.comp.shape.shape.y/layout.cellH));
+	        this.comp.shape.shape.svg.removeChild(this.comp.shape.shape.c_svg);
 
             }else/** TODO: voir avec David pour la suppression des edges
                   * harmoniser la suppression pour tous
@@ -205,279 +206,279 @@ class Component{
             Register.clear(this.type != 'edge' ?
                            this.comp.shape.uuid:
                            this.comp.shape.line.uuid);
-	    }
-	    else if(type == 'andsplit'){
-	        var i, lyt, p, t, e, cur, obj={};
+	}
+	else if(type == 'andsplit'){
+	    var i, lyt, p, t, e, cur, obj={};
 
-	        for(i=0; i<2; i++){
-		        cur = this;
+	    for(i=0; i<2; i++){
+		cur = this;
 
-		        lyt = layout.getClosestPosition(Math.floor(cur.comp.shape.shape.x/layout.cellW),
-						                        Math.floor(cur.comp.shape.shape.y/layout.cellH));
+		lyt = layout.getClosestPosition(Math.floor(cur.comp.shape.shape.x/layout.cellW),
+						Math.floor(cur.comp.shape.shape.y/layout.cellH));
 
-		        obj.x = lyt.x*layout.cellW;
-		        obj.y = lyt.y*layout.cellH;
-		        obj.type = 'intermediary';
-		        p = new Component('place', obj);
-		        e = new Component('edge', {src: cur.comp.shape.uuid,
-					                       dest: p.comp.shape.uuid,
-					                       direction: 't2p'});
+		obj.x = lyt.x*layout.cellW;
+		obj.y = lyt.y*layout.cellH;
+		obj.type = 'intermediary';
+		p = new Component('place', obj);
+		e = new Component('edge', {src: cur.comp.shape.uuid,
+					   dest: p.comp.shape.uuid,
+					   direction: 't2p'});
             	cur = p;
-		        lyt = layout.getClosestPosition(Math.floor(cur.comp.shape.shape.x/layout.cellW),
-						                        Math.floor(cur.comp.shape.shape.y/layout.cellH));
-		        obj.x = lyt.x*layout.cellW;
-		        obj.y = lyt.y*layout.cellH;
-		        obj.type = 'dummy';
-		        t = new Component('transition', obj);
-		        e = new Component('edge', {src: cur.comp.shape.uuid,
-					                       dest: t.comp.shape.uuid,
-					                       direction: 'p2t'});
+		lyt = layout.getClosestPosition(Math.floor(cur.comp.shape.shape.x/layout.cellW),
+						Math.floor(cur.comp.shape.shape.y/layout.cellH));
+		obj.x = lyt.x*layout.cellW;
+		obj.y = lyt.y*layout.cellH;
+		obj.type = 'dummy';
+		t = new Component('transition', obj);
+		e = new Component('edge', {src: cur.comp.shape.uuid,
+					   dest: t.comp.shape.uuid,
+					   direction: 'p2t'});
             }
-	    }else if(type == 'xorsplit'){
-	        var lyt, p, t, e, cur, obj={};
+	}else if(type == 'xorsplit'){
+	    var lyt, p, t, e, cur, obj={};
 
             lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
-						                        Math.floor(this.comp.shape.shape.y/layout.cellH));
-		    obj.x = lyt.x*layout.cellW;
-		    obj.y = lyt.y*layout.cellH;
-		    obj.type = 'dummy';
+					    Math.floor(this.comp.shape.shape.y/layout.cellH));
+	    obj.x = lyt.x*layout.cellW;
+	    obj.y = lyt.y*layout.cellH;
+	    obj.type = 'dummy';
 
             t = new Component('transition', obj);
-		    e = new Component('edge', {src: this.comp.shape.uuid,
-					                   dest: t.comp.shape.uuid,
-					                   direction: 'p2t', cond:""});
+	    e = new Component('edge', {src: this.comp.shape.uuid,
+				       dest: t.comp.shape.uuid,
+				       direction: 'p2t', cond:""});
 
             lyt = layout.getClosestPosition(Math.floor(t.comp.shape.shape.x/layout.cellW),
-						                        Math.floor(t.comp.shape.shape.y/layout.cellH));
-		    obj.x = lyt.x*layout.cellW;
-		    obj.y = lyt.y*layout.cellH;
-		    obj.type = 'intermediary';
+					    Math.floor(t.comp.shape.shape.y/layout.cellH));
+	    obj.x = lyt.x*layout.cellW;
+	    obj.y = lyt.y*layout.cellH;
+	    obj.type = 'intermediary';
 
             p = new Component('place', obj);
-		    e = new Component('edge', {src: t.comp.shape.uuid,
-					                   dest: p.comp.shape.uuid,
-					                   direction: 't2p'});
+	    e = new Component('edge', {src: t.comp.shape.uuid,
+				       dest: p.comp.shape.uuid,
+				       direction: 't2p'});
 
             lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
-						                        Math.floor(this.comp.shape.shape.y/layout.cellH));
-		    obj.x = lyt.x*layout.cellW;
-		    obj.y = lyt.y*layout.cellH;
-		    obj.type = 'dummy';
+					    Math.floor(this.comp.shape.shape.y/layout.cellH));
+	    obj.x = lyt.x*layout.cellW;
+	    obj.y = lyt.y*layout.cellH;
+	    obj.type = 'dummy';
 
             t = new Component('transition', obj);
-		    e = new Component('edge', {src: this.comp.shape.uuid,
-					                   dest: t.comp.shape.uuid,
-					                   direction: 'p2t', cond:""});
+	    e = new Component('edge', {src: this.comp.shape.uuid,
+				       dest: t.comp.shape.uuid,
+				       direction: 'p2t', cond:""});
 
             e = new Component('edge', {src: t.comp.shape.uuid,
-					                   dest: p.comp.shape.uuid,
-					                   direction: 't2p'});
+				       dest: p.comp.shape.uuid,
+				       direction: 't2p'});
         }else if(type == 'multichoice'){
-	        var i, lyt, p, p2, t, t0, t2, t3, e, cur, obj={};
+	    var i, lyt, p, p2, t, t0, t2, t3, e, cur, obj={};
 
             lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
-						                        Math.floor(this.comp.shape.shape.y/layout.cellH));
-		    obj.x = lyt.x*layout.cellW;
-		    obj.y = lyt.y*layout.cellH;
-		    obj.type = 'dummy';
+					    Math.floor(this.comp.shape.shape.y/layout.cellH));
+	    obj.x = lyt.x*layout.cellW;
+	    obj.y = lyt.y*layout.cellH;
+	    obj.type = 'dummy';
 
             t0 = new Component('transition', obj);
-		    e = new Component('edge', {src: this.comp.shape.uuid,
-					                   dest: t0.comp.shape.uuid,
-					                   direction: 'p2t'});
+	    e = new Component('edge', {src: this.comp.shape.uuid,
+				       dest: t0.comp.shape.uuid,
+				       direction: 'p2t'});
 
             for(i=0; i<2; i++){
                 lyt = layout.getClosestPosition(Math.floor(t0.comp.shape.shape.x/layout.cellW),
-						                        Math.floor(t0.comp.shape.shape.y/layout.cellH));
-		        obj.x = lyt.x*layout.cellW;
-		        obj.y = lyt.y*layout.cellH;
-		        obj.type = 'intermediary';
+						Math.floor(t0.comp.shape.shape.y/layout.cellH));
+		obj.x = lyt.x*layout.cellW;
+		obj.y = lyt.y*layout.cellH;
+		obj.type = 'intermediary';
 
                 p = new Component('place', obj);
                 e = new Component('edge', {src: t0.comp.shape.uuid,
-					                       dest: p.comp.shape.uuid,
-					                       direction: 't2p'});
+					   dest: p.comp.shape.uuid,
+					   direction: 't2p'});
                 lyt = layout.getClosestPosition(Math.floor(p.comp.shape.shape.x/layout.cellW),
-						                        Math.floor(p.comp.shape.shape.y/layout.cellH));
-		        obj.x = lyt.x*layout.cellW;
-		        obj.y = lyt.y*layout.cellH;
-		        obj.type = 'automatic';
+						Math.floor(p.comp.shape.shape.y/layout.cellH));
+		obj.x = lyt.x*layout.cellW;
+		obj.y = lyt.y*layout.cellH;
+		obj.type = 'automatic';
                 obj.name = 'auto'+i;
 
                 t = new Component('transition', obj);
 
                 lyt = layout.getClosestPosition(Math.floor(p.comp.shape.shape.x/layout.cellW),
-						                        Math.floor(p.comp.shape.shape.y/layout.cellH));
-		        obj.x = lyt.x*layout.cellW;
-		        obj.y = lyt.y*layout.cellH;
-		        obj.type = 'dummy';
+						Math.floor(p.comp.shape.shape.y/layout.cellH));
+		obj.x = lyt.x*layout.cellW;
+		obj.y = lyt.y*layout.cellH;
+		obj.type = 'dummy';
                 obj.name = null;
 
                 t2 = new Component('transition', obj);
 
                 e = new Component('edge', {src: p.comp.shape.uuid,
-					                       dest: t.comp.shape.uuid,
-					                       direction: 'p2t', cond:''});
+					   dest: t.comp.shape.uuid,
+					   direction: 'p2t', cond:''});
 
                 e = new Component('edge', {src: p.comp.shape.uuid,
-					                       dest: t2.comp.shape.uuid,
-					                       direction: 'p2t', cond:''});
+					   dest: t2.comp.shape.uuid,
+					   direction: 'p2t', cond:''});
 
                 lyt = layout.getClosestPosition(Math.floor(t.comp.shape.shape.x/layout.cellW),
-						                        Math.floor(t.comp.shape.shape.y/layout.cellH));
-		        obj.x = lyt.x*layout.cellW;
-		        obj.y = lyt.y*layout.cellH;
-		        obj.type = 'intermediary';
+						Math.floor(t.comp.shape.shape.y/layout.cellH));
+		obj.x = lyt.x*layout.cellW;
+		obj.y = lyt.y*layout.cellH;
+		obj.type = 'intermediary';
 
                 p = new Component('place', obj);
 
                 e = new Component('edge', {src: t.comp.shape.uuid,
-					                       dest: p.comp.shape.uuid,
-					                       direction: 't2p'});
+					   dest: p.comp.shape.uuid,
+					   direction: 't2p'});
                 e.comp.shape.redraw();
 
                 e = new Component('edge', {src: t2.comp.shape.uuid,
-					                       dest: p.comp.shape.uuid,
-					                       direction: 't2p'});
+					   dest: p.comp.shape.uuid,
+					   direction: 't2p'});
                 e.comp.shape.redraw();
 
                 if(!i){
                     lyt = layout.getClosestPosition(Math.floor(p.comp.shape.shape.x/layout.cellW),
-						                            Math.floor(p.comp.shape.shape.y/layout.cellH));
-		            obj.x = lyt.x*layout.cellW;
-		            obj.y = lyt.y*layout.cellH;
-		            obj.type = 'dummy';
+						    Math.floor(p.comp.shape.shape.y/layout.cellH));
+		    obj.x = lyt.x*layout.cellW;
+		    obj.y = lyt.y*layout.cellH;
+		    obj.type = 'dummy';
                     t3 = new Component('transition', obj);
                     t3.comp.setGate('and_join');
                 }
 
                 e = new Component('edge', {src: p.comp.shape.uuid,
-					                       dest: t3.comp.shape.uuid,
-					                       direction: 'p2t'});
+					   dest: t3.comp.shape.uuid,
+					   direction: 'p2t'});
             }
         }
         else if(type == 'dowhile'){
-	        var i, lyt, p, t, e, obj={};
+	    var i, lyt, p, t, e, obj={};
 
-	        lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
-	    					                Math.floor(this.comp.shape.shape.y/layout.cellH));
+	    lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
+	    				    Math.floor(this.comp.shape.shape.y/layout.cellH));
 
-	        obj.x = lyt.x*layout.cellW;
-	        obj.y = lyt.y*layout.cellH;
-	        obj.type = 'intermediary';
-	        p = new Component('place', obj);
+	    obj.x = lyt.x*layout.cellW;
+	    obj.y = lyt.y*layout.cellH;
+	    obj.type = 'intermediary';
+	    p = new Component('place', obj);
 
-	        lyt = layout.getClosestPosition(Math.floor(p.comp.shape.shape.x/layout.cellW),
-	    					                Math.floor(p.comp.shape.shape.y/layout.cellH));
-	        obj.x = lyt.x*layout.cellW;
-	        obj.y = lyt.y*layout.cellH;
-	        obj.type = 'dummy';
-	        t = new Component('transition', obj);
+	    lyt = layout.getClosestPosition(Math.floor(p.comp.shape.shape.x/layout.cellW),
+	    				    Math.floor(p.comp.shape.shape.y/layout.cellH));
+	    obj.x = lyt.x*layout.cellW;
+	    obj.y = lyt.y*layout.cellH;
+	    obj.type = 'dummy';
+	    t = new Component('transition', obj);
 
             e = new Component('edge', {src: this.comp.shape.uuid,
-	    				               dest: p.comp.shape.uuid,
-	    				               direction: 't2p'});
+	    			       dest: p.comp.shape.uuid,
+	    			       direction: 't2p'});
 
             e = new Component('edge', {src: p.comp.shape.uuid,
-	    				               dest: this.comp.shape.uuid,
-	    				               direction: 'p2t',
+	    			       dest: this.comp.shape.uuid,
+	    			       direction: 'p2t',
                                        altpath: true, cond:''
                                       });
 
             e = new Component('edge', {src: p.comp.shape.uuid,
-	    				               dest: t.comp.shape.uuid,
-	    				               direction: 'p2t', cond:''});
+	    			       dest: t.comp.shape.uuid,
+	    			       direction: 'p2t', cond:''});
 
             this.comp.setGate('xor_join');
-	    }else if(type == 'while'){
-	        var i, lyt, p, t, e, obj={};
+	}else if(type == 'while'){
+	    var i, lyt, p, t, e, obj={};
 
-	        lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
-	    					                Math.floor(this.comp.shape.shape.y/layout.cellH));
+	    lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
+	    				    Math.floor(this.comp.shape.shape.y/layout.cellH));
 
-	        obj.x = lyt.x*layout.cellW;
-	        obj.y = lyt.y*layout.cellH;
-	        obj.type = 'dummy';
-	        t = new Component('transition', obj);
+	    obj.x = lyt.x*layout.cellW;
+	    obj.y = lyt.y*layout.cellH;
+	    obj.type = 'dummy';
+	    t = new Component('transition', obj);
 
             e = new Component('edge', {src: this.comp.shape.uuid,
-	    				               dest: t.comp.shape.uuid,
-	    				               direction: 'p2t', cond:""});
+	    			       dest: t.comp.shape.uuid,
+	    			       direction: 'p2t', cond:""});
 
             e = new Component('edge', {src: t.comp.shape.uuid,
-	    				               dest: this.comp.shape.uuid,
-	    				               direction: 't2p',
+	    			       dest: this.comp.shape.uuid,
+	    			       direction: 't2p',
                                        altpath: true});
-			
-			lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
-			Math.floor(this.comp.shape.shape.y/layout.cellH));
-			
-			obj.x = lyt.x*layout.cellW;
-			obj.y = lyt.y*layout.cellH;
-			obj.type = 'dummy';
-			
-			t = new Component('transition', obj);
+	    
+	    lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
+					    Math.floor(this.comp.shape.shape.y/layout.cellH));
+	    
+	    obj.x = lyt.x*layout.cellW;
+	    obj.y = lyt.y*layout.cellH;
+	    obj.type = 'dummy';
+	    
+	    t = new Component('transition', obj);
 
-			e = new Component('edge', {src: this.comp.shape.uuid,
-										dest: t.comp.shape.uuid,
-								  direction: 'p2t', cond: ""});
+	    e = new Component('edge', {src: this.comp.shape.uuid,
+				       dest: t.comp.shape.uuid,
+				       direction: 'p2t', cond: ""});
 
-	    }else if(type == 'deferredchoice'){
-	        var i, lyt, p, p2, t, t2, e, obj={}, ca = [null, null];
+	}else if(type == 'deferredchoice'){
+	    var i, lyt, p, p2, t, t2, e, obj={}, ca = [null, null];
 
             lyt = layout.getClosestPosition(Math.floor(this.comp.shape.shape.x/layout.cellW),
-	    					                Math.floor(this.comp.shape.shape.y/layout.cellH));
-	        obj.x = lyt.x*layout.cellW;
-	        obj.y = lyt.y*layout.cellH;
-	        obj.type = 'dummy';
-	        t = new Component('transition', obj);
+	    				    Math.floor(this.comp.shape.shape.y/layout.cellH));
+	    obj.x = lyt.x*layout.cellW;
+	    obj.y = lyt.y*layout.cellH;
+	    obj.type = 'dummy';
+	    t = new Component('transition', obj);
 
             e = new Component('edge', {src: this.comp.shape.uuid,
-	    				               dest: t.comp.shape.uuid,
-	    				               direction: 't2p'});
+	    			       dest: t.comp.shape.uuid,
+	    			       direction: 't2p'});
             e.comp.shape.redraw();
 
             for(i=0; i<2; i++){
                 lyt = layout.getClosestPosition(Math.floor(t.comp.shape.shape.x/layout.cellW),
-	    					                    Math.floor(t.comp.shape.shape.y/layout.cellH));
-	            obj.x = lyt.x*layout.cellW;
-	            obj.y = lyt.y*layout.cellH;
-	            obj.type = 'intermediary';
+	    					Math.floor(t.comp.shape.shape.y/layout.cellH));
+	        obj.x = lyt.x*layout.cellW;
+	        obj.y = lyt.y*layout.cellH;
+	        obj.type = 'intermediary';
 
                 p = new Component('place', obj);
 
                 e = new Component('edge', {src: t.comp.shape.uuid,
-	    				               dest: p.comp.shape.uuid,
-	    				               direction: 't2p'});
+	    				   dest: p.comp.shape.uuid,
+	    				   direction: 't2p'});
                 e.comp.shape.redraw();
 
                 lyt = layout.getClosestPosition(Math.floor(p.comp.shape.shape.x/layout.cellW),
-	    					                    Math.floor(p.comp.shape.shape.y/layout.cellH));
+	    					Math.floor(p.comp.shape.shape.y/layout.cellH));
                 obj.x = lyt.x*layout.cellW;
-	            obj.y = lyt.y*layout.cellH;
-	            obj.type = 'automatic';
+	        obj.y = lyt.y*layout.cellH;
+	        obj.type = 'automatic';
                 obj.name = 'auto'+i;
 
                 t2 = new Component('transition', obj);
                 ca[i] = t2;
 
                 e = new Component('edge', {src: p.comp.shape.uuid,
-	    				               dest: t2.comp.shape.uuid,
-	    				               direction: 'p2t'});
+	    				   dest: t2.comp.shape.uuid,
+	    				   direction: 'p2t'});
                 if(!i){
                     lyt = layout.getClosestPosition(Math.floor(t2.comp.shape.shape.x/layout.cellW),
-	    					                        Math.floor(t2.comp.shape.shape.y/layout.cellH));
-	                obj.x = lyt.x*layout.cellW;
-	                obj.y = lyt.y*layout.cellH;
-	                obj.type = 'intermediary';
+	    					    Math.floor(t2.comp.shape.shape.y/layout.cellH));
+	            obj.x = lyt.x*layout.cellW;
+	            obj.y = lyt.y*layout.cellH;
+	            obj.type = 'intermediary';
                     obj.name = null;
 
                     p2 = new Component('place', obj);
                 }
 
                 e = new Component('edge', {src: t2.comp.shape.uuid,
-	    				                   dest: p2.comp.shape.uuid,
-	    				                   direction: 't2p'});
+	    				   dest: p2.comp.shape.uuid,
+	    				   direction: 't2p'});
             }
 
             ca[0].comp.ca = ca[1].comp.name;
@@ -487,92 +488,92 @@ class Component{
             ca[1].comp.cauuid = ca[0].comp.shape.shape.uuid;
 
             e = new Component('edge', {src: ca[0].comp.shape.shape.uuid,
-	            			           dest: ca[1].comp.shape.shape.uuid,
-	            			           direction: 'ca'});
-	    }
+	            		       dest: ca[1].comp.shape.shape.uuid,
+	            		       direction: 'ca'});
+	}
 
 
     }
     
     onMouseDown(){
-	    Component.state = 'moving';
-	    Component.x = this.comp.shape.shape.x;
-	    Component.y = this.comp.shape.shape.y;
+	Component.state = 'moving';
+	Component.x = this.comp.shape.shape.x;
+	Component.y = this.comp.shape.shape.y;
     }
 
     onMouseUp(uuid){
-	    console.log('mouseUp state='+Component.state);
-	    if(Component.state == 'linking')
-	        this.edgeCompleted(uuid);
-	    else if(Component.state == 'moving'){
-	        var lyt = layout.fixPoint(this.comp.shape.shape.x,
-				                      this.comp.shape.shape.y);
-	        var edges = [], src, dest, osrc, odest;
+	console.log('mouseUp state='+Component.state);
+	if(Component.state == 'linking')
+	    this.edgeCompleted(uuid);
+	else if(Component.state == 'moving'){
+	    var lyt = layout.fixPoint(this.comp.shape.shape.x,
+				      this.comp.shape.shape.y);
+	    var edges = [], src, dest, osrc, odest;
 
-	        this.comp.shape.shape.shift(lyt.x - this.comp.shape.shape.x,
-										lyt.y - this.comp.shape.shape.y);
-	        this.comp.redraw(layout.cellW, layout.cellH);
+	    this.comp.shape.shape.shift(lyt.x - this.comp.shape.shape.x,
+					lyt.y - this.comp.shape.shape.y);
+	    this.comp.redraw(layout.cellW, layout.cellH);
 
-	        Register.forEach(
-		        (item, data)=>{
-		            if(item.type=='edge' &&
-		               (item.comp.src == this.comp.shape.uuid ||
-			            item.comp.dest == this.comp.shape.uuid))
-			            data.push(item);
-		        },
-		        edges);
-			console.log(edges);
-	        if(!edges.length){
-		        layout.umark(Math.floor(Component.x/layout.cellW),
-			                 Math.floor(Component.y/layout.cellH));
-		        layout.mark(lyt.x/layout.cellW,  lyt.y/layout.cellH);
-	        }else{
-		        edges.map((e)=>{
-		            if(e.comp.src == this.comp.shape.uuid){
-			            dest = Register.find(e.comp.dest);
-			            odest = {
-			                x: dest.comp.shape.shape.x,
-			                y: dest.comp.shape.shape.y
-			            };
-			            src = this;
-			            osrc = {
-			                x: Component.x,
-			                y: Component.y
-			            };
-			            // e.comp.shape.line.x = this.comp.shape.shape.c_points[3].x;
-			            // e.comp.shape.line.y = this.comp.shape.shape.c_points[3].y;
-		            }
-		            else{
-			            src = Register.find(e.comp.src);
-			            osrc = {
-			                x: src.comp.shape.shape.x,
-			                y: src.comp.shape.shape.y
-			            };
+	    Register.forEach(
+		(item, data)=>{
+		    if(item.type=='edge' &&
+		       (item.comp.src == this.comp.shape.uuid ||
+			item.comp.dest == this.comp.shape.uuid))
+			data.push(item);
+		},
+		edges);
+	    console.log(edges);
+	    if(!edges.length){
+		layout.umark(Math.floor(Component.x/layout.cellW),
+			     Math.floor(Component.y/layout.cellH));
+		layout.mark(lyt.x/layout.cellW,  lyt.y/layout.cellH);
+	    }else{
+		edges.map((e)=>{
+		    if(e.comp.src == this.comp.shape.uuid){
+			dest = Register.find(e.comp.dest);
+			odest = {
+			    x: dest.comp.shape.shape.x,
+			    y: dest.comp.shape.shape.y
+			};
+			src = this;
+			osrc = {
+			    x: Component.x,
+			    y: Component.y
+			};
+			// e.comp.shape.line.x = this.comp.shape.shape.c_points[3].x;
+			// e.comp.shape.line.y = this.comp.shape.shape.c_points[3].y;
+		    }
+		    else{
+			src = Register.find(e.comp.src);
+			osrc = {
+			    x: src.comp.shape.shape.x,
+			    y: src.comp.shape.shape.y
+			};
 
-			            dest = this;
-			            odest = {
-			                x: Component.x,
-			                y: Component.y
-			            };
-			            // e.comp.shape.line.dest_x = this.comp.shape.shape.c_points[3].x;
-			            // e.comp.shape.line.dest_y = this.comp.shape.shape.c_points[3].y;
-		            }
+			dest = this;
+			odest = {
+			    x: Component.x,
+			    y: Component.y
+			};
+			// e.comp.shape.line.dest_x = this.comp.shape.shape.c_points[3].x;
+			// e.comp.shape.line.dest_y = this.comp.shape.shape.c_points[3].y;
+		    }
 
-		            layout.umarkEdge(Math.floor(osrc.x/layout.cellW),
-				                     Math.floor(osrc.y/layout.cellH),
-				                     Math.floor(odest.x/layout.cellW),
-				                     Math.floor(odest.y/layout.cellH));
+		    layout.umarkEdge(Math.floor(osrc.x/layout.cellW),
+				     Math.floor(osrc.y/layout.cellH),
+				     Math.floor(odest.x/layout.cellW),
+				     Math.floor(odest.y/layout.cellH));
 
-		            layout.markEdge(Math.floor(src.comp.shape.shape.x/layout.cellW),
-				                    Math.floor(src.comp.shape.shape.y/layout.cellH),
-				                    Math.floor(dest.comp.shape.shape.x/layout.cellW),
-				                    Math.floor(dest.comp.shape.shape.y/layout.cellH));
+		    layout.markEdge(Math.floor(src.comp.shape.shape.x/layout.cellW),
+				    Math.floor(src.comp.shape.shape.y/layout.cellH),
+				    Math.floor(dest.comp.shape.shape.x/layout.cellW),
+				    Math.floor(dest.comp.shape.shape.y/layout.cellH));
 
-		            e.comp.shape.redraw();
-			});
-	        }
+		    e.comp.shape.redraw();
+		});
 	    }
-	    Component.state = null;
+	}
+	Component.state = null;
     }
 
     onclick() {
@@ -583,17 +584,17 @@ class Component{
     }
     
     save(){
-	    var obj = {};
-	    Object.keys(this.comp.shape).map((e)=>{
-	        if(e != 'shape')
-		        obj[e] = this.comp[e];
-					else {
-						obj.uuid = this.comp[e].shape.uuid
-				    obj.x = this.comp[e].shape.x;
-				    obj.y = this.comp[e].shape.y;
-					}
-	    });
+	var obj = {};
+	Object.keys(this.comp.shape).map((e)=>{
+	    if(e != 'shape')
+		obj[e] = this.comp[e];
+	    else {
+		obj.uuid = this.comp[e].shape.uuid
+		obj.x = this.comp[e].shape.x;
+		obj.y = this.comp[e].shape.y;
+	    }
+	});
 
-	    return obj;
+	return obj;
     }
 }

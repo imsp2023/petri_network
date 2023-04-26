@@ -41,7 +41,7 @@ class Edge {
         this.shape.redraw();
 
         if(props.direction != 'ca')
-            this.shape.line.c_svg.addEventListener("click", (e)=>{
+            this.shape.line.addEvent("click", (e)=>{
 	            var target;
 
 	            if((target=Register.find(this.shape.line.uuid)))
