@@ -22,6 +22,7 @@ class Aya{
 	    uuid : uuid,
 	    events: [],
 	    type : this.ttype ? this.ttype : type,
+	    
 	    shape : {
 
 		dest_x: props ? props.dest_x : null,
@@ -48,6 +49,15 @@ class Aya{
 		},
 		redraw: ()=>{
 		},
+		addEvent: (e, callback) => {
+		    var ev = {};
+		    ev[e] = callback;
+		    Obj.events.push(ev);
+		},
+		deleteAllEvents: () => {
+		    Obj.events = [];
+		},
+
 		svg: {
 		    setAttribute: (tag, value) =>{
 			Obj.shape[tag] = value;
@@ -158,7 +168,7 @@ class Aya{
     Rectangle(x, y, width, height){
 	var Obj = {
 	    events: [],
-		x: x!=undefined ? x : null,
+	    x: x!=undefined ? x : null,
 	    y: y!=undefined ? y : null,
 	    width: width ? width : null,
 	    height: height ? height : null,
@@ -168,6 +178,18 @@ class Aya{
 	    children : [
 	    ],
 	    shape: {shift: ()=>{}, svg:{}},
+	    addEvent: (e, callback) => {
+		var ev = {};
+		ev[e] = callback;
+		Obj.events.push(ev);
+	    },
+	    deleteAllEvents: () => {
+		// var ev = {};
+		// ev[e] = callback;
+		// Obj.events.push(ev);
+		Obj.events = [];
+	    },
+
 	    c_svg: {
 		setAttribute: (tag, value) =>{
 		    Obj.shape[tag] = value;
@@ -190,6 +212,9 @@ class Aya{
 	    },
 
 	    draw(){
+	    },
+	    deleteEvent(tag){
+		Obj.events[tag] = 0;
 	    }
 	};
 
@@ -205,6 +230,17 @@ class Aya{
 	    path: path ? path : null,
 	    type: "image",
 	    events: [],
+	    addEvent: (e, callback) => {
+		var ev = {};
+		ev[e] = callback;
+		Obj.events.push(ev);
+	    },
+	    deleteAllEvents: () => {
+		// var ev = {};
+		// ev[e] = callback;
+		// Obj.events.push(ev);
+		Obj.events = [];
+	    },
 	    c_svg: {
 		setAttribute: (tag, value) =>{
 		    Obj.shape[tag] = value;

@@ -17,10 +17,10 @@ const edge = () => {
           m("label.block.mb-3", "Direction"),
           m("input[disabled]", { value: node.comp.direction, onchange: (e) => node.comp.direction = e.target.value })
         ]),
-        (node.comp.cond == " " || node.comp.cond) && m("", [
+        node.comp.cond != undefined && m("", [
           m("label.block.mb-3", "Condition"),
-          m("input", { value: node.comp.cond, onchange: (e) => node.comp.cond = e.target.value })
-        ]),
+            m("input", { value: node.comp.cond, onchange: (e) => {node.comp.setCond(e.target.value);} })
+        ])
       ])
     }
   }
@@ -171,8 +171,8 @@ const config = {
             m("label.text-xl.font-medium", node.type),
             m("button.btn.rounded-xl.w-fit.self-end", {
               onclick: () => {
-                vnode.attrs.config.node.addConnector('deletion');
-                vnode.attrs.config.node = null;
+                  vnode.attrs.config.node.remove();
+                  vnode.attrs.config.node = null;
 
               }
             }, m(Icon.Delete, {

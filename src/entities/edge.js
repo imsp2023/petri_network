@@ -2,8 +2,8 @@
 
 class Edge {
     constructor(props={}){
-	    var src, dest, line;
-	    if (!props.direction || !props.src || !props.dest)
+	var src, dest, line;
+	if (!props.direction || !props.src || !props.dest)
 	        throw new Error("missing parameters");
 
         if ((props.direction != "p2t" && props.direction != "t2p" && props.direction != "ca") ||
@@ -28,22 +28,28 @@ class Edge {
 			                  dest.comp.shape.shape.uuid,
                               props);
         if (this.cond != undefined){
-            this.shape.addText(this.cond == '' ? 'a' : this.cond, "top");
-            // if (this.cond == '')
-            //     this.shape.line.setStyles({strokedasharray: "2"});
+            //this.shape.addText(this.cond, "top");
+            if (this.cond == '')
+                //this.shape.line.setStyles({strokedasharray: "2"});
+		this.shape.line.setStyles({stroke: "red"});
+	    else
+		this.shape.line.setStyles({stroke: "blue"});
         }
         this.shape.line.children.map(({child})=>{
             child.setStyles({"fill": "black"});
         });
         this.shape.redraw();
+    }
 
-        if(props.direction != 'ca')
-            this.shape.line.c_svg.addEventListener("click", (e)=>{
-	            var target;
+    setCond(cond){
+	this.cond = cond;
+	if (this.cond == '')
+            this.shape.line.setStyles({stroke: "red"});
+	else
+	    this.shape.line.setStyles({stroke: "blue"});
+    }
 
-	            if((target=Register.find(this.shape.line.uuid)))
-		            target.onclick();
-	        });
-
+    redraw(){
+	this.shape.redraw();
     }
 }

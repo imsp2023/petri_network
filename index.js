@@ -1,9 +1,26 @@
 try {
-	var aya = new aya.Init(2000, 2000);
-	aya.config.link.end_start = ' ';
+    var aya = new aya.Init(2000, 2000);
+    aya.config.link.end_start = ' ';
     console.log(aya.config);
-    Component.initSvgEvents(aya.svg);
-	layout.init(40, 80, 2000, 2000);
+    //Component.initSvgEvents(aya.svg);
+    aya.svg.addEventListener("mousemove", (e)=>{
+	if(Event.line){
+	    Event.line.dest_x = e.clientX;
+	    Event.line.dest_y = e.clientY;
+	    Event.line.redraw();
+	}
+    });
+
+    aya.svg.addEventListener("mouseup", (e)=>{
+	console.log('mouseUP SVG');
+	if(Event.line){
+	    Event.line.removeFromDOM();
+	    Event.line = null;
+	    Event.src = null;
+	    Event.state = null;
+	}
+    });
+    layout.init(40, 80, 2000, 2000);
 }
 catch (e) {
 	console.error(e);
@@ -15,8 +32,17 @@ function new_diag() {
 			comp.addConnector('deletion');
 	});
 
-	Register.clear();
-	var p = new Component("place", { type: 'start', x: 100, y: 350 });
+    Register.clear();
+
+    
+    var cps = [];
+    var p = ComponentFactory.getComponent("place", { type: 'start', x: 100, y: 350 });
+    // var l = new Lasso({x: 0, y: 0, width: 150, height: 150});
+    var t = ComponentFactory.getComponent('transition', {type: 'dummy', x: 100, y: 250});
+
+    //cps.push(p.comp.shape.shape);
+    // cps.push(p);
+    // l.addSelectedComp(cps);
 }
 function load_diag() {
 	console.log("Call load_diag");
@@ -60,6 +86,6 @@ m.mount(document.body, {
 			m("button.btn.p-2.border-b.border-gray-400.hover:bg-gray-200.active:bg-gray-400", { title: "Save diagram", onclick: save_diag }, m(Icon.Download)),
 			m("button.btn.p-2.border-b.border-gray-400.hover:bg-gray-200.active:bg-gray-400", { title: "Save as svg", onclick: save_as_svg }, m(Icon.Image)),
 		]),
-		m(editor)
+	    m(editor, {config: Event.config})
 	])
 })
