@@ -2,8 +2,8 @@
 
 class Edge {
     constructor(props={}){
-	    var src, dest, line;
-	    if (!props.direction || !props.src || !props.dest)
+	var src, dest, line;
+	if (!props.direction || !props.src || !props.dest)
 	        throw new Error("missing parameters");
 
         if ((props.direction != "p2t" && props.direction != "t2p" && props.direction != "ca") ||
@@ -39,15 +39,6 @@ class Edge {
             child.setStyles({"fill": "black"});
         });
         this.shape.redraw();
-
-        if(props.direction != 'ca')
-            this.shape.line.addEvent("click", (e)=>{
-	            var target;
-
-	            if((target=Register.find(this.shape.line.uuid)))
-		            target.onclick();
-	        });
-
     }
 
     setCond(cond){
@@ -56,5 +47,9 @@ class Edge {
             this.shape.line.setStyles({stroke: "red"});
 	else
 	    this.shape.line.setStyles({stroke: "blue"});
+    }
+
+    redraw(){
+	this.shape.redraw();
     }
 }

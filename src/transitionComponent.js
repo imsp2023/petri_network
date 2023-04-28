@@ -1,29 +1,10 @@
-class Component{
-    static config = {};
-    static initSvgEvents(svg){
-	svg.addEventListener("mousemove", (e)=>{
-	    if(Event.line){
-		Event.line.dest_x = e.clientX;
-		Event.line.dest_y = e.clientY;
-		Event.line.redraw();
-	    }
-	});
-
-	svg.addEventListener("mouseup", (e)=>{
-	    console.log('mouseUP SVG');
-	    if(Event.line){
-		Event.line.removeFromDOM();
-		Event.line = null;
-		Event.src = null;
-		Event.state = null;
-	    }
-	});
-    }
-
+class TransitionComponent{
     addAllEvents() {
 	this.comp.shape.shape.addEvent('mouseover', (e)=>{
 	    //this.onmouseover();
-	    Event.onmouseover(this, transactions.list);
+	    Event.onmouseover(this, transactions.list,
+			      this.comp.shape.shape.x + this.comp.shape.shape.width,
+			      this.comp.shape.shape.y);
 	});
 	this.comp.shape.shape.addEvent('mousedown', (e)=>{
 	    Event.onmousedown(this)
@@ -44,17 +25,10 @@ class Component{
         comp.y += (layout.cellH-comp.height)/2;
     }
     
-    constructor(type, props){
+    constructor(props={}){
 	var lyt = {x: 0, y :0}, dim;
 	
-	if (!type || !props)
-	    throw new Error("missing parameter");
-	else if ((type != 'place' && type != 'edge' && type != 'transition') ||
-		 typeof props != 'object')
-	    throw new Error("wrong parameter");
-
-	this.type = type;
-
+	this.type = 'transition';
 	this.panelPos = -1;
 	
 	if(props.x >= 0 && props.y >= 0){
@@ -76,20 +50,15 @@ class Component{
 	props.x = dim.x;
 	props.y = dim.y;
 	
-	this.comp = Factory.getShape(type, props);
-	if(this.comp == null)
-	    throw new Error ("instantiation failed");
-	if(type=='transition' || type == 'place')
-	    layout.mark(Math.floor(lyt.x/layout.cellW),
-                        Math.floor(lyt.y/layout.cellH),
-                        this.comp.shape.shape.uuid);
+	this.comp = new Transition(props);
 
-	
+	layout.mark(Math.floor(lyt.x/layout.cellW),
+                    Math.floor(lyt.y/layout.cellH),
+                    this.comp.shape.shape.uuid);
+
 	this.addAllEvents();
 	this.actions = transactions;
-        Register.add(this.type == 'edge'?
-		     this.comp.shape.line.uuid :
-		     this.comp.shape.uuid, this);
+        Register.add(this.comp.shape.uuid, this);
 	
     }
 
@@ -97,7 +66,7 @@ class Component{
 	var edges = [];
 
 	this.comp.shape.shape.shift(dx, dy);
-	this.comp.shape.redraw();
+	this.comp.redraw();
 
 	Register.forEach(
 	    (item, data)=>{
@@ -127,5 +96,13 @@ class Component{
 	// });
 
 	return this.comp.shape.save();
+    }
+
+    remove(){
+	console.log('remove');
+	console.log(this.comp.shape);
+	//this.comp.shape.remove();
+	this.comp.shape.shape.removeFromDOM();
+        Register.clear(this.comp.shape.uuid);
     }
 }
