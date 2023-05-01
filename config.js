@@ -171,7 +171,8 @@ const config = {
             m("label.text-xl.font-medium", node.type),
             m("button.btn.rounded-xl.w-fit.self-end", {
               onclick: () => {
-                  vnode.attrs.config.node.remove();
+                  // vnode.attrs.config.node.remove();
+                  vnode.attrs.config.node.actions['deletion'](vnode.attrs.config.node);
                   vnode.attrs.config.node = null;
 
               }

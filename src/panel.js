@@ -71,17 +71,17 @@ const Panel = {
     },
 
     remove: (target)=>{
-	var i, len;
+		var i, len;
 
-        if(target.panelPos < 0)
-            return;
+			if(target.panelPos < 0)
+				return;
 
-	len = target.comp.shape.shape.children.length-1;
-        for(i = target.panelPos; i < target.comp.shape.shape.children.length; i++)
-	    target.comp.shape.shape.children[i].child.removeFromDOM();
-	target.comp.shape.shape.children.splice(target.panelPos, len);
+		len = target.comp.shape.shape.children.length;
+			for(i = target.panelPos; i < target.comp.shape.shape.children.length; i++)
+			target.comp.shape.shape.children[i].child.removeFromDOM();
+		target.comp.shape.shape.children.splice(target.panelPos, len);
 
-	target.panelPos = -1;
-	target.comp.shape.shape.svg.removeEventListener("mouseover", () => {});
+		target.panelPos = -1;
+		target.comp.shape.shape.svg.removeEventListener("mouseover", () => {});
     }
 }

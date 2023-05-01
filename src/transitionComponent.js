@@ -99,10 +99,10 @@ class TransitionComponent{
     }
 
     remove(){
-	console.log('remove');
-	console.log(this.comp.shape);
-	//this.comp.shape.remove();
-	this.comp.shape.shape.removeFromDOM();
+		console.log('remove');
+		console.log(this.comp.shape);
+		this.comp.shape.remove();
+		// this.comp.shape.shape.removeFromDOM();
         Register.clear(this.comp.shape.uuid);
     }
 }
