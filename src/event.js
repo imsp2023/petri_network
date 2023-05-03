@@ -21,7 +21,6 @@ const Event = {
     },
 
     onmousedown: (target, actions)=>{
-	//console.log('mousedown component');
 	Panel.remove(target, actions);
 	Event.state = 'moving';
 	Event.x = target.comp.shape.shape.x;
@@ -37,23 +36,20 @@ const Event = {
 	    var lyt = layout.fixPoint(target.comp.shape.shape.x,
 				      target.comp.shape.shape.y);
 	    
-	    dim = Transition.getShapeDimension();
+	    if(target.type == 'transition')
+		dim = Transition.getShapeDimension(target.comp.type);
+	    else if(target.type == 'place')
+		dim = Place.getShapeDimension(target.comp.type);
+
+
 	    dim.x = lyt.x;
 	    dim.y = lyt.y;
 
 	    target.centerComponent(dim);
 	    target.move(dim.x - target.comp.shape.shape.x,
 			dim.y - target.comp.shape.shape.y);
-
-	    // layout.umark(Math.floor(Event.x/layout.cellW),
-	    // 		 Math.floor(Event.y/layout.cellH));
-	    // layout.mark(Math.floor(dim.x/layout.cellW),
-	    // 		Math.floor(dim.y/layout.cellH),
-	    // 		target.comp.shape.shape.uuid);
-	}// else if(Event.state = 'moving_lasso'){
-	//     Event.src = null;
-	// }
-
+	}
+	
 	Event.src = null;
 	Event.state = null;
 	Event.x = null;
@@ -67,78 +63,4 @@ const Event = {
             Event.config.node = target;
     }
 };
-
-
-    // onMouseUp(uuid){
-    // 	console.log('mouseUp state='+Component.state);
-    // 	if(Component.state == 'linking')
-    // 	    this.edgeCompleted(uuid);
-    // 	else if(Component.state == 'moving'){
-    // 	    var lyt = layout.fixPoint(this.comp.shape.shape.x,
-    // 				      this.comp.shape.shape.y);
-    // 	    var edges = [], src, dest, osrc, odest;
-
-    // 	    this.comp.shape.shape.shift(lyt.x - this.comp.shape.shape.x,
-    // 					lyt.y - this.comp.shape.shape.y);
-    // 	    this.comp.redraw(layout.cellW, layout.cellH);
-
-    // 	    Register.forEach(
-    // 		(item, data)=>{
-    // 		    if(item.type=='edge' &&
-    // 		       (item.comp.src == this.comp.shape.uuid ||
-    // 			item.comp.dest == this.comp.shape.uuid))
-    // 			data.push(item);
-    // 		},
-    // 		edges);
-    // 	    console.log(edges);
-    // 	    if(!edges.length){
-    // 		layout.umark(Math.floor(Component.x/layout.cellW),
-    // 			     Math.floor(Component.y/layout.cellH));
-    // 		layout.mark(lyt.x/layout.cellW,  lyt.y/layout.cellH);
-    // 	    }else{
-    // 		edges.map((e)=>{
-    // 		    if(e.comp.src == this.comp.shape.uuid){
-    // 			dest = Register.find(e.comp.dest);
-    // 			odest = {
-    // 			    x: dest.comp.shape.shape.x,
-    // 			    y: dest.comp.shape.shape.y
-    // 			};
-    // 			src = this;
-    // 			osrc = {
-    // 			    x: Component.x,
-    // 			    y: Component.y
-    // 			};
-			
-    // 		    }
-    // 		    else{
-    // 			src = Register.find(e.comp.src);
-    // 			osrc = {
-    // 			    x: src.comp.shape.shape.x,
-    // 			    y: src.comp.shape.shape.y
-    // 			};
-
-    // 			dest = this;
-    // 			odest = {
-    // 			    x: Component.x,
-    // 			    y: Component.y
-    // 			};
-			
-    // 		    }
-
-    // 		    layout.umarkEdge(Math.floor(osrc.x/layout.cellW),
-    // 				     Math.floor(osrc.y/layout.cellH),
-    // 				     Math.floor(odest.x/layout.cellW),
-    // 				     Math.floor(odest.y/layout.cellH));
-
-    // 		    layout.markEdge(Math.floor(src.comp.shape.shape.x/layout.cellW),
-    // 				    Math.floor(src.comp.shape.shape.y/layout.cellH),
-    // 				    Math.floor(dest.comp.shape.shape.x/layout.cellW),
-    // 				    Math.floor(dest.comp.shape.shape.y/layout.cellH));
-
-    // 		    e.comp.shape.redraw();
-    // 		});
-    // 	    }
-    // 	}
-    // 	Component.state = null;
-    // }
 

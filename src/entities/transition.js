@@ -131,24 +131,24 @@ class Transition{
     }
     
     setType(type){
-        var dim;
-        if(this.type == type)
-            return;
+        // var dim;
+        // if(this.type == type)
+        //     return;
 
-        this.type = type;
-        this.app = {};
-        this.shape.shape.children.map(({child})=>{
-            child.removeFromDOM();
-        })
+        // this.type = type;
+        // this.app = {};
+        // this.shape.shape.children.map(({child})=>{
+        //     child.removeFromDOM();
+        // })
 
-        this.shape.shape.children.length = 0;
-        dim = this.getRectDimension();
+        // this.shape.shape.children.length = 0;
+        // dim = Transition.getShapeDimension(this.type);
 
-        this.shape.shape.width = dim.width;
-        this.shape.shape.height = dim.height;
+        // this.shape.shape.width = dim.width;
+        // this.shape.shape.height = dim.height;
 
-        this.completeShape();
-	this.shape.shape.redraw();
+        // this.completeShape();
+	// this.shape.shape.redraw();
     }
 
     redraw(){

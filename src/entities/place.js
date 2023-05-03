@@ -8,7 +8,10 @@ class Place{
     static IColor = 'black';
     static SColor = 'green';
     static EColor = 'red';
-    
+
+    static getShapeDimension(type){
+        return {};
+    }
     
     constructor(props = {}){
 	var color = Place.IColor;
@@ -70,6 +73,7 @@ class Place{
 	if(this.type == type)
             return;
 
+	this.type = type;
 	if (this.type == "start"){
 	    color = Place.SColor;
 	    pixel = Place.IStroke;
@@ -84,6 +88,7 @@ class Place{
 	});
 	this.shape.shape.c_svg.setAttribute("stroke-width", pixel);
 	this.shape.shape.c_svg.setAttribute("stroke", color);
+	this.shape.shape.redraw();
     }
     
 }

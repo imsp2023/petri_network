@@ -41,9 +41,8 @@ const place = () => {
           m("select",
             {
               onchange: (e) => {
-                node.comp.type = e.target.value;
-                node.comp.setType(e.target.value);
-                node.comp.shape.shape.redraw();
+                  node.comp.setType(e.target.value);
+                  node.comp.shape.shape.redraw();
               }
             },
             types.map((type, idx) =>
@@ -81,7 +80,7 @@ const transition = {
             m("select",
               {
                 onchange: (e) => {
-                  node.comp.setType(e.target.value);
+                  node.setType(e.target.value);
                 }
               },
               types.map((type, idx) =>
