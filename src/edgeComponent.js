@@ -17,18 +17,13 @@ class EdgeComponent{
     }
 
     save(){
-	// var obj = {};
-	// Object.keys(this.comp.shape).map((e)=>{
-	//     if(e != 'shape')
-	// 	obj[e] = this.comp[e];
-	//     else {
-	// 	obj.uuid = this.comp[e].shape.uuid
-	// 	obj.x = this.comp[e].shape.x;
-	// 	obj.y = this.comp[e].shape.y;
-	//     }
-	// });
+	var obj = {};
+	Object.keys(this.comp).map((e)=>{
+	    if(e != 'shape')
+		obj[e] = this.comp[e];
+	});
 
-	return this.comp.shape.save();
+	return obj;
     }
 
     remove(){

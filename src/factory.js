@@ -8,6 +8,8 @@ class ComponentFactory{
 	    return new EdgeComponent(props);
 	else if (type == 'transition')
 	    return new TransitionComponent(props);
+	else if (type == 'lasso')
+	    return new LassoComponent(props);
 	else
 	    return null;
     }
