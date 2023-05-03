@@ -1,13 +1,14 @@
 class TransitionComponent{
     addAllEvents() {
 	this.comp.shape.shape.addEvent('mouseover', (e)=>{
-	    //this.onmouseover();
 	    Event.onmouseover(this, transactions.list,
 			      this.comp.shape.shape.x + this.comp.shape.shape.width,
 			      this.comp.shape.shape.y);
 	});
 	this.comp.shape.shape.addEvent('mousedown', (e)=>{
 	    Event.onmousedown(this)
+	    layout.umark(Math.floor(this.comp.shape.shape.x/layout.cellW),
+			 Math.floor(this.comp.shape.shape.y/layout.cellH));
 	});
 	this.comp.shape.shape.addEvent('mouseleave', (e)=>{
 	    Event.onmouseleave(this);
@@ -52,20 +53,26 @@ class TransitionComponent{
 	
 	this.comp = new Transition(props);
 
-	layout.mark(Math.floor(lyt.x/layout.cellW),
-                    Math.floor(lyt.y/layout.cellH),
+	layout.mark(Math.floor(props.x/layout.cellW),
+                    Math.floor(props.y/layout.cellH),
                     this.comp.shape.shape.uuid);
 
 	this.addAllEvents();
 	this.actions = transactions;
         Register.add(this.comp.shape.uuid, this);
-	
     }
 
     move(dx, dy) {
 	var edges = [];
 
+	layout.umark(Math.floor(this.comp.shape.shape.x/layout.cellW),
+		     Math.floor(this.comp.shape.shape.y/layout.cellH));
+
 	this.comp.shape.shape.shift(dx, dy);
+
+	layout.mark(Math.floor(this.comp.shape.shape.x/layout.cellW),
+		    Math.floor(this.comp.shape.shape.y/layout.cellH),
+		    this.comp.shape.shape.uuid);
 	this.comp.redraw();
 
 	Register.forEach(
@@ -100,8 +107,10 @@ class TransitionComponent{
 
     remove(){
 	console.log('remove');
-	console.log(this.comp.shape);
+	//console.log(this.comp.shape);
 	//this.comp.shape.remove();
+	layout.umark(Math.floor(this.comp.shape.shape.x/layout.cellW),
+		     Math.floor(this.comp.shape.shape.y/layout.cellH));
 	this.comp.shape.shape.removeFromDOM();
         Register.clear(this.comp.shape.uuid);
     }

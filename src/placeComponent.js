@@ -8,6 +8,8 @@ class PlaceComponent{
 	});
 	this.comp.shape.shape.addEvent('mousedown', (e)=>{
 	    Event.onmousedown(this)
+	    layout.umark(Math.floor(this.comp.shape.shape.x/layout.cellW),
+			 Math.floor(this.comp.shape.shape.y/layout.cellH));
 	});
 	this.comp.shape.shape.addEvent('mouseleave', (e)=>{
 	    Event.onmouseleave(this);
@@ -59,7 +61,14 @@ class PlaceComponent{
     move(dx, dy) {
 	var edges = [];
 
+	layout.umark(Math.floor(this.comp.shape.shape.x/layout.cellW),
+		     Math.floor(this.comp.shape.shape.y/layout.cellH));
+	
 	this.comp.shape.shape.shift(dx, dy);
+
+	layout.mark(Math.floor(this.comp.shape.shape.x/layout.cellW),
+		    Math.floor(this.comp.shape.shape.y/layout.cellH),
+		    this.comp.shape.shape.uuid);
 	this.comp.redraw();
 	Register.forEach(
 	    (item, data)=>{
@@ -92,6 +101,8 @@ class PlaceComponent{
     }
 
     remove(){
+	layout.umark(Math.floor(this.comp.shape.shape.x/layout.cellW),
+		     Math.floor(this.comp.shape.shape.y/layout.cellH));
 	this.comp.shape.shape.removeFromDOM();
         Register.clear(this.comp.shape.uuid);
     }

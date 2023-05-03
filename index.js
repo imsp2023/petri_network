@@ -4,21 +4,46 @@ try {
     console.log(aya.config);
     //Component.initSvgEvents(aya.svg);
     aya.svg.addEventListener("mousemove", (e)=>{
-	if(Event.line){
+	if(Event.state == 'linking'){
 	    Event.line.dest_x = e.clientX;
 	    Event.line.dest_y = e.clientY;
 	    Event.line.redraw();
+	}else if(Event.state == 'selection'){
+	    Event.src.resize(e.clientX-Event.x, e.clientY-Event.y);
+	    Event.x = e.clientX;
+	    Event.y = e.clientY;
+	}else if(Event.state == 'moving_lasso'){
+	    Event.src.move(e.clientX-Event.x, e.clientY-Event.y);
+	    Event.x = e.clientX;
+	    Event.y = e.clientY;
 	}
     });
 
     aya.svg.addEventListener("mouseup", (e)=>{
-	console.log('mouseUP SVG');
-	if(Event.line){
+	console.log('mouseUP SVG state='+Event.state);
+	if(Event.state == 'linking'){
 	    Event.line.removeFromDOM();
 	    Event.line = null;
 	    Event.src = null;
 	    Event.state = null;
+	}else if(Event.state == 'selection'){
+	    Event.src.lockComponent();
+	    Event.src = null;
+	    Event.state = null;
 	}
+    });
+
+    aya.svg.addEventListener("mousedown", (e)=>{
+	console.log('mouseDOWN SVG state='+Event.state);
+	if(Event.state != null)
+	    return;
+
+	Event.state = 'selection';
+
+	Event.x = e.clientX;
+	Event.y = e.clientY;
+	console.log('x='+ Event.x+' y='+Event.y);
+	Event.src = ComponentFactory.getComponent('lasso', {x: Event.x, y: Event.y});
     });
     layout.init(40, 80, 2000, 2000);
 }

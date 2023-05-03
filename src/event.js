@@ -5,37 +5,30 @@ const Event = {
     config: {},
 
     onmouseover: (target, actions, x, y)=>{
-	console.log('mouseover Component state='+target.lstate+ ' pos='+target.panelPos);
-	// if(target.state == 'moving')
-	//     return;
-	//else
-	    if(target.panelPos < 0)
+	//console.log('mouseover Component state='+Event.state+ ' pos='+target.panelPos);
+
+	if(Event.state == 'moving')
+	    return;
+	else if(target.panelPos < 0)
 		Panel.add(target, actions, x, y);
 	
 	target.state = 'component';
     },
 
     onmouseleave: (target)=>{
-	console.log('mouseleave Component');
-	// if(target.state == 'moving')
-	//     return;
-	target.state = '';
+	//console.log('mouseleave Component');
+	target.state = null;
     },
 
     onmousedown: (target, actions)=>{
-	console.log('mousedown component');
-	//	Panel.remove(target, actions);
-	
+	//console.log('mousedown component');
+	Panel.remove(target, actions);
 	Event.state = 'moving';
 	Event.x = target.comp.shape.shape.x;
 	Event.y = target.comp.shape.shape.y;
- 
-	//target.state = 'moving';
     },
 
     onmouseup: (target)=>{
-	// if(this.state == 'moving')
-	//     this.state = '';
 	console.log('mouseUp state='+Event.state);
 	if(Event.state == 'linking')
 	    target.actions.edgeCompleted(target);
@@ -52,11 +45,16 @@ const Event = {
 	    target.move(dim.x - target.comp.shape.shape.x,
 			dim.y - target.comp.shape.shape.y);
 
-	    layout.umark(Math.floor(Event.x/layout.cellW),
-			 Math.floor(Event.y/layout.cellH));
-	    layout.mark(lyt.x/layout.cellW,  lyt.y/layout.cellH);
-	}
-    
+	    // layout.umark(Math.floor(Event.x/layout.cellW),
+	    // 		 Math.floor(Event.y/layout.cellH));
+	    // layout.mark(Math.floor(dim.x/layout.cellW),
+	    // 		Math.floor(dim.y/layout.cellH),
+	    // 		target.comp.shape.shape.uuid);
+	}// else if(Event.state = 'moving_lasso'){
+	//     Event.src = null;
+	// }
+
+	Event.src = null;
 	Event.state = null;
 	Event.x = null;
 	Event.y = null;

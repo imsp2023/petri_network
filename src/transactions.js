@@ -33,8 +33,7 @@ const transactions = {
 	props.cWidth = layout.cellW;
 	props.cheight = layout.cellH;
 
-	layout.markEdge(posx, posy, pos.x, pos.y);
-
+	
 	tr = ComponentFactory.getComponent('place', props);
 	edge = ComponentFactory.getComponent('edge', {
 	    direction: 't2p',
@@ -125,7 +124,7 @@ const transactions = {
     
     deletion: (target)=>{
 	var edges = []; //, src, dest;
-
+	console.log('TRABSACT deletion');
         Register.forEach(
 	    (item, data)=>{
 		if(item.type=='edge' &&

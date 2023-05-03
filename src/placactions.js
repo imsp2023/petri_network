@@ -24,7 +24,7 @@ const placactions = {
 	    props.x = pos.x*layout.cellW;
 	    props.y = pos.y*layout.cellH;
 	}else{
-	    props.x = 0;
+	 y   props.x = 0;
 	    props.y = 0;
 
 	    pos.x = 0;
@@ -33,8 +33,6 @@ const placactions = {
 
 	props.cWidth = layout.cellW;
 	props.cheight = layout.cellH;
-
-	layout.markEdge(posx, posy, pos.x, pos.y);
 
 	tr = ComponentFactory.getComponent('transition', props);
 	edge = ComponentFactory.getComponent('edge', {
