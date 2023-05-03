@@ -1,0 +1,2 @@
+- rewrite all the tests
+- simplify petri model (remove subclasses: lasso, edges, transition, place)
