@@ -24,7 +24,7 @@ const placactions = {
 	    props.x = pos.x*layout.cellW;
 	    props.y = pos.y*layout.cellH;
 	}else{
-	 y   props.x = 0;
+	    props.x = 0;
 	    props.y = 0;
 
 	    pos.x = 0;

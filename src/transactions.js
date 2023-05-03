@@ -15,7 +15,6 @@ const transactions = {
 
 	/* TODO: genereate name*/
 	props.name = 'generate automatic name';
-	console.log('addconnector');
 
 	posx = Math.floor(target.comp.shape.shape.x/layout.cellW);
 	posy = Math.floor(target.comp.shape.shape.y/layout.cellH);
@@ -43,7 +42,6 @@ const transactions = {
     },
 
     edge: (target)=>{
-	console.log('addconnector edge');
 	Event.state = 'linking'
 	Event.src = target;
 	Event.line = aya.Line(target.comp.shape.shape.c_points[0].x,
@@ -124,7 +122,6 @@ const transactions = {
     
     deletion: (target)=>{
 	var edges = []; //, src, dest;
-	console.log('TRABSACT deletion');
         Register.forEach(
 	    (item, data)=>{
 		if(item.type=='edge' &&
@@ -155,7 +152,6 @@ const transactions = {
 
             Register.forEach(
 		(item, data)=>{
-                    console.log('Register');
                     if(item.type=='edge' &&
 		       (item.comp.src == target.comp.shape.uuid ||
 			item.comp.dest == target.comp.shape.uuid)){

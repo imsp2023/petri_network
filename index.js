@@ -42,7 +42,6 @@ try {
 
 	Event.x = e.clientX;
 	Event.y = e.clientY;
-	console.log('x='+ Event.x+' y='+Event.y);
 	Event.src = ComponentFactory.getComponent('lasso', {x: Event.x, y: Event.y});
     });
     layout.init(40, 80, 2000, 2000);
@@ -52,22 +51,16 @@ catch (e) {
 }
 
 function new_diag() {
-	Register.forEach(comp => {
-		if (comp.type != "edge")
-			comp.addConnector('deletion');
-	});
-
-    Register.clear();
-
-    
     var cps = [];
-    var p = ComponentFactory.getComponent("place", { type: 'start', x: 100, y: 350 });
-    // var l = new Lasso({x: 0, y: 0, width: 150, height: 150});
-    var t = ComponentFactory.getComponent('transition', {type: 'dummy', x: 100, y: 250});
+    Register.forEach(cp => {
+	if (cp.type != "edge")
+	    cps.push(cp);
+    }, cps);
 
-    //cps.push(p.comp.shape.shape);
-    // cps.push(p);
-    // l.addSelectedComp(cps);
+    cps.map((c)=>{c.actions['deletion'](c);});
+    cps.length = 0;
+    
+    ComponentFactory.getComponent("place", { type: 'start', x: 100, y: 350 });
 }
 function load_diag() {
 	console.log("Call load_diag");
