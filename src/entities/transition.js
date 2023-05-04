@@ -76,21 +76,16 @@ class Transition{
 
         this.panelPos = -1;
 	this.state = '';
-	this.type = props.type;
-	this.name = props.name;
-
-	if(!props.app)
+	
+	Object.keys(props).map((e)=>{
+	    if(e != 'x' && e != 'y')
+		this[e] = props[e];
+	});
+	    
+	if(props.app == undefined)
             this.app = {};
-        else
-            this.app = props.app;
-	
+        
         dim = Transition.getShapeDimension(this.type);
-
-	
-	if(props.x == undefined && !props.y == undefined){
-	    props.x = 0;
-	    props.y = 0;
-	}
 
 	this.shape = aya.Component("rectangle", {x:props.x, y:props.y, width: dim.width, height: dim.height});
 	if(this.shape && this.shape.type != 'rectangle')
@@ -136,24 +131,24 @@ class Transition{
     }
     
     setType(type){
-        var dim;
-        if(this.type == type)
-            return;
+        // var dim;
+        // if(this.type == type)
+        //     return;
 
-        this.type = type;
-        this.app = {};
-        this.shape.shape.children.map(({child})=>{
-            child.removeFromDOM();
-        })
+        // this.type = type;
+        // this.app = {};
+        // this.shape.shape.children.map(({child})=>{
+        //     child.removeFromDOM();
+        // })
 
-        this.shape.shape.children.length = 0;
-        dim = this.getRectDimension();
+        // this.shape.shape.children.length = 0;
+        // dim = Transition.getShapeDimension(this.type);
 
-        this.shape.shape.width = dim.width;
-        this.shape.shape.height = dim.height;
+        // this.shape.shape.width = dim.width;
+        // this.shape.shape.height = dim.height;
 
-        this.completeShape();
-	this.shape.shape.redraw();
+        // this.completeShape();
+	// this.shape.shape.redraw();
     }
 
     redraw(){

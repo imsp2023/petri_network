@@ -4,21 +4,45 @@ try {
     console.log(aya.config);
     //Component.initSvgEvents(aya.svg);
     aya.svg.addEventListener("mousemove", (e)=>{
-	if(Event.line){
+	if(Event.state == 'linking'){
 	    Event.line.dest_x = e.clientX;
 	    Event.line.dest_y = e.clientY;
 	    Event.line.redraw();
+	}else if(Event.state == 'selection'){
+	    Event.src.resize(e.clientX-Event.x, e.clientY-Event.y);
+	    Event.x = e.clientX;
+	    Event.y = e.clientY;
+	}else if(Event.state == 'moving_lasso'){
+	    Event.src.move(e.clientX-Event.x, e.clientY-Event.y);
+	    Event.x = e.clientX;
+	    Event.y = e.clientY;
 	}
     });
 
     aya.svg.addEventListener("mouseup", (e)=>{
-	console.log('mouseUP SVG');
-	if(Event.line){
+	console.log('mouseUP SVG state='+Event.state);
+	if(Event.state == 'linking'){
 	    Event.line.removeFromDOM();
 	    Event.line = null;
 	    Event.src = null;
 	    Event.state = null;
+	}else if(Event.state == 'selection'){
+	    Event.src.lockComponent();
+	    Event.src = null;
+	    Event.state = null;
 	}
+    });
+
+    aya.svg.addEventListener("mousedown", (e)=>{
+	console.log('mouseDOWN SVG state='+Event.state);
+	if(Event.state != null)
+	    return;
+
+	Event.state = 'selection';
+
+	Event.x = e.clientX;
+	Event.y = e.clientY;
+	Event.src = ComponentFactory.getComponent('lasso', {x: Event.x, y: Event.y});
     });
     layout.init(40, 80, 2000, 2000);
 }
@@ -27,22 +51,16 @@ catch (e) {
 }
 
 function new_diag() {
-	Register.forEach(comp => {
-		if (comp.type != "edge")
-			comp.addConnector('deletion');
-	});
-
-    Register.clear();
-
-    
     var cps = [];
-    var p = ComponentFactory.getComponent("place", { type: 'start', x: 100, y: 350 });
-    // var l = new Lasso({x: 0, y: 0, width: 150, height: 150});
-    var t = ComponentFactory.getComponent('transition', {type: 'dummy', x: 100, y: 250});
+    Register.forEach(cp => {
+	if (cp.type != "edge")
+	    cps.push(cp);
+    }, cps);
 
-    //cps.push(p.comp.shape.shape);
-    // cps.push(p);
-    // l.addSelectedComp(cps);
+    cps.map((c)=>{c.actions['deletion'](c);});
+    cps.length = 0;
+    
+    ComponentFactory.getComponent("place", { type: 'start', x: 100, y: 350 });
 }
 function load_diag() {
 	console.log("Call load_diag");

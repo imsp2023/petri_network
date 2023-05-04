@@ -8,16 +8,30 @@ class Place{
     static IColor = 'black';
     static SColor = 'green';
     static EColor = 'red';
-    
+
+    static getShapeDimension(type){
+        return {};
+    }
     
     constructor(props = {}){
 	var color = Place.IColor;
 	var pixel = Place.IStroke;
 	var x, y;
 
-	this.type = !props.type ? "intermediary" :  props.type;
-	this.name = !props.name ? 'p_+aya.uuid.generate()' :  props.name;
+	this.panelPos = -1;
+	this.state = '';
+	
+	Object.keys(props).map((e)=>{
+	    if(e != 'x' && e != 'y')
+		this[e] = props[e];
+	});
 
+	if(this.type == undefined)
+	    this.type = "intermediary";
+	
+	if(!this.name)
+	    this.name = 'p_+aya.uuid.generate()';
+	
 	if (this.type == "start"){
 	    color = Place.SColor;
 	    pixel = Place.SStroke;;
@@ -27,11 +41,6 @@ class Place{
 	}
 	else if (this.type != "intermediary")
 	    throw new Error("wrong parameter");
-
-	if(!props.x && !props.y){
-	    props.x = 0;
-	    props.y = 0;
-	}
 
 	this.shape = aya.Component("circle",
 				   {x:props.x, y: props.y,
@@ -64,6 +73,7 @@ class Place{
 	if(this.type == type)
             return;
 
+	this.type = type;
 	if (this.type == "start"){
 	    color = Place.SColor;
 	    pixel = Place.IStroke;
@@ -78,6 +88,7 @@ class Place{
 	});
 	this.shape.shape.c_svg.setAttribute("stroke-width", pixel);
 	this.shape.shape.c_svg.setAttribute("stroke", color);
+	this.shape.shape.redraw();
     }
     
 }

@@ -71,7 +71,7 @@ layout.clear = ()=>{
 };
 
 layout.mark = (col, lig, comp)=>{
-    console.log('mark x1='+col+' y1='+lig);
+    console.log('LAYOUT mark x1='+col+' y1='+lig);
     layout.grid[lig*layout.ncols+col] = comp ? comp: true;
 };
 
@@ -88,57 +88,67 @@ layout.fixPoint = (x, y)=>{
     return {x: Math.floor(x/layout.cellW)*layout.cellW, y: Math.floor(y/layout.cellH)*layout.cellH};
 };
 
-layout.markEdge = (x1, y1, x2, y2)=>{
-    var step, val;
+// layout.markEdge = (x1, y1, x2, y2)=>{
+//     var step, val;
 
-    console.log('markEdge x1='+x1+' y1='+y1+' x2='+x2+' y2='+y2);
+//     console.log('markEdge x1='+x1+' y1='+y1+' x2='+x2+' y2='+y2);
 
-    if(y1 < y2)
-	step = 1;
-    else
-	step = -1;
+//     if(y1 < y2)
+// 	step = 1;
+//     else
+// 	step = -1;
 
-    val = y1;
-    while(val != y2){
-	layout.mark(x1, val+step);
-	val+=step;
-    }
+//     val = y1;
+//     while(val != y2){
+// 	layout.mark(x1, val+step);
+// 	val+=step;
+//     }
     
-    if(x1 < x2)
-	step = 1;
-    else
-	step = -1;
+//     if(x1 < x2)
+// 	step = 1;
+//     else
+// 	step = -1;
 
-    val = x1;
-    while(val != x2){
-	layout.mark(val+step, y2);
-	val+=step;
-    }
-};
+//     val = x1;
+//     while(val != x2){
+// 	layout.mark(val+step, y2);
+// 	val+=step;
+//     }
+// };
 
-layout.umarkEdge = (x1, y1, x2, y2)=>{
-    var step, val;
+// layout.umarkEdge = (x1, y1, x2, y2)=>{
+//     var step, val;
 
-    console.log('umarkEdge x1='+x1+' y1='+y1+' x2='+x2+' y2='+y2);
-    if(y1 < y2)
-	step = 1;
-    else
-	step = -1;
+//     console.log('umarkEdge x1='+x1+' y1='+y1+' x2='+x2+' y2='+y2);
+//     if(y1 < y2)
+// 	step = 1;
+//     else
+// 	step = -1;
 
-    val = y1;
-    while(val != y2){
-	layout.umark(x1, val+step);
-	val+=step;
-    }
+//     val = y1;
+//     while(val != y2){
+// 	layout.umark(x1, val+step);
+// 	val+=step;
+//     }
     
-    if(x1 < x2)
-	step = 1;
-    else
-	step = -1;
+//     if(x1 < x2)
+// 	step = 1;
+//     else
+// 	step = -1;
 
-    val = x1;
-    while(val != x2){
-	layout.umark(val+step, y2);
-	val+=step;
-    }
-};
+//     val = x1;
+//     while(val != x2){
+// 	layout.umark(val+step, y2);
+// 	val+=step;
+//     }
+// };
+
+layout.getMarkedCells= (fromX, fromY, toX, toY, cells)=>{
+    var i, j;
+    for(j = fromY; j <= toY; j++)
+	for(i = fromX; i <= toX; i++){
+	    console.log('LAYOUT mark x1='+i+' y1='+j+ 'value'+layout.grid[i*layout.ncols+j]);
+	    if(layout.grid[j*layout.ncols+i])
+		cells.push(layout.grid[j*layout.ncols+i]);
+	}
+}

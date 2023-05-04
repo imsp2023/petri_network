@@ -41,13 +41,10 @@ const Panel = {
 	    img.c_svg.setAttribute("height", ImSZ);
 
 	    img.addEvent("mouseover", (e)=>{
-		console.log('mouseover img');
-		console.log(target);
-		
 		target.state = 'panel';
 	    });
 	    img.addEvent("mouseleave", (e)=>{
-		target.state = '';
+		target.state = null;
 	    });
 	    img.addEvent("mousedown", (e)=>{
 		Panel.remove(target);
@@ -56,17 +53,18 @@ const Panel = {
 	}
 
 	panel.addEvent("mouseover", (e)=>{
-	    console.log('mouseover panel');
 	    target.state = 'panel';
 	});
 	panel.addEvent("mouseleave", (e)=>{
-	    target.state = '';
+	    target.state = null;
 	});
 
 	target.comp.shape.shape.svg.addEventListener("mouseover", () => {
 	    console.log('mouseover SVG state='+target.state + ' panelpos='+target.panelPos);
-	    if (target.state == '' && target.panelPos >= 0)
+	    if (target.state == null && target.panelPos >= 0){
 		Panel.remove(target);
+		target.comp.shape.shape.svg.removeEventListener("mouseover",()=>{});
+	    }
 	});
     },
 
@@ -76,10 +74,10 @@ const Panel = {
 			if(target.panelPos < 0)
 				return;
 
-		len = target.comp.shape.shape.children.length;
-			for(i = target.panelPos; i < target.comp.shape.shape.children.length; i++)
-			target.comp.shape.shape.children[i].child.removeFromDOM();
-		target.comp.shape.shape.children.splice(target.panelPos, len);
+	len = target.comp.shape.shape.children.length;
+        for(i = target.panelPos; i < target.comp.shape.shape.children.length; i++)
+	    target.comp.shape.shape.children[i].child.removeFromDOM();
+	target.comp.shape.shape.children.splice(target.panelPos, len);
 
 		target.panelPos = -1;
 		target.comp.shape.shape.svg.removeEventListener("mouseover", () => {});

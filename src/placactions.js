@@ -34,8 +34,6 @@ const placactions = {
 	props.cWidth = layout.cellW;
 	props.cheight = layout.cellH;
 
-	layout.markEdge(posx, posy, pos.x, pos.y);
-
 	tr = ComponentFactory.getComponent('transition', props);
 	edge = ComponentFactory.getComponent('edge', {
 	    direction: 'p2t',
