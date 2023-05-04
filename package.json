@@ -1,0 +1,19 @@
+{
+  "name": "petri_network",
+  "version": "1.0.0",
+  "description": "## Getting Started     - git clone  https://github.com/imsp2023/petri_network.git",
+  "module": "build/petri.module.js",
+  "type": "module",
+  "main": "build/petri.js",
+  "directories": {
+    "doc": "doc",
+    "test": "tests"
+  },
+  "scripts": {
+    "start": "rollup -c rollup.dev.js",
+    "build": "rollup -c && npm run uglify",
+    "uglify": "uglifyjs --v8 --toplevel --compress --mangle --verbose  -m reserved=['$','require','exports'] --output build/petri.min.js build/petri.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

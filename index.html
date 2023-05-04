@@ -8,7 +8,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ayajs@2.0.5/build/style.css">
   <script src="https://unpkg.com/mithril/mithril.js"></script>
   <script type="application/javascript" src="https://cdn.jsdelivr.net/npm/ayajs@2.0.5/build/aya.js"></script>
-  <!-- <script type="application/javascript"  src="aya.js"></script> -->
+  <script type="application/javascript"  src="build/petri.js"></script>
+  <script type="application/javascript"  src="icon.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <style type="text/tailwindcss">
     input,
@@ -16,71 +17,28 @@
     	@apply bg-white border-gray-400 border-2 w-full rounded p-2 mb-8 disabled:bg-gray-200 disabled:cursor-not-allowed
     }
   </style>
-  <script src="./src/entities/place.js"></script>
-  <script src="./src/entities/transition.js"></script>
-  <script src="./src/entities/edge.js"></script>
-  <script src="./src/entities/lasso.js"></script>
-
-  <script src="./src/register.js"></script>
-  <script src="./src/layout.js"></script>
-
-  <script src="./src/transitionComponent.js"></script>
-  <script src="./src/placeComponent.js"></script>
-  <script src="./src/edgeComponent.js"></script>
-  <script src="./src/lassoComponent.js"></script>
-  
-  <script src="./src/factory.js"></script>
-  <script src="./src/panel.js"></script>
-  <script src="./src/event.js"></script>
-
-  <script src="./src/transactions.js"></script>
-  <script src="./src/placactions.js"></script>
-  <script src="./src/edgeactions.js"></script>
-  <script src="./src/lassoactions.js"></script>
-  
-  <script src="icon.js"></script>
-  <script src="config.js"></script>
-
-   <!-- <script src="./src/entities/place.js"></script> -->
-<!--    <script src="./src/entities/transition.js"></script> -->
-<!--    <script src="./src/entities/edge.js"></script> -->
-<!--       <script src="./src/entities/lasso.js"></script> -->
-
-<!--    <script src="./src/register.js"></script> -->
-<!--    <script src="./src/layout.js"></script> -->
-<!--    <script src="./src/factory.js"></script> -->
-<!--    <script src="./src/component.js"></script> -->
-
-<!--    <title>petri network</title> -->
-<!-- </head> -->
-
-<!-- <body > -->
-<!--   <script> -->
-<!--     console.log(aya); -->
-<!--     try{ -->
-<!--         var aya = new aya.Init(2000, 2000); -->
-<!--       console.log(aya.config); -->
-<!--       aya.config.link.end_start = ' '; -->
-<!--         Component.initSvgEvents(aya.svg); -->
-<!--         layout.init(40, 80, 2000, 2000); -->
-
-<!-- 	    // var p = new Component("place", {type: 'end', x:100,y:100}); -->
-<!-- 	    // var p = new Component("place", {type: 'start', x:180,y:100}); -->
-
-<!--         // var t = new Component('transition', {type:'dummy'}); -->
-
-<!--       new Lasso({width:100, height: 100}); -->
-<!--     }catch(e){console.log(e);} -->
-
-<!--       document.body.append(aya.svg); -->
-<!--    </script> -->
-
   <title>petri network</title>
 </head>
 
 <body>
-  <script src="editor.js"></script>
-  <script src="index.js"></script>
+  <script>
+    var aya = new aya.Init(2000, 2000);
+    petri.init();
+    m.mount(document.body, {
+      oninit(vnode) {
+          petri._new();
+      },
+      view: () => m("", [
+        m(".border.flex.fixed.top-5.left-5.flex-col.rounded-lg.border-gray-400.bg-gray-100", [
+          m("button.btn.p-2.border-b.border-gray-400.hover:bg-gray-200.active:bg-gray-400", { title: "New diagram", onclick: petri._new }, m(Icon.FilePlus)),
+          m("button.btn.p-2.border-b.border-gray-400.hover:bg-gray-200.active:bg-gray-400", { title: "Load diagram", onclick: petri.load}, m(Icon.Folder)),
+          m("button.btn.p-2.border-b.border-gray-400.hover:bg-gray-200.active:bg-gray-400", { title: "Save diagram", onclick: petri.save }, m(Icon.Download)),
+          m("button.btn.p-2.border-b.border-gray-400.hover:bg-gray-200.active:bg-gray-400", { title: "Save as svg", onclick: petri.save_as_svg }, m(Icon.Image)),
+        ]),
+        m(petri.editor)
+      ])
+  });
+  </script>
 </body>
 
 </html>

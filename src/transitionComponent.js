@@ -1,3 +1,8 @@
+import {layout} from "./layout";
+import {Event} from "./event";
+import {Register} from './register';
+import { Transition } from "./entities/transition";
+import { transactions } from "./transactions";
 class TransitionComponent{
     addAllEvents() {
 	this.comp.shape.shape.addEvent('mouseover', (e)=>{
@@ -150,3 +155,4 @@ class TransitionComponent{
         Register.clear(this.comp.shape.uuid);
     }
 }
+export {TransitionComponent};

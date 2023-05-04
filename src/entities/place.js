@@ -1,4 +1,3 @@
-//import { abstractComponent } from "../abstractions/abstractComponent";
 
 class Place{
     static Radius = 20;
@@ -30,7 +29,7 @@ class Place{
 	    this.type = "intermediary";
 	
 	if(!this.name)
-	    this.name = 'p_+aya.uuid.generate()';
+	    this.name = 'p_' + aya.id();
 	
 	if (this.type == "start"){
 	    color = Place.SColor;
@@ -90,5 +89,5 @@ class Place{
 	this.shape.shape.c_svg.setAttribute("stroke", color);
 	this.shape.shape.redraw();
     }
-    
 }
+export {Place};

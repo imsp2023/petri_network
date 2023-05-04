@@ -1,3 +1,9 @@
+import {Event} from "./event";
+import {layout} from "./layout";
+import {Register} from './register';
+import { Place } from "./entities/place";
+import { placactions } from "./placactions";
+
 class PlaceComponent{
     addAllEvents() {
 	this.comp.shape.shape.addEvent('mouseover', (e)=>{
@@ -108,3 +114,4 @@ class PlaceComponent{
     }
 
 }
+export {PlaceComponent};

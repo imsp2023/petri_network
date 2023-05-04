@@ -14,3 +14,4 @@ const lassoactions = {
 	target.remove();
     }
 }
+export {lassoactions};

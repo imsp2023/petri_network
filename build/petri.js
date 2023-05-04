@@ -1,0 +1,1922 @@
+(function (global, factory) {
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+	typeof define === 'function' && define.amd ? define(['exports'], factory) :
+	(global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.petri = {}));
+})(this, (function (exports) { 'use strict';
+
+	let Register$1 = class Register{
+	    static store = {};
+	    
+	    static add(id, obj) {
+		if(id)
+		    Register$1.store[id] = obj;
+	    }
+
+	    static find(id){
+	        return Register$1.store[id] ? Register$1.store[id] : null;
+	    }
+
+	    static clear(id){
+	        delete Register$1.store[id];
+	    }
+
+	    static forEach(func, userdata){
+		Object.keys(Register$1.store).map((e)=>{
+		    func(Register$1.store[e], userdata);
+		});
+	    }
+	};
+
+	const edgeactions = {
+	    list : [
+		{name: "deletion", path: "src/images/delete.png"}
+	    ],
+
+	    deletion: (target)=>{
+		target.remove();
+	    }
+	};
+
+	class Edge {
+	    constructor(props={}){
+		var src, dest;
+		if (!props.direction || !props.src || !props.dest)
+		        throw new Error("missing parameters");
+
+	        if ((props.direction != "p2t" && props.direction != "t2p" && props.direction != "ca") ||
+		        !(src=Register$1.find(props.src)) ||
+		        !(dest=Register$1.find(props.dest)) ||
+		        (props.direction != 'ca' && src.comp.shape.type == dest.comp.shape.type))
+		        throw new Error("wrong direction");
+
+		    this.src = props.src;
+		    this.dest = props.dest;
+		    this.direction = props.direction;
+	        if(props.cond || props.cond == "")
+	            this.cond = props.cond;
+
+	        if(props.direction == 'ca'){
+	            props.subtype =  'optimal';
+	            props.end_start = 'circle';
+	            props.end_dest = 'circle';
+	        }
+
+		    this.shape = aya.Link(src.comp.shape.shape.uuid,
+				                  dest.comp.shape.shape.uuid,
+	                              props);
+	        if (this.cond != undefined){
+	            //this.shape.addText(this.cond, "top");
+	            if (this.cond == '')
+	                //this.shape.line.setStyles({strokedasharray: "2"});
+			this.shape.line.setStyles({stroke: "red"});
+		    else
+			this.shape.line.setStyles({stroke: "blue"});
+	        }
+	        this.shape.line.children.map(({child})=>{
+	            child.setStyles({"fill": "black"});
+	        });
+	        this.shape.redraw();
+	    }
+
+	    setCond(cond){
+		this.cond = cond;
+		if (this.cond == '')
+	            this.shape.line.setStyles({stroke: "red"});
+		else
+		    this.shape.line.setStyles({stroke: "blue"});
+	    }
+
+	    redraw(){
+		this.shape.redraw();
+	    }
+	}
+
+	class EdgeComponent{
+	    addAllEvents() {
+			if(!this.comp.shape.ca)
+				this.comp.shape.line.addEvent('click', (e)=>{
+					Event.onclick(this);
+				});
+		}
+	    
+	    constructor(props){
+			this.type = 'edge';
+			this.comp = new Edge(props);
+			
+			this.addAllEvents();
+			this.actions = edgeactions;
+			Register$1.add(this.comp.shape.line.uuid, this);
+	    }
+
+	    save(){
+			var obj = {};
+			Object.keys(this.comp).map((e)=>{
+				if(e != 'shape')
+				obj[e] = this.comp[e];
+			});
+			return obj;
+	    }
+
+	    remove(){
+			this.comp.shape.removeFromDOM();
+			Register$1.clear(this.comp.shape.line.uuid);
+	    }
+	}
+
+	const ImSZ = 22;
+	const Panel = {
+	    path2name: (actions, path)=>{
+		var a;
+		for(a=0; a < actions.length; a++){
+		    if(path == actions[a].path){
+			return actions[a].name;
+		    }
+		}
+		return '';
+	    },
+	    add: (target, actions, posx, posy)=>{
+		var x = posx;
+		var y = posy;
+		var wid, hei, panel, img;
+
+		wid = 2*ImSZ+2*5/*spacing*/;
+		hei = Math.floor(actions.length/2);
+		if(actions.length % 2)
+		    hei++;
+
+		hei = hei*ImSZ+ hei*5;
+		panel = aya.Rectangle(x, y, wid, hei);
+
+		target.comp.shape.addChild(panel, {x: -2, y: 0}, null, true);
+		panel.c_svg.setAttribute("stroke-width", "0px");
+		panel.c_svg.setAttribute("opacity", 0);
+
+		target.panelPos = target.comp.shape.shape.children.length-1;
+
+	        for (var i = 0, j = 0; i < actions.length; i++, j++){
+		    if (i && !(i%3)){
+			j = 0;
+			y += ImSZ+5/* spacing */;
+		    }
+
+		    img = aya.Image(x +ImSZ * j, y, ImSZ, ImSZ,
+				    actions[i].path, actions[i].name);
+		    target.comp.shape.addChild(img, {x: 5, y: 0}, null, true);
+		    img.c_svg.setAttribute("width", ImSZ);
+		    img.c_svg.setAttribute("height", ImSZ);
+
+		    img.addEvent("mouseover", (e)=>{
+			target.state = 'panel';
+		    });
+		    img.addEvent("mouseleave", (e)=>{
+			target.state = null;
+		    });
+		    img.addEvent("mousedown", (e)=>{
+			Panel.remove(target);
+			target.actions[Panel.path2name(actions, e.target.href.baseVal)](target);
+		    });
+		}
+
+		panel.addEvent("mouseover", (e)=>{
+		    target.state = 'panel';
+		});
+		panel.addEvent("mouseleave", (e)=>{
+		    target.state = null;
+		});
+
+		target.comp.shape.shape.svg.addEventListener("mouseover", () => {
+		    // console.log('mouseover SVG state='+target.state + ' panelpos='+target.panelPos);
+		    if (target.state == null && target.panelPos >= 0){
+			Panel.remove(target);
+			target.comp.shape.shape.svg.removeEventListener("mouseover",()=>{});
+		    }
+		});
+	    },
+
+	    remove: (target)=>{
+			var i, len;
+
+				if(target.panelPos < 0)
+					return;
+
+		len = target.comp.shape.shape.children.length;
+	        for(i = target.panelPos; i < target.comp.shape.shape.children.length; i++)
+		    target.comp.shape.shape.children[i].child.removeFromDOM();
+		target.comp.shape.shape.children.splice(target.panelPos, len);
+
+			target.panelPos = -1;
+			target.comp.shape.shape.svg.removeEventListener("mouseover", () => {});
+	    }
+	};
+
+	class Transition{
+	    static getShapeDimension(type){
+	        var dim = {width: 20, height: 50};
+		
+	        if(type == 'asub' || type == 'ssub'){
+		    dim.width = 30;
+		    dim.height = 60;
+		}
+		
+	        return dim;
+	    }
+
+	    completeShape(){
+	        var color = 'white';
+
+	        if(this.type == 'dummy')
+		    color = 'black';
+
+		this.shape.shape.c_svg.setAttribute("fill", color);
+		this.shape.shape.c_svg.setAttribute("stroke-width", "2px");
+		this.shape.shape.vertex.map((v)=>{
+		    v.c_svg.setAttribute("fill", 'none');
+		});
+		this.shape.shape.c_points.map((c)=>{
+		    c.c_svg.setAttribute("fill", 'none');
+		});
+
+
+		if(this.type == 'asub' || this.type == 'ssub'){
+		    var child = aya.Rectangle(
+			this.shape.shape.x,
+			this.shape.shape.y,
+			20, 50);
+		    this.shape.addChild(child, {x: 5, y: 5}, null);
+		    child.setStyles({fill: "none"});
+		}else if(this.type == 'clock' || this.type == 'event' ||
+	                 this.type == 'manual' || this.type == 'automatic'){
+		    this.shape.addChild(aya.Image(
+			this.shape.shape.x,
+			this.shape.shape.y,
+			20, 20,
+			this.type=='clock' ? 'src/images/clock2.png':
+			    this.type=='event' ? 'src/images/envelope.png' :
+			    this.type=='manual' ? 'src/images/user1.png':
+	                    'src/images/service2.png'  ), {x: 0, y: 0}, null);
+		}
+
+		if(this.type == 'asub' ||this.type == 'ssub' ||
+	           this.type == 'automatic' ||this.type == 'manual'){
+		    this.shape.addChild(
+			aya.Text(this.shape.shape.x - 60,
+				 this.shape.shape.y - 10, this.name, 0, this.shape.shape.x + this.shape.shape.width + 60, this.shape.shape.y - 10),
+			{x: 0, y: 0}, null);
+		}
+
+	    }
+
+	    constructor(props={type: 'dummy'}){
+		var dim = {};
+
+		if(props && typeof props != 'object')
+		    throw new Error('wrong parameter');
+
+		if(props.name && !props.type){
+		    props.type = "dummy";
+		}else if(props.type == "dummy" || props.type == "clock"){
+		    if(!props.name)
+			props.name = 't_' + aya.id();
+		}else if(props.type == "manual" || props.type == "automatic" ||
+			 props.type == "asub" || props.type == "ssub" || props.type == "event"){
+		    if(!props.name)
+			throw new Error("manual transition requires a name");
+		}else
+		    throw new Error("wrong transition type");
+
+	        this.panelPos = -1;
+		this.state = '';
+		
+		Object.keys(props).map((e)=>{
+		    if(e != 'x' && e != 'y')
+			this[e] = props[e];
+		});
+		    
+		if(props.app == undefined)
+	            this.app = {};
+	        
+	        dim = Transition.getShapeDimension(this.type);
+
+		this.shape = aya.Component("rectangle", {x:props.x, y:props.y, width: dim.width, height: dim.height});
+		if(this.shape && this.shape.type != 'rectangle')
+		    throw new Error("the shape isn't a reectangle");
+
+		this.completeShape();
+
+
+	    }
+
+	    
+	    setGate(gate){
+		var index;
+		if(this.gate != 'xor_join' && gate == 'xor_join'){
+		    this.shape.addChild(aya.Polyline([this.shape.shape.x, this.shape.shape.y,
+						      this.shape.shape.x-5, this.shape.shape.y,
+						      this.shape.shape.x-5, this.shape.shape.y+this.shape.shape.height,
+						      this.shape.shape.x, this.shape.shape.y+this.shape.shape.height,
+						      this.shape.shape.x-5, this.shape.shape.y+this.shape.shape.height/2,
+						      this.shape.shape.x, this.shape.shape.y]), {x: 0, y: 0}, null);
+		    this.shape.shape.redraw();
+		}else if(this.gate == 'xor_join' && gate != 'xor_join'){
+		    if(this.type == 'manual' || this.type == 'automatic' ||
+		       this.type == 'asub' || this.type == 'ssub')
+			index = 2;
+		    else if(this.type == 'dummy')
+			index = 0;
+		    else
+			index = 1;x;
+		    this.shape.shape.children[index].child.removeFromDOM();
+		    this.shape.shape.children.length--;
+		}
+		this.gate = gate;
+	    }
+
+	    setName(name){
+	        this.name = name;
+	        if(this.ca)
+	            Register.find(this.cauuid).comp.ca = name;
+		if (this.shape.shape.children.length == 2)
+		    this.shape.shape.children[1].child.text = name;
+	        this.shape.shape.redraw();
+	    }
+
+	    redraw(){
+		this.shape.shape.redraw();
+	    }
+	    
+	    removeFromDOM(){
+	    }
+	}
+
+	class Place{
+	    static Radius = 20;
+	    static IStroke = '1px';
+	    static SStroke = '2px';
+	    static EStroke = '2px';
+	    static IColor = 'black';
+	    static SColor = 'green';
+	    static EColor = 'red';
+
+	    static getShapeDimension(type){
+	        return {};
+	    }
+	    
+	    constructor(props = {}){
+		var color = Place.IColor;
+		var pixel = Place.IStroke;
+
+		this.panelPos = -1;
+		this.state = '';
+		
+		Object.keys(props).map((e)=>{
+		    if(e != 'x' && e != 'y')
+			this[e] = props[e];
+		});
+
+		if(this.type == undefined)
+		    this.type = "intermediary";
+		
+		if(!this.name)
+		    this.name = 'p_' + aya.id();
+		
+		if (this.type == "start"){
+		    color = Place.SColor;
+		    pixel = Place.SStroke;	}else if (this.type == "end"){
+		    color = Place.EColor;
+		    pixel = Place.EStroke;
+		}
+		else if (this.type != "intermediary")
+		    throw new Error("wrong parameter");
+
+		this.shape = aya.Component("circle",
+					   {x:props.x, y: props.y,
+					    r: Place.Radius});
+		if(this.shape && this.shape.type != 'circle')
+		    throw new Error("the shape isn't a circle");
+
+		this.shape.shape.removeBoxFromDOM();
+
+		this.shape.shape.c_svg.setAttribute("fill", "white");
+		this.shape.shape.c_svg.setAttribute("stroke-width", pixel);
+		this.shape.shape.c_svg.setAttribute("stroke", color);
+
+		this.shape.shape.c_points.map((pt) => {
+		    pt.c_svg.setAttribute("fill", 'none');
+		});
+		this.shape.shape.vertex.map((vt) => {
+		    vt.c_svg.setAttribute("fill", 'none');
+		});
+	    }
+
+	    redraw(){
+		this.shape.shape.redraw();
+	    }
+	    
+	    setType(type){
+		var color = Place.IColor;
+		var pixel = Place.IStroke;
+
+		if(this.type == type)
+	            return;
+
+		this.type = type;
+		if (this.type == "start"){
+		    color = Place.SColor;
+		    pixel = Place.IStroke;
+		}
+		else if (this.type == "end"){
+		    color = Place.EColor;
+		    pixel = Place.EStroke;
+		}
+
+		this.shape.shape.c_points.map((pt) => {
+		    pt.c_svg.setAttribute("fill", color);
+		});
+		this.shape.shape.c_svg.setAttribute("stroke-width", pixel);
+		this.shape.shape.c_svg.setAttribute("stroke", color);
+		this.shape.shape.redraw();
+	    }
+	}
+
+	const space = 3;
+	var layout = {
+	    cellW: 0,
+	    cellH: 0,
+	    grid: [],
+	};
+
+	layout.init = function(cellW, cellH, gridW, gridH){
+	    var i;
+	    if(!cellW || !cellH || !gridW || !gridH)
+		return false;
+
+	    layout.cellW = cellW;
+	    layout.cellH = cellH;
+	    layout.ncols = Math.floor(gridW/cellW);
+	    layout.nligs = Math.floor(gridH/cellH);
+	    layout.grid = [];
+	    for(i = 0; i < layout.ncols*layout.nligs; i++)
+		layout.grid.push(false);
+	    return true;
+	};
+
+	layout.getClosestPosition = (originX, originY)=>{
+	    var obj = {}, pos1, pos2, i, j, coef;
+
+	    // console.log('closestposition x='+originX+' y='+originY);
+	    if(originX == undefined || originY == undefined ||
+	       originX < 0 || originY < 0 || originX >= layout.ncols || originY >= layout.nligs)
+		return null;
+	    
+	    for(j=0, coef=1; j < 2 /*east, west oritentation*/; j++, coef*=-1){
+		if(originX+coef*space >= layout.ncols || originX+coef*space < 0)
+		    continue;
+		
+		for(i=0; i < layout.nligs-originY; i+=1){
+		    pos1 = originY-i;
+		    pos2 = originY+i;
+
+		    obj.x = originX+coef*space;
+		    if(pos1 >= 0){
+			pos1 = layout.ncols*pos1+originX+coef*space;
+			if(!layout.grid[pos1]){
+			    obj.y = originY-i;
+			    // console.log('close-1');
+			    // console.log(obj);
+			    return obj;
+			}
+		    }				
+
+		    if(pos2 < layout.nligs){
+			pos2 = layout.ncols*pos2+originX+coef*space;
+			
+			if(!layout.grid[pos2]){
+			    obj.y = originY+i;
+			    // console.log('close-2');
+			    // console.log(obj);
+			    return obj;
+			}
+		    }
+		}
+	    }
+	    
+	    return null;
+	};
+
+
+	layout.clear = ()=>{
+	    var i;
+	    for(i=0; i< layout.grid.length; i++)
+		layout.grid[i] = false;
+	};
+
+	layout.mark = (col, lig, comp)=>{
+	    // console.log('LAYOUT mark x1='+col+' y1='+lig);
+	    layout.grid[lig*layout.ncols+col] = comp ? comp: true;
+	};
+
+	layout.umark = (col, lig)=>{
+	    // console.log('umark x1='+col+' y1='+lig);
+	    layout.grid[lig*layout.ncols+col] = false;
+	};
+
+	layout.fixPoint = (x, y)=>{
+	    if(x == undefined || y == undefined ||
+	       x < 0 || x >= layout.ncols*layout.cellW ||
+	       y < 0 || x >= layout.nligs*layout.cellH)
+		return {x: 0, y: 0};
+	    return {x: Math.floor(x/layout.cellW)*layout.cellW, y: Math.floor(y/layout.cellH)*layout.cellH};
+	};
+
+	layout.getMarkedCells= (fromX, fromY, toX, toY, cells)=>{
+	    var i, j;
+	    for(j = fromY; j <= toY; j++)
+		for(i = fromX; i <= toX; i++){
+		    // console.log('LAYOUT mark x1='+i+' y1='+j+ 'value'+layout.grid[i*layout.ncols+j]);
+		    if(layout.grid[j*layout.ncols+i])
+			cells.push(layout.grid[j*layout.ncols+i]);
+		}
+	};
+
+	const Event$1 = {
+	    line: null,
+	    src: null,
+	    state: null,
+	    config: {},
+
+	    onmouseover: (target, actions, x, y)=>{
+		//console.log('mouseover Component state='+Event.state+ ' pos='+target.panelPos);
+
+		if(Event$1.state == 'moving')
+		    return;
+		else if(target.panelPos < 0)
+			Panel.add(target, actions, x, y);
+		
+		target.state = 'component';
+	    },
+
+	    onmouseleave: (target)=>{
+		//console.log('mouseleave Component');
+		target.state = null;
+	    },
+
+	    onmousedown: (target, actions)=>{
+		Panel.remove(target, actions);
+		Event$1.state = 'moving';
+		Event$1.x = target.comp.shape.shape.x;
+		Event$1.y = target.comp.shape.shape.y;
+	    },
+
+	    onmouseup: (target)=>{
+		// console.log('mouseUp state='+Event.state);
+		if(Event$1.state == 'linking')
+		    target.actions.edgeCompleted(target);
+		else if(Event$1.state == 'moving'){
+		    var dim;
+		    var lyt = layout.fixPoint(target.comp.shape.shape.x,
+					      target.comp.shape.shape.y);
+		    
+		    if(target.type == 'transition')
+			dim = Transition.getShapeDimension(target.comp.type);
+		    else if(target.type == 'place')
+			dim = Place.getShapeDimension(target.comp.type);
+
+
+		    dim.x = lyt.x;
+		    dim.y = lyt.y;
+
+		    target.centerComponent(dim);
+		    target.move(dim.x - target.comp.shape.shape.x,
+				dim.y - target.comp.shape.shape.y);
+		}
+		
+		Event$1.src = null;
+		Event$1.state = null;
+		Event$1.x = null;
+		Event$1.y = null;
+	    },
+	    
+	    onclick: (target)=>{
+		if(Event$1.config.node == target)
+	            Event$1.config.node = null;
+	        else
+	            Event$1.config.node = target;
+	    }
+	};
+
+	const placactions = {
+	    list: [
+		{name: "transition", path: "src/images/transition3.png"},
+		{name: "edge", path: "src/images/edge2.png"},
+		{name: "xorsplit", path: "src/images/xorsplit.png"},
+		{name: "multichoice", path: "src/images/inclusive.png"},
+		{name: "deferredchoice", path: "src/images/deferredchoice.png"},
+		{name: "while", path: "src/images/loop2.png"},
+		{name: "multinstance", path: "src/images/multinstance.png"},
+		{name: "deletion", path: "src/images/delete.png"}
+	    ],
+	    
+	    transition: (target)=>{
+		var props = {}, tr, pos, posx, posy;
+
+		props.type = 'dummy';
+		
+		props.name = 't_' + aya.id();
+
+		posx = Math.floor(target.comp.shape.shape.x/layout.cellW);
+		posy = Math.floor(target.comp.shape.shape.y/layout.cellH);
+		if((pos=layout.getClosestPosition(posx, posy))){
+		    props.x = pos.x*layout.cellW;
+		    props.y = pos.y*layout.cellH;
+		}else {
+		    props.x = 0;
+		    props.y = 0;
+
+		    pos.x = 0;
+		    pos.y = 0;
+		}
+
+		props.cWidth = layout.cellW;
+		props.cheight = layout.cellH;
+
+		tr = ComponentFactory.getComponent('transition', props);
+		ComponentFactory.getComponent('edge', {
+		    direction: 'p2t',
+		    src: target.comp.shape.uuid,
+		    dest: tr.comp.shape.uuid
+		});
+	    },
+
+	    edge: (target)=>{
+		Event$1.state = 'linking';
+		Event$1.src = target;
+		Event$1.line = aya.Line(target.comp.shape.shape.c_points[0].x,
+				      target.comp.shape.shape.c_points[0].y);
+		Event$1.line.draw();
+
+	    },
+
+	    xorsplit: (target)=>{
+		var lyt, p, t, obj={};
+
+	        lyt = layout.getClosestPosition(Math.floor(target.comp.shape.shape.x/layout.cellW),
+						Math.floor(target.comp.shape.shape.y/layout.cellH));
+		obj.x = lyt.x*layout.cellW;
+		obj.y = lyt.y*layout.cellH;
+		obj.type = 'dummy';
+
+		t = ComponentFactory.getComponent('transition', obj);
+		ComponentFactory.getComponent('edge', {src: target.comp.shape.uuid,
+					   dest: t.comp.shape.uuid,
+					   direction: 'p2t', cond:""});
+
+	        lyt = layout.getClosestPosition(Math.floor(t.comp.shape.shape.x/layout.cellW),
+						Math.floor(t.comp.shape.shape.y/layout.cellH));
+		obj.x = lyt.x*layout.cellW;
+		obj.y = lyt.y*layout.cellH;
+		obj.type = 'intermediary';
+
+	        p = ComponentFactory.getComponent('place', obj);
+		ComponentFactory.getComponent('edge', {src: t.comp.shape.uuid,
+					   dest: p.comp.shape.uuid,
+					   direction: 't2p'});
+
+	        lyt = layout.getClosestPosition(Math.floor(target.comp.shape.shape.x/layout.cellW),
+						Math.floor(target.comp.shape.shape.y/layout.cellH));
+		obj.x = lyt.x*layout.cellW;
+		obj.y = lyt.y*layout.cellH;
+		obj.type = 'dummy';
+
+	        t = ComponentFactory.getComponent('transition', obj);
+		ComponentFactory.getComponent('edge', {src: target.comp.shape.uuid,
+					   dest: t.comp.shape.uuid,
+					   direction: 'p2t', cond:""});
+
+	        ComponentFactory.getComponent('edge', {src: t.comp.shape.uuid,
+					   dest: p.comp.shape.uuid,
+					   direction: 't2p'});
+
+	    },
+
+	    multichoice: (target)=>{
+		var i, lyt, p, t, t0, t2, t3, e, obj={};
+
+	        lyt = layout.getClosestPosition(Math.floor(target.comp.shape.shape.x/layout.cellW),
+						Math.floor(target.comp.shape.shape.y/layout.cellH));
+		obj.x = lyt.x*layout.cellW;
+		obj.y = lyt.y*layout.cellH;
+		obj.type = 'dummy';
+
+	        t0 = ComponentFactory.getComponent('transition', obj);
+		e = ComponentFactory.getComponent('edge', {src: target.comp.shape.uuid,
+					   dest: t0.comp.shape.uuid,
+					   direction: 'p2t'});
+
+	        for(i=0; i<2; i++){
+	            lyt = layout.getClosestPosition(Math.floor(t0.comp.shape.shape.x/layout.cellW),
+						    Math.floor(t0.comp.shape.shape.y/layout.cellH));
+		    obj.x = lyt.x*layout.cellW;
+		    obj.y = lyt.y*layout.cellH;
+		    obj.type = 'intermediary';
+
+	            p = ComponentFactory.getComponent('place', obj);
+	            e = ComponentFactory.getComponent('edge', {src: t0.comp.shape.uuid,
+					       dest: p.comp.shape.uuid,
+					       direction: 't2p'});
+	            lyt = layout.getClosestPosition(Math.floor(p.comp.shape.shape.x/layout.cellW),
+						    Math.floor(p.comp.shape.shape.y/layout.cellH));
+		    obj.x = lyt.x*layout.cellW;
+		    obj.y = lyt.y*layout.cellH;
+		    obj.type = 'automatic';
+	            obj.name = 'auto'+i;
+
+	            t = ComponentFactory.getComponent('transition', obj);
+
+	            lyt = layout.getClosestPosition(Math.floor(p.comp.shape.shape.x/layout.cellW),
+						    Math.floor(p.comp.shape.shape.y/layout.cellH));
+		    obj.x = lyt.x*layout.cellW;
+		    obj.y = lyt.y*layout.cellH;
+		    obj.type = 'dummy';
+	            obj.name = null;
+
+	            t2 = ComponentFactory.getComponent('transition', obj);
+
+	            e = ComponentFactory.getComponent('edge', {src: p.comp.shape.uuid,
+					       dest: t.comp.shape.uuid,
+					       direction: 'p2t', cond:''});
+
+	            e = ComponentFactory.getComponent('edge', {src: p.comp.shape.uuid,
+					       dest: t2.comp.shape.uuid,
+					       direction: 'p2t', cond:''});
+
+	            lyt = layout.getClosestPosition(Math.floor(t.comp.shape.shape.x/layout.cellW),
+						    Math.floor(t.comp.shape.shape.y/layout.cellH));
+		    obj.x = lyt.x*layout.cellW;
+		    obj.y = lyt.y*layout.cellH;
+		    obj.type = 'intermediary';
+
+	            p = ComponentFactory.getComponent('place', obj);
+
+	            e = ComponentFactory.getComponent('edge', {src: t.comp.shape.uuid,
+					       dest: p.comp.shape.uuid,
+					       direction: 't2p'});
+	            e.comp.shape.redraw();
+
+	            e = ComponentFactory.getComponent('edge', {src: t2.comp.shape.uuid,
+					       dest: p.comp.shape.uuid,
+					       direction: 't2p'});
+	            e.comp.shape.redraw();
+
+	            if(!i){
+	                lyt = layout.getClosestPosition(Math.floor(p.comp.shape.shape.x/layout.cellW),
+							Math.floor(p.comp.shape.shape.y/layout.cellH));
+			obj.x = lyt.x*layout.cellW;
+			obj.y = lyt.y*layout.cellH;
+			obj.type = 'dummy';
+	                t3 = ComponentFactory.getComponent('transition', obj);
+	                t3.comp.setGate('and_join');
+	            }
+
+	            e = ComponentFactory.getComponent('edge', {src: p.comp.shape.uuid,
+					       dest: t3.comp.shape.uuid,
+					       direction: 'p2t'});
+	        }
+
+	    },
+
+	    deferredchoice: (target)=>{
+		var i, lyt, p, p2, t, t2, e, obj={}, ca = [null, null];
+
+	        lyt = layout.getClosestPosition(Math.floor(target.comp.shape.shape.x/layout.cellW),
+		    				Math.floor(target.comp.shape.shape.y/layout.cellH));
+		obj.x = lyt.x*layout.cellW;
+		obj.y = lyt.y*layout.cellH;
+		obj.type = 'dummy';
+		t = ComponentFactory.getComponent('transition', obj);
+
+	        e = ComponentFactory.getComponent('edge', {src: target.comp.shape.uuid,
+		    			   dest: t.comp.shape.uuid,
+		    			   direction: 't2p'});
+	        e.comp.shape.redraw();
+
+	        for(i=0; i<2; i++){
+	            lyt = layout.getClosestPosition(Math.floor(t.comp.shape.shape.x/layout.cellW),
+		    				    Math.floor(t.comp.shape.shape.y/layout.cellH));
+		    obj.x = lyt.x*layout.cellW;
+		    obj.y = lyt.y*layout.cellH;
+		    obj.type = 'intermediary';
+
+	            p = ComponentFactory.getComponent('place', obj);
+
+	            e = ComponentFactory.getComponent('edge', {src: t.comp.shape.uuid,
+		    			       dest: p.comp.shape.uuid,
+		    			       direction: 't2p'});
+	            e.comp.shape.redraw();
+
+	            lyt = layout.getClosestPosition(Math.floor(p.comp.shape.shape.x/layout.cellW),
+		    				    Math.floor(p.comp.shape.shape.y/layout.cellH));
+	            obj.x = lyt.x*layout.cellW;
+		    obj.y = lyt.y*layout.cellH;
+		    obj.type = 'automatic';
+	            obj.name = 'auto'+i;
+
+	            t2 = ComponentFactory.getComponent('transition', obj);
+	            ca[i] = t2;
+
+	            e = ComponentFactory.getComponent('edge', {src: p.comp.shape.uuid,
+		    			       dest: t2.comp.shape.uuid,
+		    			       direction: 'p2t'});
+	            if(!i){
+	                lyt = layout.getClosestPosition(Math.floor(t2.comp.shape.shape.x/layout.cellW),
+		    					Math.floor(t2.comp.shape.shape.y/layout.cellH));
+		        obj.x = lyt.x*layout.cellW;
+		        obj.y = lyt.y*layout.cellH;
+		        obj.type = 'intermediary';
+	                obj.name = null;
+
+	                p2 = ComponentFactory.getComponent('place', obj);
+	            }
+
+	            e = ComponentFactory.getComponent('edge', {src: t2.comp.shape.uuid,
+		    			       dest: p2.comp.shape.uuid,
+		    			       direction: 't2p'});
+	        }
+
+	        ca[0].comp.ca = ca[1].comp.name;
+	        ca[0].comp.cauuid = ca[1].comp.shape.shape.uuid;
+
+	        ca[1].comp.ca = ca[0].comp.name;
+	        ca[1].comp.cauuid = ca[0].comp.shape.shape.uuid;
+
+	        e = ComponentFactory.getComponent('edge', {src: ca[0].comp.shape.shape.uuid,
+		            		   dest: ca[1].comp.shape.shape.uuid,
+		            		   direction: 'ca'});
+
+	    },
+
+	    while: (target)=>{
+		var lyt, t, obj={};
+
+	        lyt = layout.getClosestPosition(Math.floor(target.comp.shape.shape.x/layout.cellW),
+	                                        Math.floor(target.comp.shape.shape.y/layout.cellH));
+
+	        obj.x = lyt.x*layout.cellW;
+	        obj.y = lyt.y*layout.cellH;
+	        obj.type = 'dummy';
+	        t = ComponentFactory.getComponent('transition', obj);
+
+	        ComponentFactory.getComponent('edge', {src: target.comp.shape.uuid,
+	                                   dest: t.comp.shape.uuid,
+	                                   direction: 'p2t', cond:""});
+
+	        ComponentFactory.getComponent('edge', {src: t.comp.shape.uuid,
+	                                   dest: target.comp.shape.uuid,
+	                                   direction: 't2p',
+	                                   altpath: true});
+	        
+	        lyt = layout.getClosestPosition(Math.floor(target.comp.shape.shape.x/layout.cellW),
+	                                        Math.floor(target.comp.shape.shape.y/layout.cellH));
+	        
+	        obj.x = lyt.x*layout.cellW;
+	        obj.y = lyt.y*layout.cellH;
+	        obj.type = 'dummy';
+	        
+	        t = ComponentFactory.getComponent('transition', obj);
+
+	        ComponentFactory.getComponent('edge', {src: target.comp.shape.uuid,
+	                                   dest: t.comp.shape.uuid,
+	                                   direction: 'p2t', cond: ""});
+
+	    },
+
+	    multinstance: (target)=>{
+	    },
+	    
+	    deletion: (target)=>{
+			var edges = [];
+
+		Register$1.forEach(
+		    (item, data)=>{
+			if(item.type=='edge' &&
+			   (item.comp.src == target.comp.shape.uuid ||
+			    item.comp.dest == target.comp.shape.uuid)){
+			    data.push(item);
+			}
+		    },
+		    edges);
+
+		edges.map((lk) => {
+		    lk.remove();
+		});
+		target.remove();
+	    },
+	    
+	    edgeCompleted: (target)=>{
+		if(!Event$1.line)
+		    return;
+
+		console.log('completed type='+target.type+ ' x2='+ target.comp.shape.shape.x);
+		Event$1.line.removeFromDOM();
+
+	        /* Only p2t  and t2p are allowed */
+		if(Event$1.src.type == 'transition'){
+	            var count = {altpath: false};
+
+
+	            Register$1.forEach(
+			(item, data)=>{
+	                    console.log('Register');
+	                    if(item.type=='edge' &&
+			       (item.comp.src == target.comp.shape.uuid ||
+				item.comp.dest == target.comp.shape.uuid)){
+	                        if(item.comp.src == Event$1.src.comp.shape.uuid ||
+				   item.comp.dest == Event$1.src.comp.shape.uuid)
+				    data.altpath = true;
+			    }
+			},
+			count);
+
+	            /* Set xor_join if transition has more than one place associated */
+	            // if(count.count >= 1)
+	            //     target.comp.setGate('xor_join');
+
+		    ComponentFactory.getComponent('edge', {
+			direction:'t2p',
+			src: Event$1.src.comp.shape.uuid,
+			dest: target.comp.shape.uuid,
+	                altpath: count.altpath
+		    });
+		}
+
+		Event$1.line = null;
+		Event$1.src = null;
+		Event$1.state = null;
+	    }
+	};
+
+	class PlaceComponent{
+	    addAllEvents() {
+		this.comp.shape.shape.addEvent('mouseover', (e)=>{
+
+		    Event$1.onmouseover(this, placactions.list,
+				      this.comp.shape.shape.x + this.comp.shape.shape.r,
+				      this.comp.shape.shape.y - this.comp.shape.shape.r);
+		});
+		this.comp.shape.shape.addEvent('mousedown', (e)=>{
+		    Event$1.onmousedown(this);
+		    layout.umark(Math.floor(this.comp.shape.shape.x/layout.cellW),
+				 Math.floor(this.comp.shape.shape.y/layout.cellH));
+		});
+		this.comp.shape.shape.addEvent('mouseleave', (e)=>{
+		    Event$1.onmouseleave(this);
+		});
+		this.comp.shape.shape.addEvent('mouseup', (e)=>{
+		    Event$1.onmouseup(this);
+		});
+		this.comp.shape.shape.addEvent('click', (e)=>{
+		    Event$1.onclick(this);
+		});
+	    }
+
+	    centerComponent(comp){
+		comp.x += layout.cellW/2;
+	        comp.y += layout.cellH/2;
+	    }
+	    
+	    constructor(props){
+		var lyt = {x: 0, y :0};
+		
+		this.type = 'place';
+		this.panelPos = -1;
+		
+		if(props.x >= 0 && props.y >= 0){
+		    var lyt = layout.fixPoint(props.x, props.y);
+
+		    props.x = lyt.x;
+		    props.y = lyt.y;
+		}else {
+		    props.x = 0;
+		    props.y = 0;
+
+		}
+
+		this.centerComponent(props);
+		this.comp = new Place(props);
+
+		layout.mark(Math.floor(lyt.x/layout.cellW),
+	                    Math.floor(lyt.y/layout.cellH),
+	                    this.comp.shape.shape.uuid);
+
+		
+		this.addAllEvents();
+		this.actions = placactions;
+	        Register$1.add(this.comp.shape.uuid, this);
+		
+	    }
+
+	    move(dx, dy) {
+		var edges = [];
+
+		layout.umark(Math.floor(this.comp.shape.shape.x/layout.cellW),
+			     Math.floor(this.comp.shape.shape.y/layout.cellH));
+		
+		this.comp.shape.shape.shift(dx, dy);
+
+		layout.mark(Math.floor(this.comp.shape.shape.x/layout.cellW),
+			    Math.floor(this.comp.shape.shape.y/layout.cellH),
+			    this.comp.shape.shape.uuid);
+		this.comp.redraw();
+		Register$1.forEach(
+		    (item, data)=>{
+			if(item.type=='edge' &&
+			   (item.comp.src == this.comp.shape.uuid ||
+			    item.comp.dest == this.comp.shape.uuid))
+			    data.push(item);
+		    },
+		    edges
+		);
+
+		edges.map((e)=>{
+		    e.comp.redraw();
+		});
+	    }
+	    
+	    save(){
+		var obj = {};
+		Object.keys(this.comp.shape).map((e)=>{
+		    if(e != 'shape')
+			obj[e] = this.comp[e];
+		    else {
+			obj.uuid = this.comp[e].shape.uuid;
+			obj.x = this.comp[e].shape.x;
+			obj.y = this.comp[e].shape.y;
+		    }
+		});
+
+		return obj;
+	    }
+
+	    remove(){
+		layout.umark(Math.floor(this.comp.shape.shape.x/layout.cellW),
+			     Math.floor(this.comp.shape.shape.y/layout.cellH));
+		this.comp.shape.shape.removeFromDOM();
+	        Register$1.clear(this.comp.shape.uuid);
+	    }
+
+	}
+
+	const transactions = {
+	    list : [
+		{name: "place", path: "src/images/place.png"},
+		{name: "edge", path: "src/images/edge2.png"},
+		{name: "andsplit", path: "src/images/andsplit.png"},
+		{name: "dowhile", path: "src/images/loop2.png"},
+		{name: "multinstance", path: "src/images/multinstance.png"},
+		{name: "deletion", path: "src/images/delete.png"}
+	    ],
+
+	    place: (target)=>{
+		var props = {}, tr, pos, posx, posy;
+
+		props.type = 'intermediary';
+
+		props.name = 'p_' + aya.id();
+
+		posx = Math.floor(target.comp.shape.shape.x/layout.cellW);
+		posy = Math.floor(target.comp.shape.shape.y/layout.cellH);
+		if((pos=layout.getClosestPosition(posx, posy))){
+		    props.x = pos.x*layout.cellW;
+		    props.y = pos.y*layout.cellH;
+		}else {
+		    props.x = 0;
+		    props.y = 0;
+
+		    pos.x = 0;
+		    pos.y = 0;
+		}
+
+		props.cWidth = layout.cellW;
+		props.cheight = layout.cellH;
+
+		
+		tr = ComponentFactory.getComponent('place', props);
+		ComponentFactory.getComponent('edge', {
+		    direction: 't2p',
+		    src: target.comp.shape.uuid,
+		    dest: tr.comp.shape.uuid
+		});
+	    },
+
+	    edge: (target)=>{
+		Event$1.state = 'linking';
+		Event$1.src = target;
+		Event$1.line = aya.Line(target.comp.shape.shape.c_points[0].x,
+				      target.comp.shape.shape.c_points[0].y);
+		Event$1.line.draw();
+
+	    },
+
+	    andsplit: (target)=>{
+		var i, lyt, p, t, cur, obj={};
+		
+		for(i=0; i<2; i++){
+		    cur = target;
+
+		    lyt = layout.getClosestPosition(Math.floor(cur.comp.shape.shape.x/layout.cellW),
+						    Math.floor(cur.comp.shape.shape.y/layout.cellH));
+
+		    obj.x = lyt.x*layout.cellW;
+		    obj.y = lyt.y*layout.cellH;
+		    obj.type = 'intermediary';
+		    p = ComponentFactory.getComponent('place', obj);
+		    ComponentFactory.getComponent('edge', {src: cur.comp.shape.uuid,
+					       dest: p.comp.shape.uuid,
+					       direction: 't2p'});
+	            cur = p;
+		    lyt = layout.getClosestPosition(Math.floor(cur.comp.shape.shape.x/layout.cellW),
+						    Math.floor(cur.comp.shape.shape.y/layout.cellH));
+		    obj.x = lyt.x*layout.cellW;
+		    obj.y = lyt.y*layout.cellH;
+		    obj.type = 'dummy';
+		    t = ComponentFactory.getComponent('transition', obj);
+		    ComponentFactory.getComponent('edge', {src: cur.comp.shape.uuid,
+					       dest: t.comp.shape.uuid,
+					       direction: 'p2t'});
+	        }
+	    },
+
+	    dowhile: (target)=>{
+		var lyt, p, t, obj={};
+
+		lyt = layout.getClosestPosition(Math.floor(target.comp.shape.shape.x/layout.cellW),
+		    				Math.floor(target.comp.shape.shape.y/layout.cellH));
+
+		obj.x = lyt.x*layout.cellW;
+		obj.y = lyt.y*layout.cellH;
+		obj.type = 'intermediary';
+
+		p = ComponentFactory.getComponent('place', obj);
+		
+	        ComponentFactory.getComponent('edge', {src: target.comp.shape.uuid,
+		    			   dest: p.comp.shape.uuid,
+		    			   direction: 't2p'});
+
+	        ComponentFactory.getComponent('edge', {src: p.comp.shape.uuid,
+		    			   dest: target.comp.shape.uuid,
+		    					   direction: 'p2t',
+							   cond: '',
+							   altpath: true});
+		
+		lyt = layout.getClosestPosition(Math.floor(p.comp.shape.shape.x/layout.cellW),
+						Math.floor(p.comp.shape.shape.y/layout.cellH));
+		
+		obj.x = lyt.x*layout.cellW;
+		obj.y = lyt.y*layout.cellH;
+		obj.type = 'dummy';
+		
+		t = ComponentFactory.getComponent('transition', obj);
+
+		ComponentFactory.getComponent('edge', {src: p.comp.shape.uuid,
+					   dest: t.comp.shape.uuid,
+					   direction: 'p2t', cond: ''});
+
+
+	    },
+
+	    multinstance: (target)=>{
+	    },
+	    
+	    deletion: (target)=>{
+		var edges = []; //, src, dest;
+	        Register$1.forEach(
+		    (item, data)=>{
+			if(item.type=='edge' &&
+			   (item.comp.src == target.comp.shape.uuid ||
+			    item.comp.dest == target.comp.shape.uuid)){
+			    data.push(item);
+			}
+		    },
+		    edges);
+		
+		edges.map((lk) => {
+		    lk.remove();
+		});
+
+		target.remove();
+	    },
+
+	    edgeCompleted: (target)=>{
+		if(!Event$1.line)
+		    return;
+
+		Event$1.line.removeFromDOM();
+		
+	        if(Event$1.src.type == 'place'){
+	            var count = {count: 0, altpath: false};
+		    
+
+	            Register$1.forEach(
+			(item, data)=>{
+	                    if(item.type=='edge' &&
+			       (item.comp.src == target.comp.shape.uuid ||
+				item.comp.dest == target.comp.shape.uuid)){
+	                        data.count++;
+	                        if(item.comp.src == Event$1.src.comp.shape.uuid ||
+				   item.comp.dest == Event$1.src.comp.shape.uuid)
+				    data.altpath = true;
+			    }
+			},
+			count);
+
+	            // Set xor_join if transition has more than one place associated
+	            if(count.count >= 1)
+	                target.comp.setGate('xor_join');
+
+		    ComponentFactory.getComponent('edge', {
+			direction:'p2t',
+			src: Event$1.src.comp.shape.uuid,
+			dest: target.comp.shape.uuid,
+	                altpath: count.altpath
+		    });
+		}
+
+		Event$1.line = null;
+		Event$1.src = null;
+		Event$1.state = null;
+	    }
+	};
+
+	class TransitionComponent{
+	    addAllEvents() {
+		this.comp.shape.shape.addEvent('mouseover', (e)=>{
+		    Event$1.onmouseover(this, transactions.list,
+				      this.comp.shape.shape.x + this.comp.shape.shape.width,
+				      this.comp.shape.shape.y);
+		});
+		this.comp.shape.shape.addEvent('mousedown', (e)=>{
+		    Event$1.onmousedown(this);
+		    layout.umark(Math.floor(this.comp.shape.shape.x/layout.cellW),
+				 Math.floor(this.comp.shape.shape.y/layout.cellH));
+		});
+		this.comp.shape.shape.addEvent('mouseleave', (e)=>{
+		    Event$1.onmouseleave(this);
+		});
+		this.comp.shape.shape.addEvent('mouseup', (e)=>{
+		    Event$1.onmouseup(this);
+		});
+		this.comp.shape.shape.addEvent('click', (e)=>{
+		    Event$1.onclick(this);
+		});
+	    }
+
+	    centerComponent(comp){
+		comp.x += (layout.cellW-comp.width)/2;
+	        comp.y += (layout.cellH-comp.height)/2;
+	    }
+	    
+	    constructor(props={}){
+		var lyt = {x: 0, y :0}, dim;
+		
+		this.type = 'transition';
+		this.panelPos = -1;
+		
+		if(props.x >= 0 && props.y >= 0){
+		    var lyt = layout.fixPoint(props.x, props.y);
+
+		    props.x = lyt.x;
+		    props.y = lyt.y;
+		}else {
+		    props.x = 0;
+		    props.y = 0;
+
+		}
+
+		dim = Transition.getShapeDimension(this.type);
+		dim.x = props.x;
+		dim.y = props.y;
+		
+		this.centerComponent(dim);
+		props.x = dim.x;
+		props.y = dim.y;
+		
+		this.comp = new Transition(props);
+
+		layout.mark(Math.floor(props.x/layout.cellW),
+	                    Math.floor(props.y/layout.cellH),
+	                    this.comp.shape.shape.uuid);
+
+		this.addAllEvents();
+		this.actions = transactions;
+	        Register$1.add(this.comp.shape.uuid, this);
+	    }
+
+	    move(dx, dy) {
+		var edges = [];
+
+		layout.umark(Math.floor(this.comp.shape.shape.x/layout.cellW),
+			     Math.floor(this.comp.shape.shape.y/layout.cellH));
+
+		this.comp.shape.shape.shift(dx, dy);
+
+		layout.mark(Math.floor(this.comp.shape.shape.x/layout.cellW),
+			    Math.floor(this.comp.shape.shape.y/layout.cellH),
+			    this.comp.shape.shape.uuid);
+		this.comp.redraw();
+
+		Register$1.forEach(
+		    (item, data)=>{
+			if(item.type=='edge' &&
+			   (item.comp.src == this.comp.shape.uuid ||
+			    item.comp.dest == this.comp.shape.uuid))
+			    data.push(item);
+		    },
+		    edges
+		);
+
+		edges.map((e)=>{
+		    e.comp.redraw();
+		});
+	    }
+
+	    setType(type){
+	        var dim;
+	        if(this.comp.type == type)
+	            return;
+
+	        this.comp.type = type;
+	        this.comp.app = {};
+	        this.comp.shape.shape.children.map(({child})=>{
+	            child.removeFromDOM();
+	        });
+
+	        this.comp.shape.shape.children.length = 0;
+		var lyt = layout.fixPoint(this.comp.shape.shape.x, this.comp.shape.shape.y);
+	        dim = Transition.getShapeDimension(type);
+
+		console.log(lyt);
+		this.comp.shape.shape.x = lyt.x; 
+		this.comp.shape.shape.y = lyt.y;
+	        this.comp.shape.shape.width = dim.width;
+	        this.comp.shape.shape.height = dim.height;
+
+		this.centerComponent(this.comp.shape.shape);
+		
+	        this.comp.completeShape();
+		this.move(0, 0)                ;
+	    }
+	    
+	    save(){
+		var obj = {};
+		Object.keys(this.comp.shape).map((e)=>{
+		    if(e != 'shape')
+			obj[e] = this.comp[e];
+		    else {
+			obj.uuid = this.comp[e].shape.uuid;
+			obj.x = this.comp[e].shape.x;
+			obj.y = this.comp[e].shape.y;
+		    }
+		});
+
+		return obj;
+	    }
+
+	    remove(){
+		if(this.comp.ca){
+		    var cp;
+		    if((cp = Register$1.find(this.comp.cauuid))){
+			delete cp.comp.ca;
+			delete cp.comp.cauuid;
+
+			delete this.comp.ca;
+			delete this.comp.cauuid;
+		    }
+		}
+
+		layout.umark(Math.floor(this.comp.shape.shape.x/layout.cellW),
+			     Math.floor(this.comp.shape.shape.y/layout.cellH));
+		this.comp.shape.shape.removeFromDOM();
+	        Register$1.clear(this.comp.shape.uuid);
+	    }
+	}
+
+	class Lasso{
+	    constructor(props={}){
+
+		if(props.x == undefined)
+		    props.x = 0;
+
+		if(props.y == undefined)
+		    props.y = 0;
+
+		if(props.width == undefined)
+		    props.width = 0;
+		
+		if(props.height == undefined)
+		    props.height = 0;
+
+		
+		this.selectedComp = [];
+		this.panelPos = -1;
+		this.shape = aya.Component("rectangle", {x:props.x, y:props.y,
+							 width: props.width,
+							 height: props.height});
+
+		//this.shape.shape.c_svg.setAttribute("stroke-width", "1px");
+		this.shape.shape.c_svg.setAttribute("stroke-dasharray", "4 1 2");
+		this.shape.shape.c_svg.setAttribute("stroke", "blue");
+		this.shape.shape.c_svg.setAttribute("fill-opacity", 0);
+		this.shape.shape.c_svg.setAttribute("rx", 5);
+		this.shape.shape.c_svg.setAttribute("ry", 5);
+		
+		this.shape.shape.c_points.map((c)=>{
+		    c.c_svg.setAttribute("fill", 'none');
+		});
+
+		this.shape.shape.vertex.map((c)=>{
+		    c.c_svg.setAttribute("fill", 'none');
+		});
+	    }
+
+	    redraw(){
+		this.shape.shape.redraw();
+	    }
+
+	    
+	    removeFromDOM(){
+	    }
+	}
+
+	const lassoactions = {
+	    list : [
+		{name: "break", path: "src/images/break.png"},
+		{name: "deletion", path: "src/images/delete.png"}
+	    ],
+	    break: (target)=>{
+		target.remove();
+	    },
+	    
+	    deletion: (target)=>{
+		target.selectedComp.map((c)=>{
+		    c.actions['deletion'](c);
+		});
+		target.remove();
+	    }
+	};
+
+	class LassoComponent{
+	    addAllEvents() {
+		this.comp.shape.shape.addEvent('mouseover', (e)=>{
+		    Event$1.onmouseover(this, lassoactions.list,
+				      this.comp.shape.shape.x + this.comp.shape.shape.width,
+				      this.comp.shape.shape.y);
+		});
+		this.comp.shape.shape.addEvent('mousedown', (e)=>{
+		    Event$1.onmousedown(this);
+		    Event$1.state += '_lasso';
+		    Event$1.src = this;
+		    Event$1.x = e.clientX;
+		    Event$1.y = e.clientY;
+		    this.oldX = this.comp.shape.shape.x;
+		    this.oldY = this.comp.shape.shape.y;
+		});
+		this.comp.shape.shape.addEvent('mouseleave', (e)=>{
+		    Event$1.onmouseleave(this);
+		});
+		this.comp.shape.shape.addEvent('mouseup', (e)=>{
+		    //Event.onmouseup(this);
+		    Event$1.state = null;
+		    Event$1.x = null;
+		    Event$1.y = null;
+		});
+	    }
+
+	    constructor(props={}){
+		this.type = 'lasso';
+		this.panelPos = -1;
+		this.selectedComp = [];
+		
+		this.comp = new Lasso(props);
+
+		this.actions = lassoactions;
+		Register$1.add(this.comp.shape.uuid, this);
+	    }
+
+	    lockComponent() {
+		var ids = [], cp;
+		layout.getMarkedCells(Math.floor(this.comp.shape.shape.x/layout.cellW),
+				      Math.floor(this.comp.shape.shape.y/layout.cellH),
+				      Math.floor((this.comp.shape.shape.x+
+						  this.comp.shape.shape.width)/layout.cellW),
+				      Math.floor((this.comp.shape.shape.y+
+						 this.comp.shape.shape.height)/layout.cellH),
+				      ids);
+		//console.log(ids);
+
+		if(ids.length == 0){
+		    this.remove();
+		    return;
+		}
+		
+		ids.map((i)=>{
+		    if((cp=Register$1.find(i))){
+			
+			if(cp.comp.shape.shape.x > this.comp.shape.shape.x &&
+			   cp.comp.shape.shape.y > this.comp.shape.shape.y &&
+			   cp.comp.shape.shape.x < this.comp.shape.shape.x+this.comp.shape.shape.width &&
+			   cp.comp.shape.shape.y < this.comp.shape.shape.y+ this.comp.shape.shape.height){
+			    cp.comp.shape.shape.deleteAllEvents();
+			    this.selectedComp.push(cp);
+			}
+		    }
+		});
+
+		this.addAllEvents();
+	    }
+
+	    move(dx, dy){
+		this.selectedComp.map((c)=>{
+		    c.move(dx, dy);
+		    c.comp.redraw();
+		});
+	    }
+	    
+	    save(){
+		return null;
+	    }
+
+	    resize(dx, dy){
+		if(this.comp.shape.shape.width+dx < 0 ||
+		   this.comp.shape.shape.height+dy < 0)
+		    return;
+		this.comp.shape.shape.width += dx;
+		this.comp.shape.shape.height += dy;
+		this.comp.redraw();
+	    }
+	    
+	    remove(){
+		// console.log('remove');
+		// console.log(this.comp.shape);
+
+		this.selectedComp.map((c)=>{
+		    c.addAllEvents();
+		});
+		
+		this.comp.shape.shape.removeFromDOM();
+	        Register$1.clear(this.comp.shape.uuid);
+	    }
+	}
+
+	class ComponentFactory{
+	    static getComponent(type, props){
+			if (type == 'place')
+				return new PlaceComponent(props);
+			else if (type == 'edge')
+				return new EdgeComponent(props);
+			else if (type == 'transition')
+				return new TransitionComponent(props);
+			else if (type == 'lasso')
+				return new LassoComponent(props);
+			else
+				return null;
+			}
+	}
+
+	const config = {
+	    svg_width: 2000,
+	    svg_height: 2000,
+	    end_start: "",
+	    end_dest: "triangle",
+	    cellW: 40,
+	    cellH:  80
+	};
+
+	const init = ()=>{
+	    try{
+	        aya.config.link.end_start = config.end_start;
+	        aya.config.link.end_dest = config.end_dest;
+
+	        aya.svg.addEventListener("mousemove", (e)=>{
+	            if(Event$1.state == 'linking'){
+	                Event$1.line.dest_x = e.clientX;
+	                Event$1.line.dest_y = e.clientY;
+	                Event$1.line.redraw();
+	            }else if(Event$1.state == 'selection'){
+	                Event$1.src.resize(e.clientX-Event$1.x, e.clientY-Event$1.y);
+	                Event$1.x = e.clientX;
+	                Event$1.y = e.clientY;
+	            }else if(Event$1.state == 'moving_lasso'){
+	                Event$1.src.move(e.clientX-Event$1.x, e.clientY-Event$1.y);
+	                Event$1.x = e.clientX;
+	                Event$1.y = e.clientY;
+	            }
+	        });
+	        
+	        aya.svg.addEventListener("mouseup", (e)=>{
+	            // console.log('mouseUP SVG state='+Event.state);
+	            if(Event$1.state == 'linking'){
+	                Event$1.line.removeFromDOM();
+	                Event$1.line = null;
+	                Event$1.src = null;
+	                Event$1.state = null;
+	            }
+	            else if(Event$1.state == 'selection'){
+	                Event$1.src.lockComponent();
+	                Event$1.src = null;
+	                Event$1.state = null;
+	            }
+	        });
+	    
+	        aya.svg.addEventListener("mousedown", (e)=>{
+	        // console.log('mouseDOWN SVG state='+Event.state);
+	        if(Event$1.state != null)
+	            return;
+	    
+	        Event$1.state = 'selection';
+	    
+	        Event$1.x = e.clientX;
+	        Event$1.y = e.clientY;
+	        Event$1.src = ComponentFactory.getComponent('lasso', {x: Event$1.x, y: Event$1.y});
+	        });
+
+	        layout.init( config.cellW,  config.cellH, config.svg_width,  config.svg_height);
+	    }
+	    catch(e){
+	        console.error(e);
+	    }
+	};
+
+	const _new = ()=>{
+	    var cps = [];
+	    Register$1.forEach(cp => {
+	    if (cp.type != "edge")
+	        cps.push(cp);
+	    }, cps);
+
+	    cps.map((c)=>{c.actions['deletion'](c);});
+	    cps.length = 0;
+	    
+	    ComponentFactory.getComponent("place", { type: 'start', x: 100, y: 350 });
+	};
+
+	const load = ()=>{
+	    console.log("Call load_diag");
+	};
+
+	const save_as_svg = ()=>{
+	    const svg = document.getElementById("viewport").children[0];
+	    saveFile(svg.outerHTML,"diagram.svg","image/svg+xml");
+	};
+
+	const save = ()=>{
+	    var data = { edges: [], places: [], transitions: [] };
+	    Register$1.forEach(comp => {
+	        data[comp.type + 's'].push(comp.save());
+	    }, data);
+	    saveFile(JSON.stringify(data), "diagram.aya", 'text/plain');
+	};
+
+	const saveFile = (data, name, type)=>{
+	    let blob = new Blob([data], { type });
+	    if (typeof navigator.msSaveBlob == "function")
+	        return navigator.msSaveBlob(blob, file_name);
+
+	    var saver = document.createElementNS("http://www.w3.org/1999/xhtml", "a");
+	    var blobURL = saver.href = URL.createObjectURL(blob);
+	    var body = document.body;
+
+	    saver.download = name;
+
+	    body.appendChild(saver);
+	    saver.dispatchEvent(new MouseEvent("click"));
+	    body.removeChild(saver);
+	    URL.revokeObjectURL(blobURL);
+	};
+
+	const editor = () => {
+	    // edge -> src, destn , direction, condition
+	    var edge = () => {
+	        return {
+	        view(vnode) {
+	            let node = vnode.attrs.node;
+	            console.log(node);
+	            return m(".flex.flex-col.p-4.w-full", [
+	            m("", [
+	                m("label.block.mb-3", "Src"),
+	                m("input[disabled]", { value: node.comp.src, onchange: (e) => node.comp.src = e.target.value })
+	            ]),
+	            m("", [
+	                m("label.block.mb-3", "Destination "),
+	                m("input[disabled]", { value: node.comp.dest, onchange: (e) => node.comp.dest = e.target.value })
+	            ]),
+	            m("", [
+	                m("label.block.mb-3", "Direction"),
+	                m("input[disabled]", { value: node.comp.direction, onchange: (e) => node.comp.direction = e.target.value })
+	            ]),
+	            node.comp.cond != undefined && m("", [
+	                m("label.block.mb-3", "Condition"),
+	                m("input", { value: node.comp.cond, onchange: (e) => {node.comp.setCond(e.target.value);} })
+	            ])
+	            ])
+	        }
+	        }
+	    };
+	    // place -> uuid, type {start, end, intermediary}, name
+	    var place = () => {
+	        let types = ["start", "intermediary", "end"];
+	        return {
+	        view(vnode) {
+	            var node = vnode.attrs.node;
+	            return m(".flex.flex-col.p-4.w-full", [
+	            m("", [
+	                m("label.block.mb-3", "UUID"),
+	                m("input", { value: node.comp.shape.uuid, disabled: true })
+	            ]),
+	            m("", [
+	                m("label.block.mb-3", "Type"),
+	                m("select",
+	                {
+	                    onchange: (e) => {
+	                        node.comp.setType(e.target.value);
+	                        node.comp.shape.shape.redraw();
+	                    }
+	                },
+	                types.map((type, idx) =>
+	                    m("option", {
+	                    key: idx,
+	                    value: type,
+	                    selected: node.comp.type == type,
+	                    }, type))
+	                )]),
+	            m("", [
+	                m("label.block.mb-3", "Name"),
+	                m("input", { value: node.comp.name, onchange: (e) => node.comp.name = e.target.value })
+	            ]),
+	            ])
+	        }
+	        }
+	    };
+	    // transition -> uuid, type {auto, manual, clock , ssub, asub}, name, ca, gateway, role, resource id, resource name, 
+	    var transition = {
+	        view(vnode) {
+	        var node = vnode.attrs.node;
+	        // console.log(node);
+	        const types = ["dummy","automatic", "event", "manual", "clock", "ssub", "asub"];
+	        const rnames = ["get", "put", "post", "delete"];
+	        const gateways = ["and_join", "xor_join"];
+	        return m(".grid.grid-cols-2", [
+	            m(".p-2.border-r",
+	            m(".flex.flex-col.px-4", [
+	                m("", [
+	                m("label.block.mb-3", "UUID"),
+	                m("input", { value: node.comp.shape.uuid, disabled: true })
+	                ]),
+	                m("", [
+	                m("label.block.mb-3", "type"),
+	                m("select",
+	                    {
+	                    onchange: (e) => {
+	                        node.setType(e.target.value);
+	                    }
+	                    },
+	                    types.map((type, idx) =>
+	                    m("option", {
+	                        key: idx,
+	                        value: type,
+	                        selected: node.comp.type == type,
+	                    }, type))
+	                ),
+	                ]),
+	                node.comp.ca && m("", [
+	                m("label.block.mb-3", "Cancel activity"),
+	                m("input", { value: node.comp.ca, disabled: true})
+	                ]),
+	                node.comp.type == "automatic" && m("", [
+	                m("label.block.mb-3", "Resource name"),
+	                m("select",
+	                    {
+	                    onchange: (e) => {
+	                        node.comp.app.name = e.target.value;
+	                    }
+	                    },
+	                    rnames.map((name, idx) =>
+	                    m("option", {
+	                        key: idx,
+	                        value: name,
+	                        selected: node.comp.app.name == name,
+	                    }, name))
+	                )]),
+	            ]),
+	            ),
+	            m(".p-2", m(".flex.flex-col.px-4", [
+	            m("", [
+	                m("label.block.mb-3", "Name"),
+	                m("input", {
+	                value: node.comp.name,
+	                onchange: (e) => {node.comp.setName(e.target.value);}
+	                })
+	            ]),
+	            m("", [
+	                m("label.block.mb-3", "Gateway"),
+	                m("select",
+	                {
+	                    onchange: (e) => {
+	                    node.comp.setGate(e.target.value);
+	                    }
+	                },
+	                gateways.map((gateway, idx) =>
+	                    m("option", {
+	                    key: idx,
+	                    value: gateway,
+	                    selected: node.comp.gate == gateway || (gateway == "and_join" && node.comp.gate == undefined),
+	                    }, gateway))
+	                ),
+	                node.comp.type == "manual" && m("", [
+	                m("label.block.mb-3", "Role"),
+	                m("input", { value: node.comp.app.role, onchange: (e) => node.comp.app.role = e.target.value })
+	                ]),
+	            ]),
+	            ])),
+	            node.comp.type == "automatic" && m(".px-4.col-span-2", [
+	            m("label.block.mb-3", "Resource uri"),
+	            m("input.border", { value: node.comp.name, onchange: (e) => node.comp.name = e.target.value })
+	            ]),
+	        ])
+	        }
+	    };
+	    
+	    var config = {
+	    
+	        view(vnode) {
+	        const node = vnode.attrs.config;
+	        return m(".fixed.border.border-1.right-0.top-0.bottom-0.bg-white.flex.flex-col",
+	            { style: "min-width:25%; box-shadow: rgba(149, 157, 165, 0.2) 0px 4px 12px;}" }, [
+	            m(".flex.justify-between.border-b.px-4.py-2",
+	            m("label.text-2xl.font-medium", "Config"),
+	            m("button", {
+	                onclick: () => {
+	                vnode.attrs.config = null;
+	                }
+	            }, [
+	                m("svg[xmlns='http://www.w3.org/2000/svg'][width='24'][height='24'][viewBox='0 0 24 24'][fill='none'][stroke='currentColor'][stroke-width='2'][stroke-linecap='round'][stroke-linejoin='round'][color='currentColor']",
+	                { class: "text-gray-400 hover:text-gray-600 active:text-gray-800" },
+	                [
+	                    m("line[x1='18'][y1='6'][x2='6'][y2='18']"),
+	                    m("line[x1='6'][y1='6'][x2='18'][y2='18']")
+	                ]
+	                )
+	            ])),
+	            m(".flex-1.flex.justify-center.flex-col", [
+	            m("", [
+	                m(".flex.items-center.justify-between.mx-6.m-2", [
+	                m("label.text-xl.font-medium", node.type),
+	                m("button.btn.rounded-xl.w-fit.self-end", {
+	                    onclick: () => {
+	                        // vnode.attrs.config.node.remove();
+	                        vnode.attrs.config.actions['deletion'](vnode.attrs.config);
+	                        vnode.attrs.config = null;
+	    
+	                    }
+	                }, 
+	                    m("svg[xmlns='http://www.w3.org/2000/svg'][width='24'][height='24'][viewBox='0 0 24 24'][fill='none'][stroke='currentColor'][stroke-width='2'][stroke-linecap='round'][stroke-linejoin='round'][color='currentColor']",
+	                        { class: "text-red-300 hover:text-red-500 active:text-red-600 focus:test-red-400" }, 
+	                        [
+	                            m("path[d='M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z']"),
+	                            m("line[x1='18'][y1='9'][x2='12'][y2='15']"),
+	                            m("line[x1='12'][y1='9'][x2='18'][y2='15']")
+	                        ]
+	                    )
+	                ),
+	                ]), m("hr.mx-6.border-black.border-1")]),
+	            [
+	                node.type == "place" && m(place, { node }),
+	                node.type == "edge" && m(edge, { node }),
+	                node.type == "transition" && m(transition, { node }),
+	            ]
+	            // m(".px-8", m(vnode.attrs.mode.configView)),
+	            ])
+	        ])
+	        }
+	    };
+	    return {
+	        oncreate(vnode) {
+	            vnode.dom.append(aya.svg);
+	        },
+	        view: (vnode) => {
+	            return m("#viewport",{
+	            onclick(){}
+	            }, [
+	            Event$1.config.node && m(config, { config: Event$1.config.node})
+	            ])
+	        }
+	    }
+	};
+
+	exports._new = _new;
+	exports.editor = editor;
+	exports.init = init;
+	exports.load = load;
+	exports.save = save;
+	exports.saveFile = saveFile;
+	exports.save_as_svg = save_as_svg;
+
+}));

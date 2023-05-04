@@ -1,3 +1,4 @@
+
 class Transition{
     static getShapeDimension(type){
         var dim = {width: 20, height: 50};
@@ -66,7 +67,7 @@ class Transition{
 	    props.type = "dummy";
 	}else if(props.type == "dummy" || props.type == "clock"){
 	    if(!props.name)
-		props.name = props.type;
+		props.name = 't_' + aya.id();
 	}else if(props.type == "manual" || props.type == "automatic" ||
 		 props.type == "asub" || props.type == "ssub" || props.type == "event"){
 	    if(!props.name)
@@ -129,27 +130,6 @@ class Transition{
 	    this.shape.shape.children[1].child.text = name;
         this.shape.shape.redraw();
     }
-    
-    setType(type){
-        // var dim;
-        // if(this.type == type)
-        //     return;
-
-        // this.type = type;
-        // this.app = {};
-        // this.shape.shape.children.map(({child})=>{
-        //     child.removeFromDOM();
-        // })
-
-        // this.shape.shape.children.length = 0;
-        // dim = Transition.getShapeDimension(this.type);
-
-        // this.shape.shape.width = dim.width;
-        // this.shape.shape.height = dim.height;
-
-        // this.completeShape();
-	// this.shape.shape.redraw();
-    }
 
     redraw(){
 	this.shape.shape.redraw();
@@ -158,3 +138,4 @@ class Transition{
     removeFromDOM(){
     }
 }
+export {Transition};

@@ -1,3 +1,8 @@
+import {ComponentFactory} from "./factory";
+import {layout} from "./layout";
+import {Event} from "./event";
+import {Register} from './register';
+
 const placactions = {
     list: [
 	{name: "transition", path: "src/images/transition3.png"},
@@ -15,8 +20,7 @@ const placactions = {
 
 	props.type = 'dummy'
 	
-	/* TODO: genereate name*/
-	props.name = 't_ + aya.uuid()';
+	props.name = 't_' + aya.id();
 
 	posx = Math.floor(target.comp.shape.shape.x/layout.cellW);
 	posy = Math.floor(target.comp.shape.shape.y/layout.cellH);
@@ -60,7 +64,7 @@ const placactions = {
 	obj.y = lyt.y*layout.cellH;
 	obj.type = 'dummy';
 
-        t = ComponentFactory.getComponent('transition', obj);
+	t = ComponentFactory.getComponent('transition', obj);
 	e = ComponentFactory.getComponent('edge', {src: target.comp.shape.uuid,
 				   dest: t.comp.shape.uuid,
 				   direction: 'p2t', cond:""});
@@ -349,3 +353,4 @@ const placactions = {
 	Event.state = null;
     }
 };
+export {placactions};

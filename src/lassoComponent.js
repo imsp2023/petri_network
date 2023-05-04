@@ -1,3 +1,8 @@
+import {Lasso} from "./entities/lasso";
+import {Event} from "./event";
+import {Register} from './register';
+import {layout} from './layout';
+import { lassoactions } from "./lassoactions";
 class LassoComponent{
     addAllEvents() {
 	this.comp.shape.shape.addEvent('mouseover', (e)=>{
@@ -89,8 +94,8 @@ class LassoComponent{
     }
     
     remove(){
-	console.log('remove');
-	console.log(this.comp.shape);
+	// console.log('remove');
+	// console.log(this.comp.shape);
 
 	this.selectedComp.map((c)=>{
 	    c.addAllEvents();
@@ -100,3 +105,4 @@ class LassoComponent{
         Register.clear(this.comp.shape.uuid);
     }
 }
+export {LassoComponent};

@@ -23,7 +23,7 @@ layout.init = function(cellW, cellH, gridW, gridH){
 layout.getClosestPosition = (originX, originY)=>{
     var obj = {}, pos1, pos2, i, j, coef;
 
-    console.log('closestposition x='+originX+' y='+originY);
+    // console.log('closestposition x='+originX+' y='+originY);
     if(originX == undefined || originY == undefined ||
        originX < 0 || originY < 0 || originX >= layout.ncols || originY >= layout.nligs)
 	return null;
@@ -41,8 +41,8 @@ layout.getClosestPosition = (originX, originY)=>{
 		pos1 = layout.ncols*pos1+originX+coef*space;
 		if(!layout.grid[pos1]){
 		    obj.y = originY-i;
-		    console.log('close-1');
-		    console.log(obj);
+		    // console.log('close-1');
+		    // console.log(obj);
 		    return obj;
 		}
 	    }				
@@ -52,8 +52,8 @@ layout.getClosestPosition = (originX, originY)=>{
 		
 		if(!layout.grid[pos2]){
 		    obj.y = originY+i;
-		    console.log('close-2');
-		    console.log(obj);
+		    // console.log('close-2');
+		    // console.log(obj);
 		    return obj;
 		}
 	    }
@@ -71,12 +71,12 @@ layout.clear = ()=>{
 };
 
 layout.mark = (col, lig, comp)=>{
-    console.log('LAYOUT mark x1='+col+' y1='+lig);
+    // console.log('LAYOUT mark x1='+col+' y1='+lig);
     layout.grid[lig*layout.ncols+col] = comp ? comp: true;
 };
 
 layout.umark = (col, lig)=>{
-    console.log('umark x1='+col+' y1='+lig);
+    // console.log('umark x1='+col+' y1='+lig);
     layout.grid[lig*layout.ncols+col] = false;
 };
 
@@ -88,67 +88,14 @@ layout.fixPoint = (x, y)=>{
     return {x: Math.floor(x/layout.cellW)*layout.cellW, y: Math.floor(y/layout.cellH)*layout.cellH};
 };
 
-// layout.markEdge = (x1, y1, x2, y2)=>{
-//     var step, val;
-
-//     console.log('markEdge x1='+x1+' y1='+y1+' x2='+x2+' y2='+y2);
-
-//     if(y1 < y2)
-// 	step = 1;
-//     else
-// 	step = -1;
-
-//     val = y1;
-//     while(val != y2){
-// 	layout.mark(x1, val+step);
-// 	val+=step;
-//     }
-    
-//     if(x1 < x2)
-// 	step = 1;
-//     else
-// 	step = -1;
-
-//     val = x1;
-//     while(val != x2){
-// 	layout.mark(val+step, y2);
-// 	val+=step;
-//     }
-// };
-
-// layout.umarkEdge = (x1, y1, x2, y2)=>{
-//     var step, val;
-
-//     console.log('umarkEdge x1='+x1+' y1='+y1+' x2='+x2+' y2='+y2);
-//     if(y1 < y2)
-// 	step = 1;
-//     else
-// 	step = -1;
-
-//     val = y1;
-//     while(val != y2){
-// 	layout.umark(x1, val+step);
-// 	val+=step;
-//     }
-    
-//     if(x1 < x2)
-// 	step = 1;
-//     else
-// 	step = -1;
-
-//     val = x1;
-//     while(val != x2){
-// 	layout.umark(val+step, y2);
-// 	val+=step;
-//     }
-// };
-
 layout.getMarkedCells= (fromX, fromY, toX, toY, cells)=>{
     var i, j;
     for(j = fromY; j <= toY; j++)
 	for(i = fromX; i <= toX; i++){
-	    console.log('LAYOUT mark x1='+i+' y1='+j+ 'value'+layout.grid[i*layout.ncols+j]);
+	    // console.log('LAYOUT mark x1='+i+' y1='+j+ 'value'+layout.grid[i*layout.ncols+j]);
 	    if(layout.grid[j*layout.ncols+i])
 		cells.push(layout.grid[j*layout.ncols+i]);
 	}
 }
+
+export {layout};

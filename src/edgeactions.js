@@ -7,3 +7,4 @@ const edgeactions = {
 	target.remove();
     }
 }
+export {edgeactions};

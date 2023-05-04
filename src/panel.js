@@ -1,3 +1,4 @@
+
 const ImSZ = 22;
 const Panel = {
     path2name: (actions, path)=>{
@@ -60,7 +61,7 @@ const Panel = {
 	});
 
 	target.comp.shape.shape.svg.addEventListener("mouseover", () => {
-	    console.log('mouseover SVG state='+target.state + ' panelpos='+target.panelPos);
+	    // console.log('mouseover SVG state='+target.state + ' panelpos='+target.panelPos);
 	    if (target.state == null && target.panelPos >= 0){
 		Panel.remove(target);
 		target.comp.shape.shape.svg.removeEventListener("mouseover",()=>{});
@@ -83,3 +84,5 @@ const Panel = {
 		target.comp.shape.shape.svg.removeEventListener("mouseover", () => {});
     }
 }
+
+export {Panel};

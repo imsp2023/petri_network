@@ -1,3 +1,4 @@
+
 class Lasso{
     constructor(props={}){
 
@@ -44,3 +45,5 @@ class Lasso{
     removeFromDOM(){
     }
 }
+
+export {Lasso};

@@ -1,4 +1,4 @@
-//import { abstractComponent } from "../abstractions/abstractComponent";
+import {Register} from '../register';
 
 class Edge {
     constructor(props={}){
@@ -53,3 +53,5 @@ class Edge {
 	this.shape.redraw();
     }
 }
+
+export {Edge};

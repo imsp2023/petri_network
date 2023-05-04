@@ -1,3 +1,8 @@
+import {Panel} from "./panel";
+import {Transition} from "./entities/transition";
+import {Place} from "./entities/place";
+import {layout} from "./layout";
+
 const Event = {
     line: null,
     src: null,
@@ -28,7 +33,7 @@ const Event = {
     },
 
     onmouseup: (target)=>{
-	console.log('mouseUp state='+Event.state);
+	// console.log('mouseUp state='+Event.state);
 	if(Event.state == 'linking')
 	    target.actions.edgeCompleted(target);
 	else if(Event.state == 'moving'){
@@ -63,4 +68,4 @@ const Event = {
             Event.config.node = target;
     }
 };
-
+export {Event};

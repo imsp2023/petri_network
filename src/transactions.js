@@ -1,3 +1,8 @@
+import {ComponentFactory} from "./factory";
+import {layout} from "./layout";
+import {Event} from "./event";
+import {Register} from './register';
+
 const transactions = {
     list : [
 	{name: "place", path: "src/images/place.png"},
@@ -13,8 +18,7 @@ const transactions = {
 
 	props.type = 'intermediary'
 
-	/* TODO: genereate name*/
-	props.name = 'generate automatic name';
+	props.name = 'p_' + aya.id();
 
 	posx = Math.floor(target.comp.shape.shape.x/layout.cellW);
 	posy = Math.floor(target.comp.shape.shape.y/layout.cellH);
@@ -180,3 +184,5 @@ const transactions = {
 	Event.state = null;
     }
 }
+
+export { transactions };
