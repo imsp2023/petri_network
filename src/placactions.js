@@ -16,92 +16,90 @@ const placactions = {
     ],
     
     transition: (target)=>{
-	var props = {}, tr, pos, edge, step, i, posx, posy;
+		var props = {}, tr, pos, edge, step, i, posx, posy;
 
-	props.type = 'dummy'
-	
-	props.name = 't_' + aya.id();
+		props.type = 'dummy'
+		
+		props.name = 't_' + paya.id();
 
-	posx = Math.floor(target.comp.shape.shape.x/layout.cellW);
-	posy = Math.floor(target.comp.shape.shape.y/layout.cellH);
-	if((pos=layout.getClosestPosition(posx, posy))){
-	    props.x = pos.x*layout.cellW;
-	    props.y = pos.y*layout.cellH;
-	}else{
-	    props.x = 0;
-	    props.y = 0;
+		posx = Math.floor(target.comp.shape.x/layout.cellW);
+		posy = Math.floor(target.comp.shape.y/layout.cellH);
+		if((pos=layout.getClosestPosition(posx, posy))){
+			props.x = pos.x*layout.cellW;
+			props.y = pos.y*layout.cellH;
+		}else{
+			props.x = 0;
+			props.y = 0;
 
-	    pos.x = 0;
-	    pos.y = 0;
-	}
+			pos.x = 0;
+			pos.y = 0;
+		}
 
-	props.cWidth = layout.cellW;
-	props.cheight = layout.cellH;
+		props.cWidth = layout.cellW;
+		props.cheight = layout.cellH;
 
-	tr = ComponentFactory.getComponent('transition', props);
-	edge = ComponentFactory.getComponent('edge', {
-	    direction: 'p2t',
-	    src: target.comp.shape.uuid,
-	    dest: tr.comp.shape.uuid
-	});
+		tr = ComponentFactory.getComponent('transition', props);
+		edge = ComponentFactory.getComponent('edge', {
+			direction: 'p2t',
+			src: target.comp.shape.uuid,
+			dest: tr.comp.shape.uuid
+		});
     },
 
     edge: (target)=>{
-	Event.state = 'linking'
-	Event.src = target;
-	Event.line = aya.Line(target.comp.shape.shape.c_points[0].x,
-			      target.comp.shape.shape.c_points[0].y);
-	Event.line.draw();
-
+		Event.state = 'linking'
+		Event.src = target;
+		Event.line = paya.line(target.comp.shape.c_points[0].x,
+					target.comp.shape.c_points[0].y, true, false);
+		Event.line.vertex.map((vt)=>{ vt.setStyles({fill: "none"})});
     },
 
     xorsplit: (target)=>{
-	var lyt, p, t, e, cur, obj={};
+		var lyt, p, t, e, cur, obj={};
 
-        lyt = layout.getClosestPosition(Math.floor(target.comp.shape.shape.x/layout.cellW),
-					Math.floor(target.comp.shape.shape.y/layout.cellH));
-	obj.x = lyt.x*layout.cellW;
-	obj.y = lyt.y*layout.cellH;
-	obj.type = 'dummy';
+		lyt = layout.getClosestPosition(Math.floor(target.comp.shape.x/layout.cellW),
+			Math.floor(target.comp.shape.y/layout.cellH));
+		obj.x = lyt.x*layout.cellW;
+		obj.y = lyt.y*layout.cellH;
+		obj.type = 'dummy';
 
-	t = ComponentFactory.getComponent('transition', obj);
-	e = ComponentFactory.getComponent('edge', {src: target.comp.shape.uuid,
-				   dest: t.comp.shape.uuid,
-				   direction: 'p2t', cond:""});
+		t = ComponentFactory.getComponent('transition', obj);
+		e = ComponentFactory.getComponent('edge', {src: target.comp.shape.uuid,
+					dest: t.comp.shape.uuid,
+					direction: 'p2t', cond:""});
 
-        lyt = layout.getClosestPosition(Math.floor(t.comp.shape.shape.x/layout.cellW),
-					Math.floor(t.comp.shape.shape.y/layout.cellH));
-	obj.x = lyt.x*layout.cellW;
-	obj.y = lyt.y*layout.cellH;
-	obj.type = 'intermediary';
+			lyt = layout.getClosestPosition(Math.floor(t.comp.shape.x/layout.cellW),
+						Math.floor(t.comp.shape.y/layout.cellH));
+		obj.x = lyt.x*layout.cellW;
+		obj.y = lyt.y*layout.cellH;
+		obj.type = 'intermediary';
 
-        p = ComponentFactory.getComponent('place', obj);
-	e = ComponentFactory.getComponent('edge', {src: t.comp.shape.uuid,
-				   dest: p.comp.shape.uuid,
-				   direction: 't2p'});
+		p = ComponentFactory.getComponent('place', obj);
+		e = ComponentFactory.getComponent('edge', {src: t.comp.shape.uuid,
+					dest: p.comp.shape.uuid,
+					direction: 't2p'});
 
-        lyt = layout.getClosestPosition(Math.floor(target.comp.shape.shape.x/layout.cellW),
-					Math.floor(target.comp.shape.shape.y/layout.cellH));
-	obj.x = lyt.x*layout.cellW;
-	obj.y = lyt.y*layout.cellH;
-	obj.type = 'dummy';
+			lyt = layout.getClosestPosition(Math.floor(target.comp.shape.x/layout.cellW),
+						Math.floor(target.comp.shape.y/layout.cellH));
+		obj.x = lyt.x*layout.cellW;
+		obj.y = lyt.y*layout.cellH;
+		obj.type = 'dummy';
 
-        t = ComponentFactory.getComponent('transition', obj);
-	e = ComponentFactory.getComponent('edge', {src: target.comp.shape.uuid,
-				   dest: t.comp.shape.uuid,
-				   direction: 'p2t', cond:""});
+		t = ComponentFactory.getComponent('transition', obj);
+		e = ComponentFactory.getComponent('edge', {src: target.comp.shape.uuid,
+													dest: t.comp.shape.uuid,
+													direction: 'p2t', cond:""});
 
-        e = ComponentFactory.getComponent('edge', {src: t.comp.shape.uuid,
-				   dest: p.comp.shape.uuid,
-				   direction: 't2p'});
-
+		e = ComponentFactory.getComponent('edge', {src: t.comp.shape.uuid,
+													dest: p.comp.shape.uuid,
+													direction: 't2p'});
     },
 
     multichoice: (target)=>{
 	var i, lyt, p, p2, t, t0, t2, t3, e, cur, obj={};
 
-        lyt = layout.getClosestPosition(Math.floor(target.comp.shape.shape.x/layout.cellW),
-					Math.floor(target.comp.shape.shape.y/layout.cellH));
+        lyt = layout.getClosestPosition(Math.floor(target.comp.shape.x/layout.cellW),
+					Math.floor(target.comp.shape.y/layout.cellH));
 	obj.x = lyt.x*layout.cellW;
 	obj.y = lyt.y*layout.cellH;
 	obj.type = 'dummy';
@@ -112,8 +110,8 @@ const placactions = {
 				   direction: 'p2t'});
 
         for(i=0; i<2; i++){
-            lyt = layout.getClosestPosition(Math.floor(t0.comp.shape.shape.x/layout.cellW),
-					    Math.floor(t0.comp.shape.shape.y/layout.cellH));
+            lyt = layout.getClosestPosition(Math.floor(t0.comp.shape.x/layout.cellW),
+					    Math.floor(t0.comp.shape.y/layout.cellH));
 	    obj.x = lyt.x*layout.cellW;
 	    obj.y = lyt.y*layout.cellH;
 	    obj.type = 'intermediary';
@@ -122,8 +120,8 @@ const placactions = {
             e = ComponentFactory.getComponent('edge', {src: t0.comp.shape.uuid,
 				       dest: p.comp.shape.uuid,
 				       direction: 't2p'});
-            lyt = layout.getClosestPosition(Math.floor(p.comp.shape.shape.x/layout.cellW),
-					    Math.floor(p.comp.shape.shape.y/layout.cellH));
+            lyt = layout.getClosestPosition(Math.floor(p.comp.shape.x/layout.cellW),
+					    Math.floor(p.comp.shape.y/layout.cellH));
 	    obj.x = lyt.x*layout.cellW;
 	    obj.y = lyt.y*layout.cellH;
 	    obj.type = 'automatic';
@@ -131,8 +129,8 @@ const placactions = {
 
             t = ComponentFactory.getComponent('transition', obj);
 
-            lyt = layout.getClosestPosition(Math.floor(p.comp.shape.shape.x/layout.cellW),
-					    Math.floor(p.comp.shape.shape.y/layout.cellH));
+            lyt = layout.getClosestPosition(Math.floor(p.comp.shape.x/layout.cellW),
+					    Math.floor(p.comp.shape.y/layout.cellH));
 	    obj.x = lyt.x*layout.cellW;
 	    obj.y = lyt.y*layout.cellH;
 	    obj.type = 'dummy';
@@ -148,8 +146,8 @@ const placactions = {
 				       dest: t2.comp.shape.uuid,
 				       direction: 'p2t', cond:''});
 
-            lyt = layout.getClosestPosition(Math.floor(t.comp.shape.shape.x/layout.cellW),
-					    Math.floor(t.comp.shape.shape.y/layout.cellH));
+            lyt = layout.getClosestPosition(Math.floor(t.comp.shape.x/layout.cellW),
+					    Math.floor(t.comp.shape.y/layout.cellH));
 	    obj.x = lyt.x*layout.cellW;
 	    obj.y = lyt.y*layout.cellH;
 	    obj.type = 'intermediary';
@@ -167,8 +165,8 @@ const placactions = {
             e.comp.shape.redraw();
 
             if(!i){
-                lyt = layout.getClosestPosition(Math.floor(p.comp.shape.shape.x/layout.cellW),
-						Math.floor(p.comp.shape.shape.y/layout.cellH));
+                lyt = layout.getClosestPosition(Math.floor(p.comp.shape.x/layout.cellW),
+						Math.floor(p.comp.shape.y/layout.cellH));
 		obj.x = lyt.x*layout.cellW;
 		obj.y = lyt.y*layout.cellH;
 		obj.type = 'dummy';
@@ -186,8 +184,8 @@ const placactions = {
     deferredchoice: (target)=>{
 	var i, lyt, p, p2, t, t2, e, obj={}, ca = [null, null];
 
-        lyt = layout.getClosestPosition(Math.floor(target.comp.shape.shape.x/layout.cellW),
-	    				Math.floor(target.comp.shape.shape.y/layout.cellH));
+        lyt = layout.getClosestPosition(Math.floor(target.comp.shape.x/layout.cellW),
+	    				Math.floor(target.comp.shape.y/layout.cellH));
 	obj.x = lyt.x*layout.cellW;
 	obj.y = lyt.y*layout.cellH;
 	obj.type = 'dummy';
@@ -199,8 +197,8 @@ const placactions = {
         e.comp.shape.redraw();
 
         for(i=0; i<2; i++){
-            lyt = layout.getClosestPosition(Math.floor(t.comp.shape.shape.x/layout.cellW),
-	    				    Math.floor(t.comp.shape.shape.y/layout.cellH));
+            lyt = layout.getClosestPosition(Math.floor(t.comp.shape.x/layout.cellW),
+	    				    Math.floor(t.comp.shape.y/layout.cellH));
 	    obj.x = lyt.x*layout.cellW;
 	    obj.y = lyt.y*layout.cellH;
 	    obj.type = 'intermediary';
@@ -212,8 +210,8 @@ const placactions = {
 	    			       direction: 't2p'});
             e.comp.shape.redraw();
 
-            lyt = layout.getClosestPosition(Math.floor(p.comp.shape.shape.x/layout.cellW),
-	    				    Math.floor(p.comp.shape.shape.y/layout.cellH));
+            lyt = layout.getClosestPosition(Math.floor(p.comp.shape.x/layout.cellW),
+	    				    Math.floor(p.comp.shape.y/layout.cellH));
             obj.x = lyt.x*layout.cellW;
 	    obj.y = lyt.y*layout.cellH;
 	    obj.type = 'automatic';
@@ -226,8 +224,8 @@ const placactions = {
 	    			       dest: t2.comp.shape.uuid,
 	    			       direction: 'p2t'});
             if(!i){
-                lyt = layout.getClosestPosition(Math.floor(t2.comp.shape.shape.x/layout.cellW),
-	    					Math.floor(t2.comp.shape.shape.y/layout.cellH));
+                lyt = layout.getClosestPosition(Math.floor(t2.comp.shape.x/layout.cellW),
+	    					Math.floor(t2.comp.shape.y/layout.cellH));
 	        obj.x = lyt.x*layout.cellW;
 	        obj.y = lyt.y*layout.cellH;
 	        obj.type = 'intermediary';
@@ -242,13 +240,13 @@ const placactions = {
         }
 
         ca[0].comp.ca = ca[1].comp.name;
-        ca[0].comp.cauuid = ca[1].comp.shape.shape.uuid;
+        ca[0].comp.cauuid = ca[1].comp.shape.uuid;
 
         ca[1].comp.ca = ca[0].comp.name;
-        ca[1].comp.cauuid = ca[0].comp.shape.shape.uuid;
+        ca[1].comp.cauuid = ca[0].comp.shape.uuid;
 
-        e = ComponentFactory.getComponent('edge', {src: ca[0].comp.shape.shape.uuid,
-	            		   dest: ca[1].comp.shape.shape.uuid,
+        e = ComponentFactory.getComponent('edge', {src: ca[0].comp.shape.uuid,
+	            		   dest: ca[1].comp.shape.uuid,
 	            		   direction: 'ca'});
 
     },
@@ -256,8 +254,8 @@ const placactions = {
     while: (target)=>{
 	var i, lyt, p, t, e, obj={};
 
-        lyt = layout.getClosestPosition(Math.floor(target.comp.shape.shape.x/layout.cellW),
-                                        Math.floor(target.comp.shape.shape.y/layout.cellH));
+        lyt = layout.getClosestPosition(Math.floor(target.comp.shape.x/layout.cellW),
+                                        Math.floor(target.comp.shape.y/layout.cellH));
 
         obj.x = lyt.x*layout.cellW;
         obj.y = lyt.y*layout.cellH;
@@ -273,8 +271,8 @@ const placactions = {
                                    direction: 't2p',
                                    altpath: true});
         
-        lyt = layout.getClosestPosition(Math.floor(target.comp.shape.shape.x/layout.cellW),
-                                        Math.floor(target.comp.shape.shape.y/layout.cellH));
+        lyt = layout.getClosestPosition(Math.floor(target.comp.shape.x/layout.cellW),
+                                        Math.floor(target.comp.shape.y/layout.cellH));
         
         obj.x = lyt.x*layout.cellW;
         obj.y = lyt.y*layout.cellH;
@@ -315,7 +313,7 @@ const placactions = {
 	if(!Event.line)
 	    return;
 
-	console.log('completed type='+target.type+ ' x2='+ target.comp.shape.shape.x);
+	console.log('completed type='+target.type+ ' x2='+ target.comp.shape.x);
 	Event.line.removeFromDOM();
 
         /* Only p2t  and t2p are allowed */

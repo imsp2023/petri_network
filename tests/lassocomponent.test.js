@@ -33,16 +33,16 @@ QUnit.test("use the default position when not provided", assert => {
     var props = {};
 //    layout.init(10, 10, 100, 100);
     var obj = new LassoComponent(props);
-    assert.equal(obj.comp.shape.shape.x, 0, "default value");
-    assert.equal(obj.comp.shape.shape.y, 0, "default value");
+    assert.equal(obj.comp.shape.x, 0, "default value");
+    assert.equal(obj.comp.shape.y, 0, "default value");
 });
 
 QUnit.test("can use provided position", assert => {
     layoutAjust = 0;
     var props = {x: 100, y: 100};
     var obj = new LassoComponent(props);
-    assert.equal(obj.comp.shape.shape.x, 100, "default value");
-    assert.equal(obj.comp.shape.shape.y, 100, "default value");
+    assert.equal(obj.comp.shape.x, 100, "default value");
+    assert.equal(obj.comp.shape.y, 100, "default value");
 
 });
 
@@ -218,8 +218,8 @@ QUnit.test("move makes move compoment", assert =>{
     var cp = new LassoComponent( {});
 
     cp.move(10, 10);
-    assert.equal(cp.comp.shape.shape.x, 10, "lasso x pos");
-    assert.equal(cp.comp.shape.shape.y, 10, "lasso y pos");
+    assert.equal(cp.comp.shape.x, 10, "lasso x pos");
+    assert.equal(cp.comp.shape.y, 10, "lasso y pos");
     
 });
 
@@ -235,7 +235,7 @@ QUnit.test("move makes move selected compoment", assert =>{
 		events:[],
 		shape: {
 		    children: [],
-		    shift: (dx, dy)=>{r.comp.shape.shape.x += dx;r.comp.shape.shape.y += dy;},
+		    shift: (dx, dy)=>{r.comp.shape.x += dx;r.comp.shape.y += dy;},
 		    deleteAllEvents: ()=>{
 			deleteAll = 1;
 		    },
@@ -254,8 +254,8 @@ QUnit.test("move makes move selected compoment", assert =>{
     tab[0] = r;
     cp.lockComponent();
     cp.move(10, 10);
-    assert.equal(cp.selectedComp[0].comp.shape.shape.x, 10, "lasso x pos");
-    assert.equal(cp.selectedComp[0].comp.shape.shape.y, 10, "lasso y pos");
+    assert.equal(cp.selectedComp[0].comp.shape.x, 10, "lasso x pos");
+    assert.equal(cp.selectedComp[0].comp.shape.y, 10, "lasso y pos");
     
 });
 
@@ -313,36 +313,36 @@ QUnit.test("move makes move selected compoment", assert =>{
 // QUnit.test("lasso adds the selected components as children", assert =>{
 //     layout.init(10, 10, 100, 100);
 //   var l = new Lasso({width: 50, y: 80});
-//   assert.equal(l.shape.shape.x, 10, "x value");
-//   assert.equal(l.shape.shape.y, 10, "y value");
+//   assert.equal(l.shape.x, 10, "x value");
+//   assert.equal(l.shape.y, 10, "y value");
 // });
 
 // QUnit.test("lasso remove mouseover from the selected components as children", assert =>{
 //     layout.init(10, 10, 100, 100);
 //   var l = new Lasso({width: 50, y: 80});
-//   assert.equal(l.shape.shape.x, 10, "x value");
-//   assert.equal(l.shape.shape.y, 10, "y value");
+//   assert.equal(l.shape.x, 10, "x value");
+//   assert.equal(l.shape.y, 10, "y value");
 // });
 
 // QUnit.test("lasso rem(ove mousedown from the selected components as children", assert =>{
 //     layout.init(10, 10, 100, 100);
 //   var l = new Lasso({width: 50, y: 80});
-//   assert.equal(l.shape.shape.x, 10, "x value");
-//   assert.equal(l.shape.shape.y, 10, "y value");
+//   assert.equal(l.shape.x, 10, "x value");
+//   assert.equal(l.shape.y, 10, "y value");
 // });
 
 // QUnit.test("lasso remove mouseleave from the selected components as children", assert =>{
 //   layout.init(10, 10, 100, 100);
 //   var l = new Lasso({width: 50, y: 80});
-//   assert.equal(l.shape.shape.x, 10, "x value");
-//   assert.equal(l.shape.shape.y, 10, "y value");
+//   assert.equal(l.shape.x, 10, "x value");
+//   assert.equal(l.shape.y, 10, "y value");
 // });
 
 // QUnit.test("lasso remove mouseup from the selected components as children", assert =>{
 //     layout.init(10, 10, 100, 100);
 //   var l = new Lasso({width: 50, y: 80});
-//   assert.equal(l.shape.shape.x, 10, "x value");
-//   assert.equal(l.shape.shape.y, 10, "y value");
+//   assert.equal(l.shape.x, 10, "x value");
+//   assert.equal(l.shape.y, 10, "y value");
 // });
 
 
@@ -501,8 +501,8 @@ QUnit.test("move makes move selected compoment", assert =>{
 // QUnit.test("onMouseDown stores transition position", assert => {
 //     var t = new LassoComponent( {type:'dummy'});
 //     t.onMouseDown();
-//     assert.equal(Component.x, t.comp.shape.shape.x, "x value");
-//     assert.equal(Component.y, t.comp.shape.shape.y, "y value");
+//     assert.equal(Component.x, t.comp.shape.x, "x value");
+//     assert.equal(Component.y, t.comp.shape.y, "y value");
 // });
 
 // QUnit.test("onMouseUp fix transition position", assert => {
@@ -574,8 +574,8 @@ QUnit.test("move makes move selected compoment", assert =>{
 //     layoutUMark = 0;
 //     Component.state  = 'moving';
     
-//     t.comp.shape.shape.x = 30;
-//     t.comp.shape.shape.y = 30;
+//     t.comp.shape.x = 30;
+//     t.comp.shape.y = 30;
     
 //     t.onMouseUp();
 //     assert.equal(layoutMark, 12, "mark count");
@@ -751,8 +751,8 @@ QUnit.test("move makes move selected compoment", assert =>{
 // //     var altpath = {altpath=true};
 // //     var t = new Component('place', {type:'intermediary',name: 'foo', x:0, y:0});
 // //     var p = new LassoComponent( {type:'dummy',name: 'foo', x:0, y:0});
-// //     var e = new Component('edge', {src: t.comp.shape.shape.uuid,
-// //                                  dest: p.comp.shape.shape.uuid,
+// //     var e = new Component('edge', {src: t.comp.shape.uuid,
+// //                                  dest: p.comp.shape.uuid,
 
 // //                                    direction: 't2p'});
 // //     registerUserData = [];

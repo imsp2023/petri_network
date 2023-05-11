@@ -73,17 +73,17 @@ QUnit.test("addPanel() opens an empty panel when we hover over a Component", ass
 
     t.addPanel();
 
-    assert.ok(t.comp.shape.shape.children.length, "the shape has a child");
-    assert.equal(t.comp.shape.shape.children[0].child.type, "rectangle", "panel has a rectangle as support");
+    assert.ok(t.comp.shape.children.length, "the shape has a child");
+    assert.equal(t.comp.shape.children[0].child.type, "rectangle", "panel has a rectangle as support");
 
-    assert.equal(t.comp.shape.shape.children[0].child.x, t.comp.shape.shape.x+t.comp.shape.shape.width, "panel x-absc");
-    assert.equal(t.comp.shape.shape.children[0].child.y, t.comp.shape.shape.y, "panel y-absc");
+    assert.equal(t.comp.shape.children[0].child.x, t.comp.shape.x+t.comp.shape.width, "panel x-absc");
+    assert.equal(t.comp.shape.children[0].child.y, t.comp.shape.y, "panel y-absc");
     
-    assert.equal(t.comp.shape.shape.children[0].child.width,  2*ImSZ+2*5, "panel width");
-    assert.equal(t.comp.shape.shape.children[0].child.height, 3*ImSZ+ 3*5, "panel height");
+    assert.equal(t.comp.shape.children[0].child.width,  2*ImSZ+2*5, "panel width");
+    assert.equal(t.comp.shape.children[0].child.height, 3*ImSZ+ 3*5, "panel height");
     
-    assert.equal(t.comp.shape.shape.children[0].child.shape["stroke-width"], "0px", "the border width must  be 2 px");
-    assert.equal(t.comp.shape.shape.children[0].child.shape["opacity"], 0, "panel opacity");
+    assert.equal(t.comp.shape.children[0].child.shape["stroke-width"], "0px", "the border width must  be 2 px");
+    assert.equal(t.comp.shape.children[0].child.shape["opacity"], 0, "panel opacity");
 });
 
 QUnit.test("panel must cover the Component", assert => {
@@ -91,10 +91,10 @@ QUnit.test("panel must cover the Component", assert => {
 
     t.addPanel();
 
-    assert.ok(t.comp.shape.shape.children.length, "the shape has a child");
-    assert.equal(t.comp.shape.shape.children[0].child.type, "rectangle", "panel has a rectangle as support");
-    assert.equal(t.comp.shape.shape.children[0].child.offsetX, -2, "panel offsetX");
-    assert.equal(t.comp.shape.shape.children[0].child.offsetY, 0, "panel offsetY");
+    assert.ok(t.comp.shape.children.length, "the shape has a child");
+    assert.equal(t.comp.shape.children[0].child.type, "rectangle", "panel has a rectangle as support");
+    assert.equal(t.comp.shape.children[0].child.offsetX, -2, "panel offsetX");
+    assert.equal(t.comp.shape.children[0].child.offsetY, 0, "panel offsetY");
 
 });
 
@@ -105,8 +105,8 @@ QUnit.test("add all actions on the panel when we hover over it", assert => {
     t.addPanel();
 
 
-    assert.equal(t.comp.shape.shape.children.length, actions.transition.length+1, "Component children ");
-    t.comp.shape.shape.children.map(({child}, index) => {
+    assert.equal(t.comp.shape.children.length, actions.transition.length+1, "Component children ");
+    t.comp.shape.children.map(({child}, index) => {
 	if (index != 0){
 	    assert.equal(child.type, "image", "children are images");
 	    assert.equal(child.width, ImSZ, "the width of the child must be 30 px");
@@ -122,7 +122,7 @@ QUnit.test("addpanel a mouseover on the images", assert => {
     t.addPanel();
 
     var cpt = 0;
-    t.comp.shape.shape.children.map(({child}, index) => {
+    t.comp.shape.children.map(({child}, index) => {
 	if (index != 0){
 	    for (e of child.events)
 		if (e["mouseover"])
@@ -138,7 +138,7 @@ QUnit.test("addpanel a mouseleave on the images", assert => {
     var cpt = 0;
     
     t.addPanel();
-    t.comp.shape.shape.children.map(({child}, index) => {
+    t.comp.shape.children.map(({child}, index) => {
 	if (index != 0){
 	    for (e of child.events)
 		if (e["mouseleave"])
@@ -155,7 +155,7 @@ QUnit.test("addpanel a mousedown on the images", assert => {
 
     var cpt = 0;
 
-    t.comp.shape.shape.children.map(({child}, index) => {
+    t.comp.shape.children.map(({child}, index) => {
 	if (index != 0){
 	    for (e of child.events)
 		if (e["mousedown"])
@@ -172,35 +172,35 @@ QUnit.test("actions are display on three columns", assert => {
 
     t.addPanel();
 
-    assert.equal(t.comp.shape.shape.children[1].child.x, 0, "setting the abscissa of the child");
-	assert.equal(t.comp.shape.shape.children[1].child.y, 0, "setting the ordinate of the child");
-	assert.equal(t.comp.shape.shape.children[1].child.offsetX, 5, "setting offsetX");
-	assert.equal(t.comp.shape.shape.children[1].child.offsetY, 0, "setting offsetY");
+    assert.equal(t.comp.shape.children[1].child.x, 0, "setting the abscissa of the child");
+	assert.equal(t.comp.shape.children[1].child.y, 0, "setting the ordinate of the child");
+	assert.equal(t.comp.shape.children[1].child.offsetX, 5, "setting offsetX");
+	assert.equal(t.comp.shape.children[1].child.offsetY, 0, "setting offsetY");
 
-    assert.equal(t.comp.shape.shape.children[2].child.x, 22, "setting the abscissa of the child");
-	assert.equal(t.comp.shape.shape.children[2].child.y, 0, "setting the ordinate of the child");
-	assert.equal(t.comp.shape.shape.children[2].child.offsetX, 5, "setting offsetX");
-	assert.equal(t.comp.shape.shape.children[2].child.offsetY, 0, "setting offsetY");
+    assert.equal(t.comp.shape.children[2].child.x, 22, "setting the abscissa of the child");
+	assert.equal(t.comp.shape.children[2].child.y, 0, "setting the ordinate of the child");
+	assert.equal(t.comp.shape.children[2].child.offsetX, 5, "setting offsetX");
+	assert.equal(t.comp.shape.children[2].child.offsetY, 0, "setting offsetY");
 
-    assert.equal(t.comp.shape.shape.children[3].child.x, 44, "setting the abscissa of the child");
-	assert.equal(t.comp.shape.shape.children[3].child.y, 0, "setting the ordinate of the child");
-	assert.equal(t.comp.shape.shape.children[3].child.offsetX, 5, "setting offsetX");
-	assert.equal(t.comp.shape.shape.children[3].child.offsetY, 0, "setting offsetY");
+    assert.equal(t.comp.shape.children[3].child.x, 44, "setting the abscissa of the child");
+	assert.equal(t.comp.shape.children[3].child.y, 0, "setting the ordinate of the child");
+	assert.equal(t.comp.shape.children[3].child.offsetX, 5, "setting offsetX");
+	assert.equal(t.comp.shape.children[3].child.offsetY, 0, "setting offsetY");
 
-    assert.equal(t.comp.shape.shape.children[4].child.x, 0, "setting the abscissa of the child");
-	assert.equal(t.comp.shape.shape.children[4].child.y, 27, "setting the ordinate of the child");
-	assert.equal(t.comp.shape.shape.children[4].child.offsetX, 5, "setting offsetX");
-	assert.equal(t.comp.shape.shape.children[4].child.offsetY, 0, "setting offsetY");
+    assert.equal(t.comp.shape.children[4].child.x, 0, "setting the abscissa of the child");
+	assert.equal(t.comp.shape.children[4].child.y, 27, "setting the ordinate of the child");
+	assert.equal(t.comp.shape.children[4].child.offsetX, 5, "setting offsetX");
+	assert.equal(t.comp.shape.children[4].child.offsetY, 0, "setting offsetY");
 
-    assert.equal(t.comp.shape.shape.children[5].child.x, 22, "setting the abscissa of the child");
-	assert.equal(t.comp.shape.shape.children[5].child.y, 27, "setting the ordinate of the child");
-	assert.equal(t.comp.shape.shape.children[5].child.offsetX, 5, "setting offsetX");
-	assert.equal(t.comp.shape.shape.children[5].child.offsetY, 0, "setting offsetY");
+    assert.equal(t.comp.shape.children[5].child.x, 22, "setting the abscissa of the child");
+	assert.equal(t.comp.shape.children[5].child.y, 27, "setting the ordinate of the child");
+	assert.equal(t.comp.shape.children[5].child.offsetX, 5, "setting offsetX");
+	assert.equal(t.comp.shape.children[5].child.offsetY, 0, "setting offsetY");
 
-    assert.equal(t.comp.shape.shape.children[6].child.x, 44, "setting the abscissa of the child");
-	assert.equal(t.comp.shape.shape.children[6].child.y, 27, "setting the ordinate of the child");
-	assert.equal(t.comp.shape.shape.children[6].child.offsetX, 5, "setting offsetX");
-	assert.equal(t.comp.shape.shape.children[6].child.offsetY, 0, "setting offsetY");
+    assert.equal(t.comp.shape.children[6].child.x, 44, "setting the abscissa of the child");
+	assert.equal(t.comp.shape.children[6].child.y, 27, "setting the ordinate of the child");
+	assert.equal(t.comp.shape.children[6].child.offsetX, 5, "setting offsetX");
+	assert.equal(t.comp.shape.children[6].child.offsetY, 0, "setting offsetY");
 
 });
 
@@ -211,7 +211,7 @@ QUnit.test("add mouseleave event on panel", assert => {
     t.addPanel();
 
     var ev = null;
-    for (e of t.comp.shape.shape.children[0].child.events)
+    for (e of t.comp.shape.children[0].child.events)
 	if (e["mouseleave"])
 	    ev = e;
     assert.ok(ev, "mouseleave event is defined on the rectangle child");
@@ -524,8 +524,8 @@ QUnit.test("add mouseleave event on panel", assert => {
 // QUnit.test("onMouseDown stores transition position", assert => {
 //     var t = new Component('transition', {type:'dummy'});
 //     t.onMouseDown();
-//     assert.equal(Component.x, t.comp.shape.shape.x, "x value");
-//     assert.equal(Component.y, t.comp.shape.shape.y, "y value");
+//     assert.equal(Component.x, t.comp.shape.x, "x value");
+//     assert.equal(Component.y, t.comp.shape.y, "y value");
 // });
 
 // QUnit.test("onMouseUp fix transition position", assert => {
@@ -597,8 +597,8 @@ QUnit.test("add mouseleave event on panel", assert => {
 //     layoutUMark = 0;
 //     Component.state  = 'moving';
     
-//     t.comp.shape.shape.x = 30;
-//     t.comp.shape.shape.y = 30;
+//     t.comp.shape.x = 30;
+//     t.comp.shape.y = 30;
     
 //     t.onMouseUp();
 //     assert.equal(layoutMark, 12, "mark count");
@@ -774,8 +774,8 @@ QUnit.test("add mouseleave event on panel", assert => {
 // //     var altpath = {altpath=true};
 // //     var t = new Component('place', {type:'intermediary',name: 'foo', x:0, y:0});
 // //     var p = new Component('transition', {type:'dummy',name: 'foo', x:0, y:0});
-// //     var e = new Component('edge', {src: t.comp.shape.shape.uuid,
-// //                                  dest: p.comp.shape.shape.uuid,
+// //     var e = new Component('edge', {src: t.comp.shape.uuid,
+// //                                  dest: p.comp.shape.uuid,
 
 // //                                    direction: 't2p'});
 // //     registerUserData = [];

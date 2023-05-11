@@ -28,8 +28,8 @@ const Event = {
     onmousedown: (target, actions)=>{
 	Panel.remove(target, actions);
 	Event.state = 'moving';
-	Event.x = target.comp.shape.shape.x;
-	Event.y = target.comp.shape.shape.y;
+	Event.x = target.comp.shape.x;
+	Event.y = target.comp.shape.y;
     },
 
     onmouseup: (target)=>{
@@ -38,8 +38,8 @@ const Event = {
 	    target.actions.edgeCompleted(target);
 	else if(Event.state == 'moving'){
 	    var edges = [], src, dest, osrc, odest, dim;
-	    var lyt = layout.fixPoint(target.comp.shape.shape.x,
-				      target.comp.shape.shape.y);
+	    var lyt = layout.fixPoint(target.comp.shape.x,
+				      target.comp.shape.y);
 	    
 	    if(target.type == 'transition')
 		dim = Transition.getShapeDimension(target.comp.type);
@@ -51,8 +51,8 @@ const Event = {
 	    dim.y = lyt.y;
 
 	    target.centerComponent(dim);
-	    target.move(dim.x - target.comp.shape.shape.x,
-			dim.y - target.comp.shape.shape.y);
+	    target.move(dim.x - target.comp.shape.x,
+			dim.y - target.comp.shape.y);
 	}
 	
 	Event.src = null;

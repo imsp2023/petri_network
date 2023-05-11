@@ -17,28 +17,26 @@ class Lasso{
 	
 	this.selectedComp = [];
 	this.panelPos = -1;
-	this.shape = aya.Component("rectangle", {x:props.x, y:props.y,
-						 width: props.width,
-						 height: props.height});
 
-	//this.shape.shape.c_svg.setAttribute("stroke-width", "1px");
-	this.shape.shape.c_svg.setAttribute("stroke-dasharray", "4 1 2");
-	this.shape.shape.c_svg.setAttribute("stroke", "blue");
-	this.shape.shape.c_svg.setAttribute("fill-opacity", 0);
-	this.shape.shape.c_svg.setAttribute("rx", 5);
-	this.shape.shape.c_svg.setAttribute("ry", 5);
+	this.shape = paya.rectangle(props.x, props.y, props.width, props.height);
+	//this.shape.c_svg.setAttribute("stroke-width", "1px");
+	this.shape.c_svg.setAttribute("stroke-dasharray", "4 1 2");
+	this.shape.c_svg.setAttribute("stroke", "blue");
+	this.shape.c_svg.setAttribute("fill-opacity", 0);
+	this.shape.c_svg.setAttribute("rx", 5);
+	this.shape.c_svg.setAttribute("ry", 5);
 	
-	this.shape.shape.c_points.map((c)=>{
+	this.shape.c_points.map((c)=>{
 	    c.c_svg.setAttribute("fill", 'none');
 	});
 
-	this.shape.shape.vertex.map((c)=>{
+	this.shape.vertex.map((c)=>{
 	    c.c_svg.setAttribute("fill", 'none');
 	});
     }
 
     redraw(){
-	this.shape.shape.redraw();
+	this.shape.redraw();
     }
 
     

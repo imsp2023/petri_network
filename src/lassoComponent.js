@@ -5,24 +5,24 @@ import {layout} from './layout';
 import { lassoactions } from "./lassoactions";
 class LassoComponent{
     addAllEvents() {
-	this.comp.shape.shape.addEvent('mouseover', (e)=>{
+	this.comp.shape.addEvent('mouseover', (e)=>{
 	    Event.onmouseover(this, lassoactions.list,
-			      this.comp.shape.shape.x + this.comp.shape.shape.width,
-			      this.comp.shape.shape.y);
+			      this.comp.shape.x + this.comp.shape.width,
+			      this.comp.shape.y);
 	});
-	this.comp.shape.shape.addEvent('mousedown', (e)=>{
+	this.comp.shape.addEvent('mousedown', (e)=>{
 	    Event.onmousedown(this);
 	    Event.state += '_lasso'
 	    Event.src = this;
 	    Event.x = e.clientX;
 	    Event.y = e.clientY;
-	    this.oldX = this.comp.shape.shape.x;
-	    this.oldY = this.comp.shape.shape.y;
+	    this.oldX = this.comp.shape.x;
+	    this.oldY = this.comp.shape.y;
 	});
-	this.comp.shape.shape.addEvent('mouseleave', (e)=>{
+	this.comp.shape.addEvent('mouseleave', (e)=>{
 	    Event.onmouseleave(this);
 	});
-	this.comp.shape.shape.addEvent('mouseup', (e)=>{
+	this.comp.shape.addEvent('mouseup', (e)=>{
 	    //Event.onmouseup(this);
 	    Event.state = null;
 	    Event.x = null;
@@ -43,12 +43,12 @@ class LassoComponent{
 
     lockComponent() {
 	var ids = [], cp;
-	layout.getMarkedCells(Math.floor(this.comp.shape.shape.x/layout.cellW),
-			      Math.floor(this.comp.shape.shape.y/layout.cellH),
-			      Math.floor((this.comp.shape.shape.x+
-					  this.comp.shape.shape.width)/layout.cellW),
-			      Math.floor((this.comp.shape.shape.y+
-					 this.comp.shape.shape.height)/layout.cellH),
+	layout.getMarkedCells(Math.floor(this.comp.shape.x/layout.cellW),
+			      Math.floor(this.comp.shape.y/layout.cellH),
+			      Math.floor((this.comp.shape.x+
+					  this.comp.shape.width)/layout.cellW),
+			      Math.floor((this.comp.shape.y+
+					 this.comp.shape.height)/layout.cellH),
 			      ids);
 	//console.log(ids);
 
@@ -60,11 +60,11 @@ class LassoComponent{
 	ids.map((i)=>{
 	    if((cp=Register.find(i))){
 		
-		if(cp.comp.shape.shape.x > this.comp.shape.shape.x &&
-		   cp.comp.shape.shape.y > this.comp.shape.shape.y &&
-		   cp.comp.shape.shape.x < this.comp.shape.shape.x+this.comp.shape.shape.width &&
-		   cp.comp.shape.shape.y < this.comp.shape.shape.y+ this.comp.shape.shape.height){
-		    cp.comp.shape.shape.deleteAllEvents();
+		if(cp.comp.shape.x > this.comp.shape.x &&
+		   cp.comp.shape.y > this.comp.shape.y &&
+		   cp.comp.shape.x < this.comp.shape.x+this.comp.shape.width &&
+		   cp.comp.shape.y < this.comp.shape.y+ this.comp.shape.height){
+		    cp.comp.shape.deleteAllEvents();
 		    this.selectedComp.push(cp);
 		}
 	    }
@@ -85,11 +85,11 @@ class LassoComponent{
     }
 
     resize(dx, dy){
-	if(this.comp.shape.shape.width+dx < 0 ||
-	   this.comp.shape.shape.height+dy < 0)
+	if(this.comp.shape.width+dx < 0 ||
+	   this.comp.shape.height+dy < 0)
 	    return;
-	this.comp.shape.shape.width += dx;
-	this.comp.shape.shape.height += dy;
+	this.comp.shape.width += dx;
+	this.comp.shape.height += dy;
 	this.comp.redraw();
     }
     
@@ -101,7 +101,7 @@ class LassoComponent{
 	    c.addAllEvents();
 	});
 	
-	this.comp.shape.shape.removeFromDOM();
+	this.comp.shape.removeFromDOM();
         Register.clear(this.comp.shape.uuid);
     }
 }

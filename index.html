@@ -5,9 +5,10 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="initial-scale=1.0">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ayajs@2.0.5/build/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ayajs@2.0.7/build/style.css">
   <script src="https://unpkg.com/mithril/mithril.js"></script>
-  <script type="application/javascript" src="https://cdn.jsdelivr.net/npm/ayajs@2.0.5/build/aya.js"></script>
+  <script type="application/javascript" src="https://cdn.jsdelivr.net/npm/ayajs@2.0.7/build/aya.js"></script>
+  <!-- <script type="application/javascript" src="aya.js"></script> -->
   <script type="application/javascript"  src="build/petri.js"></script>
   <script type="application/javascript"  src="icon.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -22,7 +23,37 @@
 
 <body>
   <script>
-    var aya = new aya.Init(2000, 2000);
+    var saveFile = (data, name, type)=>{
+      let blob = new Blob([data], { type });
+      if (typeof navigator.msSaveBlob == "function")
+          return navigator.msSaveBlob(blob, file_name);
+
+      var saver = document.createElementNS("http://www.w3.org/1999/xhtml", "a");
+      var blobURL = saver.href = URL.createObjectURL(blob);
+      var body = document.body;
+
+      saver.download = name;
+
+      body.appendChild(saver);
+      saver.dispatchEvent(new MouseEvent("click"));
+      body.removeChild(saver);
+      URL.revokeObjectURL(blobURL);
+    }
+    var load = ()=>{
+      const fileElem = document.getElementById("load_input");
+      if (fileElem) 
+        fileElem.click();
+      fileElem.addEventListener("change", () => {
+        const [file] = fileElem.files;
+        if (file) {
+          const reader = new FileReader();
+          reader.addEventListener("load", () => {
+            petri.load(JSON.parse(reader.result));
+          });
+          reader.readAsText(file);
+        }
+      });
+    }
     petri.init();
     m.mount(document.body, {
       oninit(vnode) {
@@ -31,8 +62,14 @@
       view: () => m("", [
         m(".border.flex.fixed.top-5.left-5.flex-col.rounded-lg.border-gray-400.bg-gray-100", [
           m("button.btn.p-2.border-b.border-gray-400.hover:bg-gray-200.active:bg-gray-400", { title: "New diagram", onclick: petri._new }, m(Icon.FilePlus)),
-          m("button.btn.p-2.border-b.border-gray-400.hover:bg-gray-200.active:bg-gray-400", { title: "Load diagram", onclick: petri.load}, m(Icon.Folder)),
-          m("button.btn.p-2.border-b.border-gray-400.hover:bg-gray-200.active:bg-gray-400", { title: "Save diagram", onclick: petri.save }, m(Icon.Download)),
+          m("button.btn.p-2.border-b.border-gray-400.hover:bg-gray-200.active:bg-gray-400", { id: "load", title: "Load diagram", onclick: ()=>{ load()}}, m(Icon.Folder)),
+          m("input[type='file']#load_input", {style: "display: none;"}),
+          m("button.btn.p-2.border-b.border-gray-400.hover:bg-gray-200.active:bg-gray-400", { title: "Save diagram", onclick: ()=> { 
+            var data = petri.save();
+            console.log(data);
+            saveFile(JSON.stringify(data), "diagram.aya", 'text/plain'); 
+          }},
+           m(Icon.Download)),
           m("button.btn.p-2.border-b.border-gray-400.hover:bg-gray-200.active:bg-gray-400", { title: "Save as svg", onclick: petri.save_as_svg }, m(Icon.Image)),
         ]),
         m(petri.editor)
@@ -40,5 +77,4 @@
   });
   </script>
 </body>
-
 </html>

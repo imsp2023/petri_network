@@ -4,12 +4,16 @@ import {Event} from "./event";
 import {config} from "../config";
 import { layout } from "./layout";
 
+let paya;
+
 export const init = ()=>{
     try{
-        aya.config.link.end_start = config.end_start;
-        aya.config.link.end_dest = config.end_dest;
+        paya = aya.init(2000, 2000);
+        paya.grid(paya.svg);
+        paya.config.link.end_start = config.end_start;
+        paya.config.link.end_dest = config.end_dest;
 
-        aya.svg.addEventListener("mousemove", (e)=>{
+        paya.svg.addEventListener("mousemove", (e)=>{
             if(Event.state == 'linking'){
                 Event.line.dest_x = e.clientX;
                 Event.line.dest_y = e.clientY;
@@ -25,7 +29,7 @@ export const init = ()=>{
             }
         });
         
-        aya.svg.addEventListener("mouseup", (e)=>{
+        paya.svg.addEventListener("mouseup", (e)=>{
             // console.log('mouseUP SVG state='+Event.state);
             if(Event.state == 'linking'){
                 Event.line.removeFromDOM();
@@ -40,7 +44,7 @@ export const init = ()=>{
             }
         });
     
-        aya.svg.addEventListener("mousedown", (e)=>{
+        paya.svg.addEventListener("mousedown", (e)=>{
         // console.log('mouseDOWN SVG state='+Event.state);
         if(Event.state != null)
             return;
@@ -53,6 +57,7 @@ export const init = ()=>{
         });
 
         layout.init( config.cellW,  config.cellH, config.svg_width,  config.svg_height);
+        globalThis.paya = paya;
     }
     catch(e){
         console.error(e);
@@ -72,8 +77,25 @@ export const _new = ()=>{
     ComponentFactory.getComponent("place", { type: 'start', x: 100, y: 350 });
 }
 
-export const load = ()=>{
-    console.log("Call load_diag");
+export const load = (data)=>{
+    var cps = [];
+    Register.forEach(cp => {
+    if (cp.type != "edge")
+        cps.push(cp);
+    }, cps);
+
+    cps.map((c)=>{c.actions['deletion'](c);});
+    cps.length = 0;
+    
+    data.places.map((p)=>{
+        ComponentFactory.getComponent("place", p);
+    });
+    data.transitions.map((t)=>{
+        ComponentFactory.getComponent("transition", t);
+    });
+    data.edges.map((e)=>{
+        ComponentFactory.getComponent("edge", e);
+    });
 }
 
 export const save_as_svg = ()=>{
@@ -81,12 +103,13 @@ export const save_as_svg = ()=>{
     saveFile(svg.outerHTML,"diagram.svg","image/svg+xml")
 }
 
+// save should return an object
 export const save = ()=>{
     var data = { edges: [], places: [], transitions: [] };
     Register.forEach(comp => {
         data[comp.type + 's'].push(comp.save())
     }, data);
-    saveFile(JSON.stringify(data), "diagram.aya", 'text/plain');
+    return data;
 }
 
 export const saveFile = (data, name, type)=>{
@@ -313,7 +336,7 @@ export const editor = () => {
     };
     return {
         oncreate(vnode) {
-            vnode.dom.append(aya.svg);
+            vnode.dom.append(paya.svg);
         },
         view: (vnode) => {
             return m("#viewport",{

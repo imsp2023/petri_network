@@ -6,7 +6,7 @@ class Edge {
 	if (!props.direction || !props.src || !props.dest)
 	        throw new Error("missing parameters");
 
-        if ((props.direction != "p2t" && props.direction != "t2p" && props.direction != "ca") ||
+            if ((props.direction != "p2t" && props.direction != "t2p" && props.direction != "ca") ||
 	        !(src=Register.find(props.src)) ||
 	        !(dest=Register.find(props.dest)) ||
 	        (props.direction != 'ca' && src.comp.shape.type == dest.comp.shape.type))
@@ -24,8 +24,8 @@ class Edge {
             props.end_dest = 'circle';
         }
 
-	    this.shape = aya.Link(src.comp.shape.shape.uuid,
-			                  dest.comp.shape.shape.uuid,
+	    this.shape = paya.link(src.comp.shape.uuid,
+			                  dest.comp.shape.uuid,
                               props);
         if (this.cond != undefined){
             //this.shape.addText(this.cond, "top");

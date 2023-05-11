@@ -18,10 +18,10 @@ const transactions = {
 
 	props.type = 'intermediary'
 
-	props.name = 'p_' + aya.id();
+	props.name = 'p_' + paya.id();
 
-	posx = Math.floor(target.comp.shape.shape.x/layout.cellW);
-	posy = Math.floor(target.comp.shape.shape.y/layout.cellH);
+	posx = Math.floor(target.comp.shape.x/layout.cellW);
+	posy = Math.floor(target.comp.shape.y/layout.cellH);
 	if((pos=layout.getClosestPosition(posx, posy))){
 	    props.x = pos.x*layout.cellW;
 	    props.y = pos.y*layout.cellH;
@@ -46,12 +46,11 @@ const transactions = {
     },
 
     edge: (target)=>{
-	Event.state = 'linking'
-	Event.src = target;
-	Event.line = aya.Line(target.comp.shape.shape.c_points[0].x,
-			      target.comp.shape.shape.c_points[0].y);
-	Event.line.draw();
-
+		Event.state = 'linking'
+		Event.src = target;
+		Event.line = paya.line(target.comp.shape.c_points[0].x,
+					target.comp.shape.c_points[0].y, true, false);
+		Event.line.vertex.map((vt)=>{ vt.setStyles({fill: "none"})});
     },
 
     andsplit: (target)=>{
@@ -60,8 +59,8 @@ const transactions = {
 	for(i=0; i<2; i++){
 	    cur = target;
 
-	    lyt = layout.getClosestPosition(Math.floor(cur.comp.shape.shape.x/layout.cellW),
-					    Math.floor(cur.comp.shape.shape.y/layout.cellH));
+	    lyt = layout.getClosestPosition(Math.floor(cur.comp.shape.x/layout.cellW),
+					    Math.floor(cur.comp.shape.y/layout.cellH));
 
 	    obj.x = lyt.x*layout.cellW;
 	    obj.y = lyt.y*layout.cellH;
@@ -71,8 +70,8 @@ const transactions = {
 				       dest: p.comp.shape.uuid,
 				       direction: 't2p'});
             cur = p;
-	    lyt = layout.getClosestPosition(Math.floor(cur.comp.shape.shape.x/layout.cellW),
-					    Math.floor(cur.comp.shape.shape.y/layout.cellH));
+	    lyt = layout.getClosestPosition(Math.floor(cur.comp.shape.x/layout.cellW),
+					    Math.floor(cur.comp.shape.y/layout.cellH));
 	    obj.x = lyt.x*layout.cellW;
 	    obj.y = lyt.y*layout.cellH;
 	    obj.type = 'dummy';
@@ -86,8 +85,8 @@ const transactions = {
     dowhile: (target)=>{
 	var i, lyt, p, t, e, obj={};
 
-	lyt = layout.getClosestPosition(Math.floor(target.comp.shape.shape.x/layout.cellW),
-	    				Math.floor(target.comp.shape.shape.y/layout.cellH));
+	lyt = layout.getClosestPosition(Math.floor(target.comp.shape.x/layout.cellW),
+	    				Math.floor(target.comp.shape.y/layout.cellH));
 
 	obj.x = lyt.x*layout.cellW;
 	obj.y = lyt.y*layout.cellH;
@@ -105,8 +104,8 @@ const transactions = {
 						   cond: '',
 						   altpath: true});
 	
-	lyt = layout.getClosestPosition(Math.floor(p.comp.shape.shape.x/layout.cellW),
-					Math.floor(p.comp.shape.shape.y/layout.cellH));
+	lyt = layout.getClosestPosition(Math.floor(p.comp.shape.x/layout.cellW),
+					Math.floor(p.comp.shape.y/layout.cellH));
 	
 	obj.x = lyt.x*layout.cellW;
 	obj.y = lyt.y*layout.cellH;

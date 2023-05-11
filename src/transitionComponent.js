@@ -5,23 +5,23 @@ import { Transition } from "./entities/transition";
 import { transactions } from "./transactions";
 class TransitionComponent{
     addAllEvents() {
-	this.comp.shape.shape.addEvent('mouseover', (e)=>{
+	this.comp.shape.addEvent('mouseover', (e)=>{
 	    Event.onmouseover(this, transactions.list,
-			      this.comp.shape.shape.x + this.comp.shape.shape.width,
-			      this.comp.shape.shape.y);
+			      this.comp.shape.x + this.comp.shape.width,
+			      this.comp.shape.y);
 	});
-	this.comp.shape.shape.addEvent('mousedown', (e)=>{
+	this.comp.shape.addEvent('mousedown', (e)=>{
 	    Event.onmousedown(this)
-	    layout.umark(Math.floor(this.comp.shape.shape.x/layout.cellW),
-			 Math.floor(this.comp.shape.shape.y/layout.cellH));
+	    layout.umark(Math.floor(this.comp.shape.x/layout.cellW),
+			 Math.floor(this.comp.shape.y/layout.cellH));
 	});
-	this.comp.shape.shape.addEvent('mouseleave', (e)=>{
+	this.comp.shape.addEvent('mouseleave', (e)=>{
 	    Event.onmouseleave(this);
 	});
-	this.comp.shape.shape.addEvent('mouseup', (e)=>{
+	this.comp.shape.addEvent('mouseup', (e)=>{
 	    Event.onmouseup(this);
 	});
-	this.comp.shape.shape.addEvent('click', (e)=>{
+	this.comp.shape.addEvent('click', (e)=>{
 	    Event.onclick(this);
 	});
     }
@@ -60,7 +60,7 @@ class TransitionComponent{
 
 	layout.mark(Math.floor(props.x/layout.cellW),
                     Math.floor(props.y/layout.cellH),
-                    this.comp.shape.shape.uuid);
+                    this.comp.shape.uuid);
 
 	this.addAllEvents();
 	this.actions = transactions;
@@ -70,14 +70,14 @@ class TransitionComponent{
     move(dx, dy) {
 	var edges = [];
 
-	layout.umark(Math.floor(this.comp.shape.shape.x/layout.cellW),
-		     Math.floor(this.comp.shape.shape.y/layout.cellH));
+	layout.umark(Math.floor(this.comp.shape.x/layout.cellW),
+		     Math.floor(this.comp.shape.y/layout.cellH));
 
-	this.comp.shape.shape.shift(dx, dy);
+	this.comp.shape.shift(dx, dy);
 
-	layout.mark(Math.floor(this.comp.shape.shape.x/layout.cellW),
-		    Math.floor(this.comp.shape.shape.y/layout.cellH),
-		    this.comp.shape.shape.uuid);
+	layout.mark(Math.floor(this.comp.shape.x/layout.cellW),
+		    Math.floor(this.comp.shape.y/layout.cellH),
+		    this.comp.shape.uuid);
 	this.comp.redraw();
 
 	Register.forEach(
@@ -102,21 +102,21 @@ class TransitionComponent{
 
         this.comp.type = type;
         this.comp.app = {};
-        this.comp.shape.shape.children.map(({child})=>{
+        this.comp.shape.children.map(({child})=>{
             child.removeFromDOM();
         })
 
-        this.comp.shape.shape.children.length = 0;
-	var lyt = layout.fixPoint(this.comp.shape.shape.x, this.comp.shape.shape.y);
+        this.comp.shape.children.length = 0;
+	var lyt = layout.fixPoint(this.comp.shape.x, this.comp.shape.y);
         dim = Transition.getShapeDimension(type);
 
 	console.log(lyt);
-	this.comp.shape.shape.x = lyt.x; 
-	this.comp.shape.shape.y = lyt.y;
-        this.comp.shape.shape.width = dim.width;
-        this.comp.shape.shape.height = dim.height;
+	this.comp.shape.x = lyt.x; 
+	this.comp.shape.y = lyt.y;
+        this.comp.shape.width = dim.width;
+        this.comp.shape.height = dim.height;
 
-	this.centerComponent(this.comp.shape.shape);
+	this.centerComponent(this.comp.shape);
 	
         this.comp.completeShape();
 	this.move(0, 0)                ;
@@ -124,16 +124,16 @@ class TransitionComponent{
     
     save(){
 	var obj = {};
-	Object.keys(this.comp.shape).map((e)=>{
-	    if(e != 'shape')
+	Object.keys(this.comp).map((e)=>{
+		// console.log(e);
+	    if(e != 'shape' && e!= 'panelPos' && e!= 'cWidth' && e != 'cheight' && e != 'state' && e != 'app') 
 		obj[e] = this.comp[e];
-	    else {
+	    else if(e == 'shape'){
 		obj.uuid = this.comp[e].shape.uuid
 		obj.x = this.comp[e].shape.x;
 		obj.y = this.comp[e].shape.y;
 	    }
 	});
-
 	return obj;
     }
 
@@ -149,9 +149,9 @@ class TransitionComponent{
 	    }
 	}
 
-	layout.umark(Math.floor(this.comp.shape.shape.x/layout.cellW),
-		     Math.floor(this.comp.shape.shape.y/layout.cellH));
-	this.comp.shape.shape.removeFromDOM();
+	layout.umark(Math.floor(this.comp.shape.x/layout.cellW),
+		     Math.floor(this.comp.shape.y/layout.cellH));
+	this.comp.shape.removeFromDOM();
         Register.clear(this.comp.shape.uuid);
     }
 }

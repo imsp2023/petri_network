@@ -21,20 +21,20 @@ class Component{
     }
 
     addAllEvents() {
-	this.comp.shape.shape.addEvent('mouseover', (e)=>{
+	this.comp.shape.addEvent('mouseover', (e)=>{
 	    //this.onmouseover();
 	    Event.onmouseover(this, transactions.list);
 	});
-	this.comp.shape.shape.addEvent('mousedown', (e)=>{
+	this.comp.shape.addEvent('mousedown', (e)=>{
 	    Event.onmousedown(this)
 	});
-	this.comp.shape.shape.addEvent('mouseleave', (e)=>{
+	this.comp.shape.addEvent('mouseleave', (e)=>{
 	    Event.onmouseleave(this);
 	});
-	this.comp.shape.shape.addEvent('mouseup', (e)=>{
+	this.comp.shape.addEvent('mouseup', (e)=>{
 	    Event.onmouseup(this);
 	});
-	this.comp.shape.shape.addEvent('click', (e)=>{
+	this.comp.shape.addEvent('click', (e)=>{
 	    Event.onclick(this);
 	});
     }
@@ -82,7 +82,7 @@ class Component{
 	if(type=='transition' || type == 'place')
 	    layout.mark(Math.floor(lyt.x/layout.cellW),
                         Math.floor(lyt.y/layout.cellH),
-                        this.comp.shape.shape.uuid);
+                        this.comp.shape.uuid);
 
 	
 	this.addAllEvents();
@@ -96,7 +96,7 @@ class Component{
     move(dx, dy) {
 	var edges = [];
 
-	this.comp.shape.shape.shift(dx, dy);
+	this.comp.shape.shift(dx, dy);
 	this.comp.shape.redraw();
 
 	Register.forEach(
