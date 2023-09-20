@@ -9,20 +9,20 @@
 	    
 	    static add(id, obj) {
 		if(id)
-		    Register$1.store[id] = obj;
+		    Register.store[id] = obj;
 	    }
 
 	    static find(id){
-	        return Register$1.store[id] ? Register$1.store[id] : null;
+	        return Register.store[id] ? Register.store[id] : null;
 	    }
 
 	    static clear(id){
-	        delete Register$1.store[id];
+	        delete Register.store[id];
 	    }
 
 	    static forEach(func, userdata){
-		Object.keys(Register$1.store).map((e)=>{
-		    func(Register$1.store[e], userdata);
+		Object.keys(Register.store).map((e)=>{
+		    func(Register.store[e], userdata);
 		});
 	    }
 	};
@@ -88,38 +88,6 @@
 
 	    redraw(){
 		this.shape.redraw();
-	    }
-	}
-
-	class EdgeComponent{
-	    addAllEvents() {
-			if(!this.comp.shape.ca)
-				this.comp.shape.line.addEvent('click', (e)=>{
-					Event.onclick(this);
-				});
-		}
-	    
-	    constructor(props){
-			this.type = 'edge';
-			this.comp = new Edge(props);
-			
-			this.addAllEvents();
-			this.actions = edgeactions;
-			Register$1.add(this.comp.shape.line.uuid, this);
-	    }
-
-	    save(){
-			var obj = {};
-			Object.keys(this.comp).map((e)=>{
-				if(e != 'shape')
-				obj[e] = this.comp[e];
-			});
-			return obj;
-	    }
-
-	    remove(){
-			this.comp.shape.removeFromDOM();
-			Register$1.clear(this.comp.shape.line.uuid);
 	    }
 	}
 
@@ -527,7 +495,7 @@
 		}
 	};
 
-	const Event$1 = {
+	const Event = {
 	    line: null,
 	    src: null,
 	    state: null,
@@ -536,7 +504,7 @@
 	    onmouseover: (target, actions, x, y)=>{
 		//console.log('mouseover Component state='+Event.state+ ' pos='+target.panelPos);
 
-		if(Event$1.state == 'moving')
+		if(Event.state == 'moving')
 		    return;
 		else if(target.panelPos < 0)
 			Panel.add(target, actions, x, y);
@@ -551,16 +519,16 @@
 
 	    onmousedown: (target, actions)=>{
 		Panel.remove(target, actions);
-		Event$1.state = 'moving';
-		Event$1.x = target.comp.shape.x;
-		Event$1.y = target.comp.shape.y;
+		Event.state = 'moving';
+		Event.x = target.comp.shape.x;
+		Event.y = target.comp.shape.y;
 	    },
 
 	    onmouseup: (target)=>{
 		// console.log('mouseUp state='+Event.state);
-		if(Event$1.state == 'linking')
+		if(Event.state == 'linking')
 		    target.actions.edgeCompleted(target);
-		else if(Event$1.state == 'moving'){
+		else if(Event.state == 'moving'){
 		    var dim;
 		    var lyt = layout.fixPoint(target.comp.shape.x,
 					      target.comp.shape.y);
@@ -579,19 +547,51 @@
 				dim.y - target.comp.shape.y);
 		}
 		
-		Event$1.src = null;
-		Event$1.state = null;
-		Event$1.x = null;
-		Event$1.y = null;
+		Event.src = null;
+		Event.state = null;
+		Event.x = null;
+		Event.y = null;
 	    },
 	    
 	    onclick: (target)=>{
-		if(Event$1.config.node == target)
-	            Event$1.config.node = null;
-	        else
-	            Event$1.config.node = target;
+			if(Event.config.node == target)
+					Event.config.node = null;
+			else
+				Event.config.node = target;
 	    }
 	};
+
+	class EdgeComponent{
+	    addAllEvents() {
+			if(!this.comp.shape.ca)
+				this.comp.shape.line.addEvent('click', (e)=>{
+					Event.onclick(this);
+				});
+		}
+	    
+	    constructor(props){
+			this.type = 'edge';
+			this.comp = new Edge(props);
+			
+			this.addAllEvents();
+			this.actions = edgeactions;
+			Register$1.add(this.comp.shape.line.uuid, this);
+	    }
+
+	    save(){
+			var obj = {};
+			Object.keys(this.comp).map((e)=>{
+				if(e != 'shape')
+				obj[e] = this.comp[e];
+			});
+			return obj;
+	    }
+
+	    remove(){
+			this.comp.shape.removeFromDOM();
+			Register$1.clear(this.comp.shape.line.uuid);
+	    }
+	}
 
 	const placactions = {
 	    list: [
@@ -637,11 +637,11 @@
 	    },
 
 	    edge: (target)=>{
-			Event$1.state = 'linking';
-			Event$1.src = target;
-			Event$1.line = paya.line(target.comp.shape.c_points[0].x,
+			Event.state = 'linking';
+			Event.src = target;
+			Event.line = paya.line(target.comp.shape.c_points[0].x,
 						target.comp.shape.c_points[0].y, true, false);
-			Event$1.line.vertex.map((vt)=>{ vt.setStyles({fill: "none"});});
+			Event.line.vertex.map((vt)=>{ vt.setStyles({fill: "none"});});
 	    },
 
 	    xorsplit: (target)=>{
@@ -899,14 +899,14 @@
 	    },
 	    
 	    edgeCompleted: (target)=>{
-		if(!Event$1.line)
+		if(!Event.line)
 		    return;
 
 		console.log('completed type='+target.type+ ' x2='+ target.comp.shape.x);
-		Event$1.line.removeFromDOM();
+		Event.line.removeFromDOM();
 
 	        /* Only p2t  and t2p are allowed */
-		if(Event$1.src.type == 'transition'){
+		if(Event.src.type == 'transition'){
 	            var count = {altpath: false};
 
 
@@ -916,8 +916,8 @@
 	                    if(item.type=='edge' &&
 			       (item.comp.src == target.comp.shape.uuid ||
 				item.comp.dest == target.comp.shape.uuid)){
-	                        if(item.comp.src == Event$1.src.comp.shape.uuid ||
-				   item.comp.dest == Event$1.src.comp.shape.uuid)
+	                        if(item.comp.src == Event.src.comp.shape.uuid ||
+				   item.comp.dest == Event.src.comp.shape.uuid)
 				    data.altpath = true;
 			    }
 			},
@@ -929,38 +929,38 @@
 
 		    ComponentFactory.getComponent('edge', {
 			direction:'t2p',
-			src: Event$1.src.comp.shape.uuid,
+			src: Event.src.comp.shape.uuid,
 			dest: target.comp.shape.uuid,
 	                altpath: count.altpath
 		    });
 		}
 
-		Event$1.line = null;
-		Event$1.src = null;
-		Event$1.state = null;
+		Event.line = null;
+		Event.src = null;
+		Event.state = null;
 	    }
 	};
 
 	class PlaceComponent{
 	    addAllEvents() {
 			this.comp.shape.addEvent('mouseover', (e)=>{
-				Event$1.onmouseover(this, placactions.list,
+				Event.onmouseover(this, placactions.list,
 					this.comp.shape.x + this.comp.shape.r,
 					this.comp.shape.y - this.comp.shape.r);
 			});
 			this.comp.shape.addEvent('mousedown', (e)=>{
-				Event$1.onmousedown(this);
+				Event.onmousedown(this);
 				layout.umark(Math.floor(this.comp.shape.x/layout.cellW),
 					Math.floor(this.comp.shape.y/layout.cellH));
 			});
 			this.comp.shape.addEvent('mouseleave', (e)=>{
-				Event$1.onmouseleave(this);
+				Event.onmouseleave(this);
 			});
 			this.comp.shape.addEvent('mouseup', (e)=>{
-				Event$1.onmouseup(this);
+				Event.onmouseup(this);
 			});
 			this.comp.shape.addEvent('click', (e)=>{
-				Event$1.onclick(this);
+				Event.onclick(this);
 			});
 	    }
 
@@ -1090,11 +1090,11 @@
 	    },
 
 	    edge: (target)=>{
-			Event$1.state = 'linking';
-			Event$1.src = target;
-			Event$1.line = paya.line(target.comp.shape.c_points[0].x,
+			Event.state = 'linking';
+			Event.src = target;
+			Event.line = paya.line(target.comp.shape.c_points[0].x,
 						target.comp.shape.c_points[0].y, true, false);
-			Event$1.line.vertex.map((vt)=>{ vt.setStyles({fill: "none"});});
+			Event.line.vertex.map((vt)=>{ vt.setStyles({fill: "none"});});
 	    },
 
 	    andsplit: (target)=>{
@@ -1187,12 +1187,12 @@
 	    },
 
 	    edgeCompleted: (target)=>{
-		if(!Event$1.line)
+		if(!Event.line)
 		    return;
 
-		Event$1.line.removeFromDOM();
+		Event.line.removeFromDOM();
 		
-	        if(Event$1.src.type == 'place'){
+	        if(Event.src.type == 'place'){
 	            var count = {count: 0, altpath: false};
 		    
 
@@ -1202,8 +1202,8 @@
 			       (item.comp.src == target.comp.shape.uuid ||
 				item.comp.dest == target.comp.shape.uuid)){
 	                        data.count++;
-	                        if(item.comp.src == Event$1.src.comp.shape.uuid ||
-				   item.comp.dest == Event$1.src.comp.shape.uuid)
+	                        if(item.comp.src == Event.src.comp.shape.uuid ||
+				   item.comp.dest == Event.src.comp.shape.uuid)
 				    data.altpath = true;
 			    }
 			},
@@ -1215,38 +1215,38 @@
 
 		    ComponentFactory.getComponent('edge', {
 			direction:'p2t',
-			src: Event$1.src.comp.shape.uuid,
+			src: Event.src.comp.shape.uuid,
 			dest: target.comp.shape.uuid,
 	                altpath: count.altpath
 		    });
 		}
 
-		Event$1.line = null;
-		Event$1.src = null;
-		Event$1.state = null;
+		Event.line = null;
+		Event.src = null;
+		Event.state = null;
 	    }
 	};
 
 	class TransitionComponent{
 	    addAllEvents() {
 		this.comp.shape.addEvent('mouseover', (e)=>{
-		    Event$1.onmouseover(this, transactions.list,
+		    Event.onmouseover(this, transactions.list,
 				      this.comp.shape.x + this.comp.shape.width,
 				      this.comp.shape.y);
 		});
 		this.comp.shape.addEvent('mousedown', (e)=>{
-		    Event$1.onmousedown(this);
+		    Event.onmousedown(this);
 		    layout.umark(Math.floor(this.comp.shape.x/layout.cellW),
 				 Math.floor(this.comp.shape.y/layout.cellH));
 		});
 		this.comp.shape.addEvent('mouseleave', (e)=>{
-		    Event$1.onmouseleave(this);
+		    Event.onmouseleave(this);
 		});
 		this.comp.shape.addEvent('mouseup', (e)=>{
-		    Event$1.onmouseup(this);
+		    Event.onmouseup(this);
 		});
 		this.comp.shape.addEvent('click', (e)=>{
-		    Event$1.onclick(this);
+		    Event.onclick(this);
 		});
 	    }
 
@@ -1445,27 +1445,27 @@
 	class LassoComponent{
 	    addAllEvents() {
 		this.comp.shape.addEvent('mouseover', (e)=>{
-		    Event$1.onmouseover(this, lassoactions.list,
+		    Event.onmouseover(this, lassoactions.list,
 				      this.comp.shape.x + this.comp.shape.width,
 				      this.comp.shape.y);
 		});
 		this.comp.shape.addEvent('mousedown', (e)=>{
-		    Event$1.onmousedown(this);
-		    Event$1.state += '_lasso';
-		    Event$1.src = this;
-		    Event$1.x = e.clientX;
-		    Event$1.y = e.clientY;
+		    Event.onmousedown(this);
+		    Event.state += '_lasso';
+		    Event.src = this;
+		    Event.x = e.clientX;
+		    Event.y = e.clientY;
 		    this.oldX = this.comp.shape.x;
 		    this.oldY = this.comp.shape.y;
 		});
 		this.comp.shape.addEvent('mouseleave', (e)=>{
-		    Event$1.onmouseleave(this);
+		    Event.onmouseleave(this);
 		});
 		this.comp.shape.addEvent('mouseup', (e)=>{
 		    //Event.onmouseup(this);
-		    Event$1.state = null;
-		    Event$1.x = null;
-		    Event$1.y = null;
+		    Event.state = null;
+		    Event.x = null;
+		    Event.y = null;
 		});
 	    }
 
@@ -1579,46 +1579,46 @@
 	        paya$1.config.link.end_dest = config.end_dest;
 
 	        paya$1.svg.addEventListener("mousemove", (e)=>{
-	            if(Event$1.state == 'linking'){
-	                Event$1.line.dest_x = e.clientX;
-	                Event$1.line.dest_y = e.clientY;
-	                Event$1.line.redraw();
-	            }else if(Event$1.state == 'selection'){
-	                Event$1.src.resize(e.clientX-Event$1.x, e.clientY-Event$1.y);
-	                Event$1.x = e.clientX;
-	                Event$1.y = e.clientY;
-	            }else if(Event$1.state == 'moving_lasso'){
-	                Event$1.src.move(e.clientX-Event$1.x, e.clientY-Event$1.y);
-	                Event$1.x = e.clientX;
-	                Event$1.y = e.clientY;
+	            if(Event.state == 'linking'){
+	                Event.line.dest_x = e.clientX;
+	                Event.line.dest_y = e.clientY;
+	                Event.line.redraw();
+	            }else if(Event.state == 'selection'){
+	                Event.src.resize(e.clientX-Event.x, e.clientY-Event.y);
+	                Event.x = e.clientX;
+	                Event.y = e.clientY;
+	            }else if(Event.state == 'moving_lasso'){
+	                Event.src.move(e.clientX-Event.x, e.clientY-Event.y);
+	                Event.x = e.clientX;
+	                Event.y = e.clientY;
 	            }
 	        });
 	        
 	        paya$1.svg.addEventListener("mouseup", (e)=>{
 	            // console.log('mouseUP SVG state='+Event.state);
-	            if(Event$1.state == 'linking'){
-	                Event$1.line.removeFromDOM();
-	                Event$1.line = null;
-	                Event$1.src = null;
-	                Event$1.state = null;
+	            if(Event.state == 'linking'){
+	                Event.line.removeFromDOM();
+	                Event.line = null;
+	                Event.src = null;
+	                Event.state = null;
 	            }
-	            else if(Event$1.state == 'selection'){
-	                Event$1.src.lockComponent();
-	                Event$1.src = null;
-	                Event$1.state = null;
+	            else if(Event.state == 'selection'){
+	                Event.src.lockComponent();
+	                Event.src = null;
+	                Event.state = null;
 	            }
 	        });
 	    
 	        paya$1.svg.addEventListener("mousedown", (e)=>{
 	        // console.log('mouseDOWN SVG state='+Event.state);
-	        if(Event$1.state != null)
+	        if(Event.state != null)
 	            return;
 	    
-	        Event$1.state = 'selection';
+	        Event.state = 'selection';
 	    
-	        Event$1.x = e.clientX;
-	        Event$1.y = e.clientY;
-	        Event$1.src = ComponentFactory.getComponent('lasso', {x: Event$1.x, y: Event$1.y});
+	        Event.x = e.clientX;
+	        Event.y = e.clientY;
+	        Event.src = ComponentFactory.getComponent('lasso', {x: Event.x, y: Event.y});
 	        });
 
 	        layout.init( config.cellW,  config.cellH, config.svg_width,  config.svg_height);
@@ -1856,7 +1856,7 @@
 	            m("label.text-2xl.font-medium", "Config"),
 	            m("button", {
 	                onclick: () => {
-	                vnode.attrs.config = null;
+	                    Event.config.node = null;
 	                }
 	            }, [
 	                m("svg[xmlns='http://www.w3.org/2000/svg'][width='24'][height='24'][viewBox='0 0 24 24'][fill='none'][stroke='currentColor'][stroke-width='2'][stroke-linecap='round'][stroke-linejoin='round'][color='currentColor']",
@@ -1907,7 +1907,7 @@
 	            return m("#viewport",{
 	            onclick(){}
 	            }, [
-	            Event$1.config.node && m(config, { config: Event$1.config.node})
+	            Event.config.node && m(config, { config: Event.config.node})
 	            ])
 	        }
 	    }

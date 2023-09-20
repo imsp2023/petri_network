@@ -1,5 +1,6 @@
 import {edgeactions} from "./edgeactions";
 import {Edge} from "./entities/edge";
+import { Event } from "./event";
 import {Register} from './register';
 
 class EdgeComponent{

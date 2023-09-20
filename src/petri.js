@@ -291,7 +291,7 @@ export const editor = () => {
             m("label.text-2xl.font-medium", "Config"),
             m("button", {
                 onclick: () => {
-                vnode.attrs.config = null;
+                    Event.config.node = null;
                 }
             }, [
                 m("svg[xmlns='http://www.w3.org/2000/svg'][width='24'][height='24'][viewBox='0 0 24 24'][fill='none'][stroke='currentColor'][stroke-width='2'][stroke-linecap='round'][stroke-linejoin='round'][color='currentColor']",

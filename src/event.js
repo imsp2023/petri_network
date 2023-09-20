@@ -62,10 +62,10 @@ const Event = {
     },
     
     onclick: (target)=>{
-	if(Event.config.node == target)
-            Event.config.node = null;
-        else
-            Event.config.node = target;
+		if(Event.config.node == target)
+				Event.config.node = null;
+		else
+			Event.config.node = target;
     }
 };
 export {Event};
