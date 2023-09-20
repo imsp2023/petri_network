@@ -957,6 +957,7 @@
 				Event.onmouseleave(this);
 			});
 			this.comp.shape.addEvent('mouseup', (e)=>{
+				console.log("mouseupppppppppppppppppppppppppppppppp");
 				Event.onmouseup(this);
 			});
 			this.comp.shape.addEvent('click', (e)=>{
@@ -1027,14 +1028,18 @@
 	    save(){
 			var obj = {};
 			Object.keys(this.comp).map((e)=>{
-				if(e != 'shape' && e!= 'panelPos' && e!= 'state') 
+				if(e != 'shape' && e!= 'panelPos' && e!= 'state') {
 					obj[e] = this.comp[e];
+
+				}
 				else if(e == 'shape'){
-					obj.uuid = this.comp[e].shape.uuid;
-					obj.x = this.comp[e].shape.x;
-					obj.y = this.comp[e].shape.y;
+					obj.uuid = this.comp[e].uuid;
+					obj.x = this.comp[e].x;
+					obj.y = this.comp[e].y;
 				}
 			});
+
+			console.log(obj);
 			return obj;
 	    }
 
@@ -1349,13 +1354,12 @@
 	    save(){
 		var obj = {};
 		Object.keys(this.comp).map((e)=>{
-			// console.log(e);
 		    if(e != 'shape' && e!= 'panelPos' && e!= 'cWidth' && e != 'cheight' && e != 'state' && e != 'app') 
 			obj[e] = this.comp[e];
 		    else if(e == 'shape'){
-			obj.uuid = this.comp[e].shape.uuid;
-			obj.x = this.comp[e].shape.x;
-			obj.y = this.comp[e].shape.y;
+			obj.uuid = this.comp[e].uuid;
+			obj.x = this.comp[e].x;
+			obj.y = this.comp[e].y;
 		    }
 		});
 		return obj;

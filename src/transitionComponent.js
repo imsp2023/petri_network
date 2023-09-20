@@ -125,13 +125,12 @@ class TransitionComponent{
     save(){
 	var obj = {};
 	Object.keys(this.comp).map((e)=>{
-		// console.log(e);
 	    if(e != 'shape' && e!= 'panelPos' && e!= 'cWidth' && e != 'cheight' && e != 'state' && e != 'app') 
 		obj[e] = this.comp[e];
 	    else if(e == 'shape'){
-		obj.uuid = this.comp[e].shape.uuid
-		obj.x = this.comp[e].shape.x;
-		obj.y = this.comp[e].shape.y;
+		obj.uuid = this.comp[e].uuid
+		obj.x = this.comp[e].x;
+		obj.y = this.comp[e].y;
 	    }
 	});
 	return obj;
