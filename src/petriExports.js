@@ -1,4 +1,6 @@
-class PetriExports{
+class PetriExports {
+    static Mode = 'dev';
+
     static edge2SQLObject(ed){
 	var obj = {}, src, dst;
 
@@ -19,7 +21,7 @@ class PetriExports{
 		obj.type = dst.comp.type;
 	    
 	    if(dst.comp.type == 'manual')
-		obj.role = dst.comp.role;
+		obj.role = PetriExports.Mode=='dev'? 'dev' : dst.comp.role;
 	    else if(dst.comp.type == 'automatic')
 		obj.app = dst.comp.app;
 
@@ -46,10 +48,10 @@ class PetriExports{
     }
     
     static toSQL(name){
-	var data= {edges = []}, text='';
+	var data={edges:[]}, text='';
 	Register.forEach( (c, ud)=> {
             if(c.type == 'place' && c.comp.type == 'start')
-		ud.start: c.comp.name;
+		ud.start = c.comp.name;
 	    else if(c.type == 'edge')
 		ud.edges.push(PetriExports.edge2SQLObject(c));
 	}, edges);

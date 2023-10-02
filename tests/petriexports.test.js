@@ -50,6 +50,7 @@ QUnit.test("edge2SQLObject set role attribute when manual transition and p2t", a
     n_tab = 0;
     tab[0] = {comp:{name: 'foo_n2', shape: {uuid: 'foo'}}};
     tab[1] = {comp:{name: 'bar_n2', type: 'manual', role: 'role', shape: {uuid: 'bar'}}};
+    PetriExports.Mode='prod';
     var so = PetriExports.edge2SQLObject({type: 'edge', comp: {direction: 'p2t', src: 'foo', dst: 'bar'}});
     assert.equal(so.role, 'role', "role attribute");
 });
