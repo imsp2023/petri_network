@@ -563,33 +563,35 @@
 
 	class EdgeComponent{
 	    addAllEvents() {
-			if(!this.comp.shape.ca)
-				this.comp.shape.line.addEvent('click', (e)=>{
-					Event.onclick(this);
-				});
-		}
+		if(!this.comp.shape.ca)
+		    this.comp.shape.line.addEvent('click', (e)=>{
+			Event.onclick(this);
+		    });
+	    }
 	    
 	    constructor(props){
-			this.type = 'edge';
-			this.comp = new Edge(props);
-			
-			this.addAllEvents();
-			this.actions = edgeactions;
-			Register$1.add(this.comp.shape.line.uuid, this);
+		this.type = 'edge';
+		this.comp = new Edge(props);
+		
+		this.addAllEvents();
+		this.actions = edgeactions;
+		Register$1.add(this.comp.shape.line.uuid, this);
 	    }
 
 	    save(){
-			var obj = {};
-			Object.keys(this.comp).map((e)=>{
-				if(e != 'shape')
-				obj[e] = this.comp[e];
-			});
-			return obj;
+		var obj = {};
+		Object.keys(this.comp).map((e)=>{
+		    if(e != 'shape')
+			obj[e] = this.comp[e];
+		    else if(this.comp[e].altpath)
+			obj['altpath'] = true;
+		});
+		return obj;
 	    }
 
 	    remove(){
-			this.comp.shape.removeFromDOM();
-			Register$1.clear(this.comp.shape.line.uuid);
+		this.comp.shape.removeFromDOM();
+		Register$1.clear(this.comp.shape.line.uuid);
 	    }
 	}
 
@@ -1038,8 +1040,6 @@
 					obj.y = this.comp[e].y;
 				}
 			});
-
-			console.log(obj);
 			return obj;
 	    }
 
