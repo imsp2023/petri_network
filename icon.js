@@ -54,5 +54,10 @@ const Icon = {
       m("line[x1='12'][y1='18'][x2='12'][y2='12']"),
       m("line[x1='9'][y1='15'][x2='15'][y2='15']")
     ])
+  },
+  Arrow: {
+    view: ({ attrs }) =>  m("svg.-mr-1.h-5.w-5.text-gray-400[viewBox='0 0 20 20'][fill='currentColor'][aria-hidden='true']", 
+      m("path[fill-rule='evenodd'][d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z'][clip-rule='evenodd']")
+    )
   }
 };

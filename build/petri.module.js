@@ -1567,14 +1567,89 @@ const config = {
     cellH:  80
 };
 
+const PetriExports = {
+    Mode:'dev',
+
+    edge2SQLObject: (ed) =>{
+	var obj = {}, src, dst;
+
+	if(ed.type != 'edge')
+	    return null;
+	
+	src = Register$1.find(ed.comp.src);
+	dst = Register$1.find(ed.comp.dest);
+
+	obj.direction = ed.comp.direction;
+
+
+	    /* to be checked */
+	if(ed.comp.shape && ed.comp.shape.altpath)
+		obj.altpath = true;
+
+	if(ed.comp.direction == 'p2t'){
+	    obj.pid = src.comp.name;
+	    obj.tid = dst.comp.name;
+
+	    if(dst.comp.type == 'automatic')
+		obj.type = 'auto';
+	    else
+		obj.type = dst.comp.type;
+	    
+	    if(dst.comp.type == 'manual')
+		obj.role = 'dev' ;
+	    else if(dst.comp.type == 'automatic')
+		obj.app = dst.comp.app;
+
+	    if(dst.comp.type == 'asub' || dst.comp.type == 'ssub')
+		obj.count = dst.comp.count;
+	    
+	    if(ed.comp.cond)
+		obj.cond = ed.comp.cond;
+
+
+	    if(dst.comp.gate)
+		obj.gate = dst.comp.gate;
+	}else if(ed.comp.direction == 't2p'){
+	    obj.pid = dst.comp.name;
+	    obj.tid = src.comp.name;
+	    if(dst.comp.type == 'end')
+		obj.type = 'end';
+	}
+
+	return obj;
+    },
+    
+    toSQL: (name) =>{
+		var data={edges:[]}, text='';
+		
+		Register$1.forEach( (c, ud)=> {
+			if(c.type == 'place' && c.comp.type == 'start')
+				ud.start = c.comp.name;
+			else if(c.type == 'edge'){
+				ud.edges.push(PetriExports.edge2SQLObject(c));
+			}
+		}, data);
+
+		text += 'insert into workflow.processes(process) values(\'{"name":"'+name+
+			'", "place":"'+ data.start +'"}\');';
+
+		data.edges.forEach(e=>{
+			text += '\ninsert into workflow.edges (id_processes, edge) values ((select id from workflow.processes where process->>\'name\'=\''+name+'\'),\''+JSON.stringify(e)+'\' );';
+		});
+
+		return text;
+    }
+};
+
 let paya$1;
 
-const init = ()=>{
+const init = (name)=>{
     try{
         paya$1 = aya.init(2000, 2000);
         paya$1.grid(paya$1.svg);
         paya$1.config.link.end_start = config.end_start;
         paya$1.config.link.end_dest = config.end_dest;
+        paya$1.name = name;
 
         paya$1.svg.addEventListener("mousemove", (e)=>{
             if(Event.state == 'linking'){
@@ -1666,8 +1741,12 @@ const save_as_svg = ()=>{
     saveFile(svg.outerHTML,"diagram.svg","image/svg+xml");
 };
 
+const save_as_sql = () =>{
+    return PetriExports.toSQL(paya$1.name); 
+};
+
 // save should return an object
-const save = ()=>{
+const save_as_json = ()=>{
     var data = { edges: [], places: [], transitions: [] };
     Register$1.forEach(comp => {
         data[comp.type + 's'].push(comp.save());
@@ -1840,6 +1919,10 @@ const editor = () => {
             m("label.block.mb-3", "Resource uri"),
             m("input.border", { value: node.comp.name, onchange: (e) => node.comp.name = e.target.value })
             ]),
+            node.comp.type == "automatic" && m(".px-4.col-span-2", [
+                m("label.block.mb-3", "Resource parameters"),
+                m("textarea.border", { value: "node.comp.name", onchange: (e) => node.comp.name = e.target.value })
+                ]),
         ])
         }
     };
@@ -1911,4 +1994,4 @@ const editor = () => {
     }
 };
 
-export { _new, editor, init, load, save, saveFile, save_as_svg };
+export { _new, editor, init, load, saveFile, save_as_json, save_as_sql, save_as_svg };

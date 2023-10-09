@@ -12,10 +12,15 @@
   <script type="application/javascript"  src="build/petri.js"></script>
   <script type="application/javascript"  src="icon.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
   <style type="text/tailwindcss">
     input,
     select {
     	@apply bg-white border-gray-400 border-2 w-full rounded p-2 mb-8 disabled:bg-gray-200 disabled:cursor-not-allowed
+    }
+    .dropwidth{
+      width: 60px;
     }
   </style>
   <title>petri network</title>
@@ -54,7 +59,7 @@
         }
       });
     }
-    petri.init();
+    petri.init("diagram");
     m.mount(document.body, {
       oninit(vnode) {
           petri._new();
@@ -64,13 +69,44 @@
           m("button.btn.p-2.border-b.border-gray-400.hover:bg-gray-200.active:bg-gray-400", { title: "New diagram", onclick: petri._new }, m(Icon.FilePlus)),
           m("button.btn.p-2.border-b.border-gray-400.hover:bg-gray-200.active:bg-gray-400", { id: "load", title: "Load diagram", onclick: ()=>{ load()}}, m(Icon.Folder)),
           m("input[type='file']#load_input", {style: "display: none;"}),
-          m("button.btn.p-2.border-b.border-gray-400.hover:bg-gray-200.active:bg-gray-400", { title: "Save diagram", onclick: ()=> { 
-            var data = petri.save();
-            console.log(data);
-            saveFile(JSON.stringify(data), "diagram.aya", 'text/plain'); 
-          }},
-           m(Icon.Download)),
-          m("button.btn.p-2.border-b.border-gray-400.hover:bg-gray-200.active:bg-gray-400", { title: "Save as svg", onclick: petri.save_as_svg }, m(Icon.Image)),
+          [
+            m(".btn.p-2.border-b.border-gray-400.hover:bg-gray-200.active:bg-gray-400[id='dropdownDefaultButton'][data-dropdown-toggle='dropdown'][type='button']",
+            {
+              title: "Save diagram as"
+            },
+            [
+                m(Icon.Download),
+              ]
+            ), 
+            m(".z-10.dropwidth.hidden.bg-white.divide-y.divide-gray-100.rounded-lg.shadow.w-44.dark:bg-gray-700[id='dropdown']", 
+              m("ul.py-2.text-sm.text-gray-700.dark:text-gray-200[aria-labelledby='dropdownDefaultButton']",
+                [
+                  m("li", 
+                    m("a.block.px-4.py-2.hover:bg-gray-100.dark:hover:bg-gray-600.dark:hover:text-white[href='#']", 
+                      {
+                        onclick: ()=>{
+                          var data = petri.save_as_json();
+                          saveFile(JSON.stringify(data), "diagram.aya", 'text/plain'); 
+                        }
+                      },
+                      "JSON"
+                    )
+                  ),
+                  m("li", 
+                    m("a.block.px-4.py-2.hover:bg-gray-100.dark:hover:bg-gray-600.dark:hover:text-white[href='#']", 
+                    {
+                        onclick: ()=>{
+                          var data = petri.save_as_sql();
+                          console.log(data);
+                        }
+                      },
+                    "SQL"
+                    )
+                  )
+                ]
+              )
+            )
+          ]        
         ]),
         m(petri.editor)
       ])

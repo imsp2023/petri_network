@@ -3,15 +3,17 @@ import {ComponentFactory} from "./factory";
 import {Event} from "./event";
 import {config} from "../config";
 import { layout } from "./layout";
+import { PetriExports } from "./petriExports";
 
 let paya;
 
-export const init = ()=>{
+export const init = (name)=>{
     try{
         paya = aya.init(2000, 2000);
         paya.grid(paya.svg);
         paya.config.link.end_start = config.end_start;
         paya.config.link.end_dest = config.end_dest;
+        paya.name = name;
 
         paya.svg.addEventListener("mousemove", (e)=>{
             if(Event.state == 'linking'){
@@ -103,8 +105,12 @@ export const save_as_svg = ()=>{
     saveFile(svg.outerHTML,"diagram.svg","image/svg+xml")
 }
 
+export const save_as_sql = () =>{
+    return PetriExports.toSQL(paya.name); 
+}
+
 // save should return an object
-export const save = ()=>{
+export const save_as_json = ()=>{
     var data = { edges: [], places: [], transitions: [] };
     Register.forEach(comp => {
         data[comp.type + 's'].push(comp.save())
@@ -277,6 +283,10 @@ export const editor = () => {
             m("label.block.mb-3", "Resource uri"),
             m("input.border", { value: node.comp.name, onchange: (e) => node.comp.name = e.target.value })
             ]),
+            node.comp.type == "automatic" && m(".px-4.col-span-2", [
+                m("label.block.mb-3", "Resource parameters"),
+                m("textarea.border", { value: "node.comp.name", onchange: (e) => node.comp.name = e.target.value })
+                ]),
         ])
         }
     };
