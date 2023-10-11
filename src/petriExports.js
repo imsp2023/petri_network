@@ -1,6 +1,6 @@
 import { Register } from "./register";
 
-const PetriExports = {
+let PetriExports = {
     Mode:'dev',
 
     edge2SQLObject: (ed) =>{

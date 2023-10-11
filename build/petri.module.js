@@ -1742,7 +1742,8 @@ const save_as_svg = ()=>{
 };
 
 const save_as_sql = () =>{
-    return PetriExports.toSQL(paya$1.name); 
+    new  File(PetriExports.toSQL(paya$1.name), paya$1.name);
+    return PetriExports.toSQL(paya$1.name);
 };
 
 // save should return an object
