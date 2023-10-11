@@ -15,9 +15,9 @@ const PetriExports = {
 	obj.direction = ed.comp.direction;
 
 
-	    /* to be checked */
+	/* to be checked */
 	if(ed.comp.shape && ed.comp.shape.altpath)
-		obj.altpath = true;
+	    obj.altpath = true;
 
 	if(ed.comp.direction == 'p2t'){
 	    obj.pid = src.comp.name;
