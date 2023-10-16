@@ -80,6 +80,7 @@ export const _new = ()=>{
 }
 
 export const load = (data)=>{
+    console.log("azer")
     var cps = [];
     Register.forEach(cp => {
     if (cp.type != "edge")
@@ -102,12 +103,12 @@ export const load = (data)=>{
 
 export const save_as_svg = ()=>{
     const svg = document.getElementById("viewport").children[0];
-    saveFile(svg.outerHTML,"diagram.svg","image/svg+xml")
+    saveFile(svg.outerHTML, paya.name + ".svg","image/svg+xml")
 }
 
 export const save_as_sql = () =>{
-    new  File(PetriExports.toSQL(paya.name), paya.name);
-    return PetriExports.toSQL(paya.name);
+    var data = PetriExports.toSQL(paya.name);
+    saveFile(data, paya.name + '.sql');
 }
 
 // save should return an object
@@ -116,7 +117,7 @@ export const save_as_json = ()=>{
     Register.forEach(comp => {
         data[comp.type + 's'].push(comp.save())
     }, data);
-    return data;
+    saveFile(JSON.stringify(data), paya.name + ".json", 'text/plain'); 
 }
 
 export const saveFile = (data, name, type)=>{
@@ -181,7 +182,7 @@ export const editor = () => {
                 {
                     onchange: (e) => {
                         node.comp.setType(e.target.value);
-                        node.comp.shape.shape.redraw();
+                        node.comp.shape.redraw();
                     }
                 },
                 types.map((type, idx) =>
@@ -202,93 +203,93 @@ export const editor = () => {
     // transition -> uuid, type {auto, manual, clock , ssub, asub}, name, ca, gateway, role, resource id, resource name, 
     var transition = {
         view(vnode) {
-        var node = vnode.attrs.node
-        // console.log(node);
-        const types = ["dummy","automatic", "event", "manual", "clock", "ssub", "asub"];
-        const rnames = ["get", "put", "post", "delete"];
-        const gateways = ["and_join", "xor_join"];
-        return m(".grid.grid-cols-2", [
-            m(".p-2.border-r",
-            m(".flex.flex-col.px-4", [
-                m("", [
-                m("label.block.mb-3", "UUID"),
-                m("input", { value: node.comp.shape.uuid, disabled: true })
+            var node = vnode.attrs.node
+            // console.log(node);
+            const types = ["dummy","automatic", "event", "manual", "clock", "ssub", "asub"];
+            const rnames = ["get", "put", "post", "delete"];
+            const gateways = ["and_join", "xor_join"];
+            return m(".grid.grid-cols-2", [
+		m(".p-2.border-r",
+		  m(".flex.flex-col.px-4", [
+                      m("", [
+			  m("label.block.mb-3", "UUID"),
+			  m("input", { value: node.comp.shape.uuid, disabled: true })
+                      ]),
+                      m("", [
+			  m("label.block.mb-3", "type"),
+			  m("select",
+			    {
+				onchange: (e) => {
+				    node.setType(e.target.value);
+				}
+			    },
+			    types.map((type, idx) =>
+				m("option", {
+				    key: idx,
+				    value: type,
+				    selected: node.comp.type == type,
+				}, type))
+			   ),
+                      ]),
+                      node.comp.ca && m("", [
+			  m("label.block.mb-3", "Cancel activity"),
+			  m("input", { value: node.comp.ca, disabled: true})
+                      ]),
+                      node.comp.type == "automatic" && m("", [
+			  m("label.block.mb-3", "Resource name"),
+			  m("select",
+			    {
+				onchange: (e) => {
+				    node.comp.app.name = e.target.value;
+				}
+			    },
+			    rnames.map((name, idx) =>
+				m("option", {
+				    key: idx,
+				    value: name,
+				    selected: node.comp.app.name == name,
+				}, name))
+			   )]),
+		  ]),
+		 ),
+		m(".p-2", m(".flex.flex-col.px-4", [
+		    m("", [
+			m("label.block.mb-3", "Name"),
+			m("input", {
+			    value: node.comp.name,
+			    onchange: (e) => {node.comp.setName(e.target.value);}
+			})
+		    ]),
+		    m("", [
+			m("label.block.mb-3", "Gateway"),
+			m("select",
+			  {
+			      onchange: (e) => {
+				  node.comp.setGate(e.target.value)
+			      }
+			  },
+			  gateways.map((gateway, idx) =>
+			      m("option", {
+				  key: idx,
+				  value: gateway,
+				  selected: node.comp.gate == gateway || (gateway == "and_join" && node.comp.gate == undefined),
+			      }, gateway))
+			 ),
+			node.comp.type == "manual" && m("", [
+			    m("label.block.mb-3", "Role"),
+			    m("input", { value: node.comp.role, onchange: (e) => node.comp.role = e.target.value })
+			]),
+		    ]),
+		])),
+		node.comp.type == "automatic" && m(".px-4.col-span-2", [
+		    m("label.block.mb-3", "Resource uri"),
+		    m("input.border", { value: node.comp.app.path, onchange: (e) => node.comp.app.path = e.target.value })
+		]),
+		node.comp.type == "automatic" && m(".px-4.col-span-2", [
+                    m("label.block.mb-3", "Resource parameters"),
+                    m("textarea.border", { value: node.comp.app.in, onchange: (e) => node.comp.app.in = e.target.value })
                 ]),
-                m("", [
-                m("label.block.mb-3", "type"),
-                m("select",
-                    {
-                    onchange: (e) => {
-                        node.setType(e.target.value);
-                    }
-                    },
-                    types.map((type, idx) =>
-                    m("option", {
-                        key: idx,
-                        value: type,
-                        selected: node.comp.type == type,
-                    }, type))
-                ),
-                ]),
-                node.comp.ca && m("", [
-                m("label.block.mb-3", "Cancel activity"),
-                m("input", { value: node.comp.ca, disabled: true})
-                ]),
-                node.comp.type == "automatic" && m("", [
-                m("label.block.mb-3", "Resource name"),
-                m("select",
-                    {
-                    onchange: (e) => {
-                        node.comp.app.name = e.target.value;
-                    }
-                    },
-                    rnames.map((name, idx) =>
-                    m("option", {
-                        key: idx,
-                        value: name,
-                        selected: node.comp.app.name == name,
-                    }, name))
-                )]),
-            ]),
-            ),
-            m(".p-2", m(".flex.flex-col.px-4", [
-            m("", [
-                m("label.block.mb-3", "Name"),
-                m("input", {
-                value: node.comp.name,
-                onchange: (e) => {node.comp.setName(e.target.value);}
-                })
-            ]),
-            m("", [
-                m("label.block.mb-3", "Gateway"),
-                m("select",
-                {
-                    onchange: (e) => {
-                    node.comp.setGate(e.target.value)
-                    }
-                },
-                gateways.map((gateway, idx) =>
-                    m("option", {
-                    key: idx,
-                    value: gateway,
-                    selected: node.comp.gate == gateway || (gateway == "and_join" && node.comp.gate == undefined),
-                    }, gateway))
-                ),
-                node.comp.type == "manual" && m("", [
-                m("label.block.mb-3", "Role"),
-                m("input", { value: node.comp.app.role, onchange: (e) => node.comp.app.role = e.target.value })
-                ]),
-            ]),
-            ])),
-            node.comp.type == "automatic" && m(".px-4.col-span-2", [
-            m("label.block.mb-3", "Resource uri"),
-            m("input.border", { value: node.comp.name, onchange: (e) => node.comp.name = e.target.value })
-            ]),
-            node.comp.type == "automatic" && m(".px-4.col-span-2", [
-                m("label.block.mb-3", "Resource parameters"),
-                m("textarea.border", { value: "node.comp.name", onchange: (e) => node.comp.name = e.target.value })
-                ]),
-        ])
+            ])
         }
     };
     

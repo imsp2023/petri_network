@@ -613,6 +613,8 @@
 			props.type = 'dummy';
 			
 			props.name = 't_' + paya.id();
+			console.log("placactions");
+			console.log(props.name);
 
 			posx = Math.floor(target.comp.shape.x/layout.cellW);
 			posy = Math.floor(target.comp.shape.y/layout.cellH);
@@ -662,6 +664,7 @@
 
 				lyt = layout.getClosestPosition(Math.floor(t.comp.shape.x/layout.cellW),
 							Math.floor(t.comp.shape.y/layout.cellH));
+			obj = {};
 			obj.x = lyt.x*layout.cellW;
 			obj.y = lyt.y*layout.cellH;
 			obj.type = 'intermediary';
@@ -673,6 +676,7 @@
 
 				lyt = layout.getClosestPosition(Math.floor(target.comp.shape.x/layout.cellW),
 							Math.floor(target.comp.shape.y/layout.cellH));
+			obj = {};
 			obj.x = lyt.x*layout.cellW;
 			obj.y = lyt.y*layout.cellH;
 			obj.type = 'dummy';
@@ -1068,6 +1072,9 @@
 		props.type = 'intermediary';
 
 		props.name = 'p_' + paya.id();
+		console.log("transactions");
+		console.log(props.name);
+
 
 		posx = Math.floor(target.comp.shape.x/layout.cellW);
 		posy = Math.floor(target.comp.shape.y/layout.cellH);
@@ -1110,7 +1117,7 @@
 
 		    lyt = layout.getClosestPosition(Math.floor(cur.comp.shape.x/layout.cellW),
 						    Math.floor(cur.comp.shape.y/layout.cellH));
-
+			obj = {};
 		    obj.x = lyt.x*layout.cellW;
 		    obj.y = lyt.y*layout.cellH;
 		    obj.type = 'intermediary';
@@ -1121,6 +1128,7 @@
 	            cur = p;
 		    lyt = layout.getClosestPosition(Math.floor(cur.comp.shape.x/layout.cellW),
 						    Math.floor(cur.comp.shape.y/layout.cellH));
+			obj = {};
 		    obj.x = lyt.x*layout.cellW;
 		    obj.y = lyt.y*layout.cellH;
 		    obj.type = 'dummy';
@@ -1155,7 +1163,7 @@
 		
 		lyt = layout.getClosestPosition(Math.floor(p.comp.shape.x/layout.cellW),
 						Math.floor(p.comp.shape.y/layout.cellH));
-		
+		obj = {};
 		obj.x = lyt.x*layout.cellW;
 		obj.y = lyt.y*layout.cellH;
 		obj.type = 'dummy';
@@ -1573,7 +1581,7 @@
 	    cellH:  80
 	};
 
-	const PetriExports = {
+	let PetriExports = {
 	    Mode:'dev',
 
 	    edge2SQLObject: (ed) =>{
@@ -1588,9 +1596,9 @@
 		obj.direction = ed.comp.direction;
 
 
-		    /* to be checked */
+		/* to be checked */
 		if(ed.comp.shape && ed.comp.shape.altpath)
-			obj.altpath = true;
+		    obj.altpath = true;
 
 		if(ed.comp.direction == 'p2t'){
 		    obj.pid = src.comp.name;
@@ -1722,6 +1730,7 @@
 	};
 
 	const load = (data)=>{
+	    console.log("azer");
 	    var cps = [];
 	    Register$1.forEach(cp => {
 	    if (cp.type != "edge")
@@ -1744,12 +1753,12 @@
 
 	const save_as_svg = ()=>{
 	    const svg = document.getElementById("viewport").children[0];
-	    saveFile(svg.outerHTML,"diagram.svg","image/svg+xml");
+	    saveFile(svg.outerHTML, paya$1.name + ".svg","image/svg+xml");
 	};
 
 	const save_as_sql = () =>{
-	    new  File(PetriExports.toSQL(paya$1.name), paya$1.name);
-	    return PetriExports.toSQL(paya$1.name);
+	    var data = PetriExports.toSQL(paya$1.name);
+	    saveFile(data, paya$1.name + '.sql');
 	};
 
 	// save should return an object
@@ -1758,7 +1767,7 @@
 	    Register$1.forEach(comp => {
 	        data[comp.type + 's'].push(comp.save());
 	    }, data);
-	    return data;
+	    saveFile(JSON.stringify(data), paya$1.name + ".json", 'text/plain'); 
 	};
 
 	const saveFile = (data, name, type)=>{
@@ -1823,7 +1832,7 @@
 	                {
 	                    onchange: (e) => {
 	                        node.comp.setType(e.target.value);
-	                        node.comp.shape.shape.redraw();
+	                        node.comp.shape.redraw();
 	                    }
 	                },
 	                types.map((type, idx) =>
@@ -1844,93 +1853,93 @@
 	    // transition -> uuid, type {auto, manual, clock , ssub, asub}, name, ca, gateway, role, resource id, resource name, 
 	    var transition = {
 	        view(vnode) {
-	        var node = vnode.attrs.node;
-	        // console.log(node);
-	        const types = ["dummy","automatic", "event", "manual", "clock", "ssub", "asub"];
-	        const rnames = ["get", "put", "post", "delete"];
-	        const gateways = ["and_join", "xor_join"];
-	        return m(".grid.grid-cols-2", [
-	            m(".p-2.border-r",
-	            m(".flex.flex-col.px-4", [
-	                m("", [
-	                m("label.block.mb-3", "UUID"),
-	                m("input", { value: node.comp.shape.uuid, disabled: true })
+	            var node = vnode.attrs.node;
+	            // console.log(node);
+	            const types = ["dummy","automatic", "event", "manual", "clock", "ssub", "asub"];
+	            const rnames = ["get", "put", "post", "delete"];
+	            const gateways = ["and_join", "xor_join"];
+	            return m(".grid.grid-cols-2", [
+			m(".p-2.border-r",
+			  m(".flex.flex-col.px-4", [
+	                      m("", [
+				  m("label.block.mb-3", "UUID"),
+				  m("input", { value: node.comp.shape.uuid, disabled: true })
+	                      ]),
+	                      m("", [
+				  m("label.block.mb-3", "type"),
+				  m("select",
+				    {
+					onchange: (e) => {
+					    node.setType(e.target.value);
+					}
+				    },
+				    types.map((type, idx) =>
+					m("option", {
+					    key: idx,
+					    value: type,
+					    selected: node.comp.type == type,
+					}, type))
+				   ),
+	                      ]),
+	                      node.comp.ca && m("", [
+				  m("label.block.mb-3", "Cancel activity"),
+				  m("input", { value: node.comp.ca, disabled: true})
+	                      ]),
+	                      node.comp.type == "automatic" && m("", [
+				  m("label.block.mb-3", "Resource name"),
+				  m("select",
+				    {
+					onchange: (e) => {
+					    node.comp.app.name = e.target.value;
+					}
+				    },
+				    rnames.map((name, idx) =>
+					m("option", {
+					    key: idx,
+					    value: name,
+					    selected: node.comp.app.name == name,
+					}, name))
+				   )]),
+			  ]),
+			 ),
+			m(".p-2", m(".flex.flex-col.px-4", [
+			    m("", [
+				m("label.block.mb-3", "Name"),
+				m("input", {
+				    value: node.comp.name,
+				    onchange: (e) => {node.comp.setName(e.target.value);}
+				})
+			    ]),
+			    m("", [
+				m("label.block.mb-3", "Gateway"),
+				m("select",
+				  {
+				      onchange: (e) => {
+					  node.comp.setGate(e.target.value);
+				      }
+				  },
+				  gateways.map((gateway, idx) =>
+				      m("option", {
+					  key: idx,
+					  value: gateway,
+					  selected: node.comp.gate == gateway || (gateway == "and_join" && node.comp.gate == undefined),
+				      }, gateway))
+				 ),
+				node.comp.type == "manual" && m("", [
+				    m("label.block.mb-3", "Role"),
+				    m("input", { value: node.comp.role, onchange: (e) => node.comp.role = e.target.value })
+				]),
+			    ]),
+			])),
+			node.comp.type == "automatic" && m(".px-4.col-span-2", [
+			    m("label.block.mb-3", "Resource uri"),
+			    m("input.border", { value: node.comp.app.path, onchange: (e) => node.comp.app.path = e.target.value })
+			]),
+			node.comp.type == "automatic" && m(".px-4.col-span-2", [
+	                    m("label.block.mb-3", "Resource parameters"),
+	                    m("textarea.border", { value: node.comp.app.in, onchange: (e) => node.comp.app.in = e.target.value })
 	                ]),
-	                m("", [
-	                m("label.block.mb-3", "type"),
-	                m("select",
-	                    {
-	                    onchange: (e) => {
-	                        node.setType(e.target.value);
-	                    }
-	                    },
-	                    types.map((type, idx) =>
-	                    m("option", {
-	                        key: idx,
-	                        value: type,
-	                        selected: node.comp.type == type,
-	                    }, type))
-	                ),
-	                ]),
-	                node.comp.ca && m("", [
-	                m("label.block.mb-3", "Cancel activity"),
-	                m("input", { value: node.comp.ca, disabled: true})
-	                ]),
-	                node.comp.type == "automatic" && m("", [
-	                m("label.block.mb-3", "Resource name"),
-	                m("select",
-	                    {
-	                    onchange: (e) => {
-	                        node.comp.app.name = e.target.value;
-	                    }
-	                    },
-	                    rnames.map((name, idx) =>
-	                    m("option", {
-	                        key: idx,
-	                        value: name,
-	                        selected: node.comp.app.name == name,
-	                    }, name))
-	                )]),
-	            ]),
-	            ),
-	            m(".p-2", m(".flex.flex-col.px-4", [
-	            m("", [
-	                m("label.block.mb-3", "Name"),
-	                m("input", {
-	                value: node.comp.name,
-	                onchange: (e) => {node.comp.setName(e.target.value);}
-	                })
-	            ]),
-	            m("", [
-	                m("label.block.mb-3", "Gateway"),
-	                m("select",
-	                {
-	                    onchange: (e) => {
-	                    node.comp.setGate(e.target.value);
-	                    }
-	                },
-	                gateways.map((gateway, idx) =>
-	                    m("option", {
-	                    key: idx,
-	                    value: gateway,
-	                    selected: node.comp.gate == gateway || (gateway == "and_join" && node.comp.gate == undefined),
-	                    }, gateway))
-	                ),
-	                node.comp.type == "manual" && m("", [
-	                m("label.block.mb-3", "Role"),
-	                m("input", { value: node.comp.app.role, onchange: (e) => node.comp.app.role = e.target.value })
-	                ]),
-	            ]),
-	            ])),
-	            node.comp.type == "automatic" && m(".px-4.col-span-2", [
-	            m("label.block.mb-3", "Resource uri"),
-	            m("input.border", { value: node.comp.name, onchange: (e) => node.comp.name = e.target.value })
-	            ]),
-	            node.comp.type == "automatic" && m(".px-4.col-span-2", [
-	                m("label.block.mb-3", "Resource parameters"),
-	                m("textarea.border", { value: "node.comp.name", onchange: (e) => node.comp.name = e.target.value })
-	                ]),
-	        ])
+	            ])
 	        }
 	    };
 	    

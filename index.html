@@ -28,22 +28,6 @@
 
 <body>
   <script>
-    var saveFile = (data, name, type)=>{
-      let blob = new Blob([data], { type });
-      if (typeof navigator.msSaveBlob == "function")
-          return navigator.msSaveBlob(blob, file_name);
-
-      var saver = document.createElementNS("http://www.w3.org/1999/xhtml", "a");
-      var blobURL = saver.href = URL.createObjectURL(blob);
-      var body = document.body;
-
-      saver.download = name;
-
-      body.appendChild(saver);
-      saver.dispatchEvent(new MouseEvent("click"));
-      body.removeChild(saver);
-      URL.revokeObjectURL(blobURL);
-    }
     var load = ()=>{
       const fileElem = document.getElementById("load_input");
       if (fileElem) 
@@ -86,7 +70,6 @@
                       {
                         onclick: ()=>{
                           var data = petri.save_as_json();
-                          saveFile(JSON.stringify(data), "diagram.aya", 'text/plain'); 
                         }
                       },
                       "JSON"
@@ -96,8 +79,7 @@
                     m("a.block.px-4.py-2.hover:bg-gray-100.dark:hover:bg-gray-600.dark:hover:text-white[href='#']", 
                     {
                         onclick: ()=>{
-                          var data = petri.save_as_sql();
-                          console.log(data);
+                          petri.save_as_sql();
                         }
                       },
                     "SQL"

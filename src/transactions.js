@@ -19,6 +19,9 @@ const transactions = {
 	props.type = 'intermediary'
 
 	props.name = 'p_' + paya.id();
+	console.log("transactions");
+	console.log(props.name);
+
 
 	posx = Math.floor(target.comp.shape.x/layout.cellW);
 	posy = Math.floor(target.comp.shape.y/layout.cellH);
@@ -61,7 +64,7 @@ const transactions = {
 
 	    lyt = layout.getClosestPosition(Math.floor(cur.comp.shape.x/layout.cellW),
 					    Math.floor(cur.comp.shape.y/layout.cellH));
-
+		obj = {};
 	    obj.x = lyt.x*layout.cellW;
 	    obj.y = lyt.y*layout.cellH;
 	    obj.type = 'intermediary';
@@ -72,6 +75,7 @@ const transactions = {
             cur = p;
 	    lyt = layout.getClosestPosition(Math.floor(cur.comp.shape.x/layout.cellW),
 					    Math.floor(cur.comp.shape.y/layout.cellH));
+		obj = {};
 	    obj.x = lyt.x*layout.cellW;
 	    obj.y = lyt.y*layout.cellH;
 	    obj.type = 'dummy';
@@ -106,7 +110,7 @@ const transactions = {
 	
 	lyt = layout.getClosestPosition(Math.floor(p.comp.shape.x/layout.cellW),
 					Math.floor(p.comp.shape.y/layout.cellH));
-	
+	obj = {};
 	obj.x = lyt.x*layout.cellW;
 	obj.y = lyt.y*layout.cellH;
 	obj.type = 'dummy';

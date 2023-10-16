@@ -21,6 +21,8 @@ const placactions = {
 		props.type = 'dummy'
 		
 		props.name = 't_' + paya.id();
+		console.log("placactions");
+		console.log(props.name);
 
 		posx = Math.floor(target.comp.shape.x/layout.cellW);
 		posy = Math.floor(target.comp.shape.y/layout.cellH);
@@ -70,6 +72,7 @@ const placactions = {
 
 			lyt = layout.getClosestPosition(Math.floor(t.comp.shape.x/layout.cellW),
 						Math.floor(t.comp.shape.y/layout.cellH));
+		obj = {};
 		obj.x = lyt.x*layout.cellW;
 		obj.y = lyt.y*layout.cellH;
 		obj.type = 'intermediary';
@@ -81,6 +84,7 @@ const placactions = {
 
 			lyt = layout.getClosestPosition(Math.floor(target.comp.shape.x/layout.cellW),
 						Math.floor(target.comp.shape.y/layout.cellH));
+		obj = {};
 		obj.x = lyt.x*layout.cellW;
 		obj.y = lyt.y*layout.cellH;
 		obj.type = 'dummy';
