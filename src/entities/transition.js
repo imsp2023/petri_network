@@ -1,3 +1,4 @@
+import { Register } from "../register";
 
 class Transition{
     static getShapeDimension(type){
