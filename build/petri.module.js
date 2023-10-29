@@ -1,4 +1,4 @@
-let Register$1 = class Register{
+class Register{
     static store = {};
     
     static add(id, obj) {
@@ -19,7 +19,7 @@ let Register$1 = class Register{
 	    func(Register.store[e], userdata);
 	});
     }
-};
+}
 
 const edgeactions = {
     list : [
@@ -38,8 +38,8 @@ class Edge {
 	        throw new Error("missing parameters");
 
             if ((props.direction != "p2t" && props.direction != "t2p" && props.direction != "ca") ||
-	        !(src=Register$1.find(props.src)) ||
-	        !(dest=Register$1.find(props.dest)) ||
+	        !(src=Register.find(props.src)) ||
+	        !(dest=Register.find(props.dest)) ||
 	        (props.direction != 'ca' && src.comp.shape.type == dest.comp.shape.type))
 	        throw new Error("wrong direction");
 
@@ -569,7 +569,7 @@ class EdgeComponent{
 	
 	this.addAllEvents();
 	this.actions = edgeactions;
-	Register$1.add(this.comp.shape.line.uuid, this);
+	Register.add(this.comp.shape.line.uuid, this);
     }
 
     save(){
@@ -585,7 +585,7 @@ class EdgeComponent{
 
     remove(){
 	this.comp.shape.removeFromDOM();
-	Register$1.clear(this.comp.shape.line.uuid);
+	Register.clear(this.comp.shape.line.uuid);
     }
 }
 
@@ -882,7 +882,7 @@ const placactions = {
     deletion: (target)=>{
 		var edges = [];
 
-	Register$1.forEach(
+	Register.forEach(
 	    (item, data)=>{
 		if(item.type=='edge' &&
 		   (item.comp.src == target.comp.shape.uuid ||
@@ -910,7 +910,7 @@ const placactions = {
             var count = {altpath: false};
 
 
-            Register$1.forEach(
+            Register.forEach(
 		(item, data)=>{
                     console.log('Register');
                     if(item.type=='edge' &&
@@ -995,7 +995,7 @@ class PlaceComponent{
 	
 		this.addAllEvents();
 		this.actions = placactions;
-		Register$1.add(this.comp.shape.uuid, this);
+		Register.add(this.comp.shape.uuid, this);
     }
 
     move(dx, dy) {
@@ -1010,7 +1010,7 @@ class PlaceComponent{
 				Math.floor(this.comp.shape.y/layout.cellH),
 				this.comp.shape.uuid);
 		this.comp.redraw();
-		Register$1.forEach(
+		Register.forEach(
 			(item, data)=>{
 			if(item.type=='edge' &&
 			(item.comp.src == this.comp.shape.uuid ||
@@ -1045,7 +1045,7 @@ class PlaceComponent{
 		layout.umark(Math.floor(this.comp.shape.x/layout.cellW),
 				Math.floor(this.comp.shape.y/layout.cellH));
 		this.comp.shape.removeFromDOM();
-			Register$1.clear(this.comp.shape.uuid);
+			Register.clear(this.comp.shape.uuid);
     }
 
 }
@@ -1176,7 +1176,7 @@ const transactions = {
     
     deletion: (target)=>{
 	var edges = []; //, src, dest;
-        Register$1.forEach(
+        Register.forEach(
 	    (item, data)=>{
 		if(item.type=='edge' &&
 		   (item.comp.src == target.comp.shape.uuid ||
@@ -1203,7 +1203,7 @@ const transactions = {
             var count = {count: 0, altpath: false};
 	    
 
-            Register$1.forEach(
+            Register.forEach(
 		(item, data)=>{
                     if(item.type=='edge' &&
 		       (item.comp.src == target.comp.shape.uuid ||
@@ -1295,7 +1295,7 @@ class TransitionComponent{
 
 	this.addAllEvents();
 	this.actions = transactions;
-        Register$1.add(this.comp.shape.uuid, this);
+        Register.add(this.comp.shape.uuid, this);
     }
 
     move(dx, dy) {
@@ -1311,7 +1311,7 @@ class TransitionComponent{
 		    this.comp.shape.uuid);
 	this.comp.redraw();
 
-	Register$1.forEach(
+	Register.forEach(
 	    (item, data)=>{
 		if(item.type=='edge' &&
 		   (item.comp.src == this.comp.shape.uuid ||
@@ -1370,7 +1370,7 @@ class TransitionComponent{
     remove(){
 	if(this.comp.ca){
 	    var cp;
-	    if((cp = Register$1.find(this.comp.cauuid))){
+	    if((cp = Register.find(this.comp.cauuid))){
 		delete cp.comp.ca;
 		delete cp.comp.cauuid;
 
@@ -1382,7 +1382,7 @@ class TransitionComponent{
 	layout.umark(Math.floor(this.comp.shape.x/layout.cellW),
 		     Math.floor(this.comp.shape.y/layout.cellH));
 	this.comp.shape.removeFromDOM();
-        Register$1.clear(this.comp.shape.uuid);
+        Register.clear(this.comp.shape.uuid);
     }
 }
 
@@ -1483,7 +1483,7 @@ class LassoComponent{
 	this.comp = new Lasso(props);
 
 	this.actions = lassoactions;
-	Register$1.add(this.comp.shape.uuid, this);
+	Register.add(this.comp.shape.uuid, this);
     }
 
     lockComponent() {
@@ -1503,7 +1503,7 @@ class LassoComponent{
 	}
 	
 	ids.map((i)=>{
-	    if((cp=Register$1.find(i))){
+	    if((cp=Register.find(i))){
 		
 		if(cp.comp.shape.x > this.comp.shape.x &&
 		   cp.comp.shape.y > this.comp.shape.y &&
@@ -1547,7 +1547,7 @@ class LassoComponent{
 	});
 	
 	this.comp.shape.removeFromDOM();
-        Register$1.clear(this.comp.shape.uuid);
+        Register.clear(this.comp.shape.uuid);
     }
 }
 
@@ -1584,8 +1584,8 @@ let PetriExports = {
 	if(ed.type != 'edge')
 	    return null;
 	
-	src = Register$1.find(ed.comp.src);
-	dst = Register$1.find(ed.comp.dest);
+	src = Register.find(ed.comp.src);
+	dst = Register.find(ed.comp.dest);
 
 	obj.direction = ed.comp.direction;
 
@@ -1630,7 +1630,7 @@ let PetriExports = {
     toSQL: (name) =>{
 		var data={edges:[]}, text='';
 		
-		Register$1.forEach( (c, ud)=> {
+		Register.forEach( (c, ud)=> {
 			if(c.type == 'place' && c.comp.type == 'start')
 				ud.start = c.comp.name;
 			else if(c.type == 'edge'){
@@ -1712,7 +1712,7 @@ const init = (name)=>{
 
 const _new = ()=>{
     var cps = [];
-    Register$1.forEach(cp => {
+    Register.forEach(cp => {
     if (cp.type != "edge")
         cps.push(cp);
     }, cps);
@@ -1726,7 +1726,7 @@ const _new = ()=>{
 const load = (data)=>{
     console.log("azer");
     var cps = [];
-    Register$1.forEach(cp => {
+    Register.forEach(cp => {
     if (cp.type != "edge")
         cps.push(cp);
     }, cps);
@@ -1758,7 +1758,7 @@ const save_as_sql = () =>{
 // save should return an object
 const save_as_json = ()=>{
     var data = { edges: [], places: [], transitions: [] };
-    Register$1.forEach(comp => {
+    Register.forEach(comp => {
         data[comp.type + 's'].push(comp.save());
     }, data);
     saveFile(JSON.stringify(data), paya$1.name + ".json", 'text/plain'); 
