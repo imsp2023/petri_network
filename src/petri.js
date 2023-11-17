@@ -285,9 +285,9 @@ export const editor = () => {
 		    m("label.block.mb-3", "Resource uri"),
 		    m("input.border", { value: node.comp.app.path, onchange: (e) => node.comp.app.path = e.target.value })
 		]),
-		node.comp.type == "automatic" && m(".px-4.col-span-2", [
+		node.comp.type == "automatic" && m(".px-4.col-span-2.overflow-y-auto", [
                     m("label.block.mb-3", "Resource parameters"),
-                    m("textarea.border", { value: node.comp.app.in, onchange: (e) => node.comp.app.in = e.target.value })
+                    m("textarea.border.w-full", { rows: 20,value: node.comp.app.in, onchange: (e) => node.comp.app.in = e.target.value })
                 ]),
             ])
         }
@@ -297,7 +297,7 @@ export const editor = () => {
     
         view(vnode) {
         const node = vnode.attrs.config;
-        return m(".fixed.border.border-1.right-0.top-0.bottom-0.bg-white.flex.flex-col",
+        return m(".fixed.border.border-1.right-0.top-0.bottom-0.bg-white.flex.flex-col.overflow-y-auto",
             { style: "min-width:25%; box-shadow: rgba(149, 157, 165, 0.2) 0px 4px 12px;}" }, [
             m(".flex.justify-between.border-b.px-4.py-2",
             m("label.text-2xl.font-medium", "Config"),
