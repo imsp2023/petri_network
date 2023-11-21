@@ -15,5 +15,8 @@
     "uglify": "uglifyjs --v8 --toplevel --compress --mangle --verbose  -m reserved=['$','require','exports'] --output build/petri.min.js build/petri.js"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "rollup": "^4.4.1"
+  }
 }
