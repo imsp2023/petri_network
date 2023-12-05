@@ -235,29 +235,29 @@
 	    }
 
 	    constructor(props={type: 'dummy'}){
-		var dim = {};
+				var dim = {};
 
-		if(props && typeof props != 'object')
-		    throw new Error('wrong parameter');
+				if(props && typeof props != 'object')
+					throw new Error('wrong parameter');
 
-		if(props.name && !props.type){
-		    props.type = "dummy";
-		}else if(props.type == "dummy" || props.type == "clock"){
-		    if(!props.name)
-			props.name = 't_' + paya.id();
-		}else if(props.type == "manual" || props.type == "automatic" ||
-			 props.type == "asub" || props.type == "ssub" || props.type == "event"){
-		    if(!props.name)
-			throw new Error("manual transition requires a name");
-		}else
-		    throw new Error("wrong transition type");
+				if(props.name && !props.type){
+					props.type = "dummy";
+				}else if(props.type == "dummy" || props.type == "clock"){
+					if(!props.name)
+					props.name = 't_' + paya.id();
+				}else if(props.type == "manual" || props.type == "automatic" ||
+					props.type == "asub" || props.type == "ssub" || props.type == "event"){
+					if(!props.name)
+					throw new Error("manual transition requires a name");
+				}else
+					throw new Error("wrong transition type");
 
-	        this.panelPos = -1;
-		this.state = '';
-		
-		Object.keys(props).map((e)=>{
-		    if(e != 'x' && e != 'y')
-				this[e] = props[e];
+					this.panelPos = -1;
+				this.state = '';
+				
+				Object.keys(props).map((e)=>{
+					if(e != 'x' && e != 'y')
+						this[e] = props[e];
 		});
 		    
 		if(props.app == undefined)
@@ -653,6 +653,8 @@
 
 			lyt = layout.getClosestPosition(Math.floor(target.comp.shape.x/layout.cellW),
 				Math.floor(target.comp.shape.y/layout.cellH));
+
+			obj = {};
 			obj.x = lyt.x*layout.cellW;
 			obj.y = lyt.y*layout.cellH;
 			obj.type = 'dummy';
@@ -696,9 +698,9 @@
 
 	        lyt = layout.getClosestPosition(Math.floor(target.comp.shape.x/layout.cellW),
 						Math.floor(target.comp.shape.y/layout.cellH));
-		obj.x = lyt.x*layout.cellW;
-		obj.y = lyt.y*layout.cellH;
-		obj.type = 'dummy';
+			obj.x = lyt.x*layout.cellW;
+			obj.y = lyt.y*layout.cellH;
+			obj.type = 'dummy';
 
 	        t0 = ComponentFactory.getComponent('transition', obj);
 		e = ComponentFactory.getComponent('edge', {src: target.comp.shape.uuid,
@@ -708,7 +710,8 @@
 	        for(i=0; i<2; i++){
 	            lyt = layout.getClosestPosition(Math.floor(t0.comp.shape.x/layout.cellW),
 						    Math.floor(t0.comp.shape.y/layout.cellH));
-		    obj.x = lyt.x*layout.cellW;
+			obj = {};
+			obj.x = lyt.x*layout.cellW;
 		    obj.y = lyt.y*layout.cellH;
 		    obj.type = 'intermediary';
 
@@ -718,7 +721,8 @@
 					       direction: 't2p'});
 	            lyt = layout.getClosestPosition(Math.floor(p.comp.shape.x/layout.cellW),
 						    Math.floor(p.comp.shape.y/layout.cellH));
-		    obj.x = lyt.x*layout.cellW;
+			obj = {};
+			obj.x = lyt.x*layout.cellW;
 		    obj.y = lyt.y*layout.cellH;
 		    obj.type = 'automatic';
 	            obj.name = 'auto'+i;
@@ -727,10 +731,11 @@
 
 	            lyt = layout.getClosestPosition(Math.floor(p.comp.shape.x/layout.cellW),
 						    Math.floor(p.comp.shape.y/layout.cellH));
-		    obj.x = lyt.x*layout.cellW;
+			obj = {};
+			obj.x = lyt.x*layout.cellW;
 		    obj.y = lyt.y*layout.cellH;
 		    obj.type = 'dummy';
-	            obj.name = null;
+			obj.name = null;
 
 	            t2 = ComponentFactory.getComponent('transition', obj);
 
@@ -744,7 +749,8 @@
 
 	            lyt = layout.getClosestPosition(Math.floor(t.comp.shape.x/layout.cellW),
 						    Math.floor(t.comp.shape.y/layout.cellH));
-		    obj.x = lyt.x*layout.cellW;
+			obj = {};
+			obj.x = lyt.x*layout.cellW;
 		    obj.y = lyt.y*layout.cellH;
 		    obj.type = 'intermediary';
 
@@ -763,6 +769,7 @@
 	            if(!i){
 	                lyt = layout.getClosestPosition(Math.floor(p.comp.shape.x/layout.cellW),
 							Math.floor(p.comp.shape.y/layout.cellH));
+			obj = {};
 			obj.x = lyt.x*layout.cellW;
 			obj.y = lyt.y*layout.cellH;
 			obj.type = 'dummy';
@@ -795,7 +802,8 @@
 	        for(i=0; i<2; i++){
 	            lyt = layout.getClosestPosition(Math.floor(t.comp.shape.x/layout.cellW),
 		    				    Math.floor(t.comp.shape.y/layout.cellH));
-		    obj.x = lyt.x*layout.cellW;
+			obj = {};
+			obj.x = lyt.x*layout.cellW;
 		    obj.y = lyt.y*layout.cellH;
 		    obj.type = 'intermediary';
 
@@ -808,10 +816,11 @@
 
 	            lyt = layout.getClosestPosition(Math.floor(p.comp.shape.x/layout.cellW),
 		    				    Math.floor(p.comp.shape.y/layout.cellH));
-	            obj.x = lyt.x*layout.cellW;
+			obj = {};
+			obj.x = lyt.x*layout.cellW;
 		    obj.y = lyt.y*layout.cellH;
 		    obj.type = 'automatic';
-	            obj.name = 'auto'+i;
+			obj.name = 'auto'+i;
 
 	            t2 = ComponentFactory.getComponent('transition', obj);
 	            ca[i] = t2;
@@ -822,10 +831,11 @@
 	            if(!i){
 	                lyt = layout.getClosestPosition(Math.floor(t2.comp.shape.x/layout.cellW),
 		    					Math.floor(t2.comp.shape.y/layout.cellH));
-		        obj.x = lyt.x*layout.cellW;
-		        obj.y = lyt.y*layout.cellH;
-		        obj.type = 'intermediary';
-	                obj.name = null;
+			obj = {};
+			obj.x = lyt.x*layout.cellW;
+			obj.y = lyt.y*layout.cellH;
+			obj.type = 'intermediary';
+			obj.name = null;
 
 	                p2 = ComponentFactory.getComponent('place', obj);
 	            }
@@ -870,7 +880,8 @@
 	        lyt = layout.getClosestPosition(Math.floor(target.comp.shape.x/layout.cellW),
 	                                        Math.floor(target.comp.shape.y/layout.cellH));
 	        
-	        obj.x = lyt.x*layout.cellW;
+			obj = {};
+			obj.x = lyt.x*layout.cellW;
 	        obj.y = lyt.y*layout.cellH;
 	        obj.type = 'dummy';
 	        
@@ -1356,7 +1367,11 @@
 		this.centerComponent(this.comp.shape);
 		
 	        this.comp.completeShape();
-		this.move(0, 0)                ;
+			if (this.comp.gate == 'xor_join'){
+				this.comp.gate = "";
+				this.comp.setGate("xor_join");
+			}
+		this.move(0, 0);
 	    }
 	    
 	    save(){

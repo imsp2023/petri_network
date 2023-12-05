@@ -119,7 +119,11 @@ class TransitionComponent{
 	this.centerComponent(this.comp.shape);
 	
         this.comp.completeShape();
-	this.move(0, 0)                ;
+		if (this.comp.gate == 'xor_join'){
+			this.comp.gate = "";
+			this.comp.setGate("xor_join");
+		}
+	this.move(0, 0);
     }
     
     save(){

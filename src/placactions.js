@@ -61,6 +61,8 @@ const placactions = {
 
 		lyt = layout.getClosestPosition(Math.floor(target.comp.shape.x/layout.cellW),
 			Math.floor(target.comp.shape.y/layout.cellH));
+
+		obj = {};
 		obj.x = lyt.x*layout.cellW;
 		obj.y = lyt.y*layout.cellH;
 		obj.type = 'dummy';
@@ -104,9 +106,9 @@ const placactions = {
 
         lyt = layout.getClosestPosition(Math.floor(target.comp.shape.x/layout.cellW),
 					Math.floor(target.comp.shape.y/layout.cellH));
-	obj.x = lyt.x*layout.cellW;
-	obj.y = lyt.y*layout.cellH;
-	obj.type = 'dummy';
+		obj.x = lyt.x*layout.cellW;
+		obj.y = lyt.y*layout.cellH;
+		obj.type = 'dummy';
 
         t0 = ComponentFactory.getComponent('transition', obj);
 	e = ComponentFactory.getComponent('edge', {src: target.comp.shape.uuid,
@@ -116,7 +118,8 @@ const placactions = {
         for(i=0; i<2; i++){
             lyt = layout.getClosestPosition(Math.floor(t0.comp.shape.x/layout.cellW),
 					    Math.floor(t0.comp.shape.y/layout.cellH));
-	    obj.x = lyt.x*layout.cellW;
+		obj = {};
+		obj.x = lyt.x*layout.cellW;
 	    obj.y = lyt.y*layout.cellH;
 	    obj.type = 'intermediary';
 
@@ -126,7 +129,8 @@ const placactions = {
 				       direction: 't2p'});
             lyt = layout.getClosestPosition(Math.floor(p.comp.shape.x/layout.cellW),
 					    Math.floor(p.comp.shape.y/layout.cellH));
-	    obj.x = lyt.x*layout.cellW;
+		obj = {};
+		obj.x = lyt.x*layout.cellW;
 	    obj.y = lyt.y*layout.cellH;
 	    obj.type = 'automatic';
             obj.name = 'auto'+i;
@@ -135,10 +139,11 @@ const placactions = {
 
             lyt = layout.getClosestPosition(Math.floor(p.comp.shape.x/layout.cellW),
 					    Math.floor(p.comp.shape.y/layout.cellH));
-	    obj.x = lyt.x*layout.cellW;
+		obj = {};
+		obj.x = lyt.x*layout.cellW;
 	    obj.y = lyt.y*layout.cellH;
 	    obj.type = 'dummy';
-            obj.name = null;
+		obj.name = null;
 
             t2 = ComponentFactory.getComponent('transition', obj);
 
@@ -152,7 +157,8 @@ const placactions = {
 
             lyt = layout.getClosestPosition(Math.floor(t.comp.shape.x/layout.cellW),
 					    Math.floor(t.comp.shape.y/layout.cellH));
-	    obj.x = lyt.x*layout.cellW;
+		obj = {};
+		obj.x = lyt.x*layout.cellW;
 	    obj.y = lyt.y*layout.cellH;
 	    obj.type = 'intermediary';
 
@@ -171,6 +177,7 @@ const placactions = {
             if(!i){
                 lyt = layout.getClosestPosition(Math.floor(p.comp.shape.x/layout.cellW),
 						Math.floor(p.comp.shape.y/layout.cellH));
+		obj = {};
 		obj.x = lyt.x*layout.cellW;
 		obj.y = lyt.y*layout.cellH;
 		obj.type = 'dummy';
@@ -203,7 +210,8 @@ const placactions = {
         for(i=0; i<2; i++){
             lyt = layout.getClosestPosition(Math.floor(t.comp.shape.x/layout.cellW),
 	    				    Math.floor(t.comp.shape.y/layout.cellH));
-	    obj.x = lyt.x*layout.cellW;
+		obj = {};
+		obj.x = lyt.x*layout.cellW;
 	    obj.y = lyt.y*layout.cellH;
 	    obj.type = 'intermediary';
 
@@ -216,10 +224,11 @@ const placactions = {
 
             lyt = layout.getClosestPosition(Math.floor(p.comp.shape.x/layout.cellW),
 	    				    Math.floor(p.comp.shape.y/layout.cellH));
-            obj.x = lyt.x*layout.cellW;
+		obj = {};
+		obj.x = lyt.x*layout.cellW;
 	    obj.y = lyt.y*layout.cellH;
 	    obj.type = 'automatic';
-            obj.name = 'auto'+i;
+		obj.name = 'auto'+i;
 
             t2 = ComponentFactory.getComponent('transition', obj);
             ca[i] = t2;
@@ -230,10 +239,11 @@ const placactions = {
             if(!i){
                 lyt = layout.getClosestPosition(Math.floor(t2.comp.shape.x/layout.cellW),
 	    					Math.floor(t2.comp.shape.y/layout.cellH));
-	        obj.x = lyt.x*layout.cellW;
-	        obj.y = lyt.y*layout.cellH;
-	        obj.type = 'intermediary';
-                obj.name = null;
+		obj = {};
+		obj.x = lyt.x*layout.cellW;
+		obj.y = lyt.y*layout.cellH;
+		obj.type = 'intermediary';
+		obj.name = null;
 
                 p2 = ComponentFactory.getComponent('place', obj);
             }
@@ -278,7 +288,8 @@ const placactions = {
         lyt = layout.getClosestPosition(Math.floor(target.comp.shape.x/layout.cellW),
                                         Math.floor(target.comp.shape.y/layout.cellH));
         
-        obj.x = lyt.x*layout.cellW;
+		obj = {};
+		obj.x = lyt.x*layout.cellW;
         obj.y = lyt.y*layout.cellH;
         obj.type = 'dummy';
         

@@ -58,30 +58,30 @@ class Transition{
     }
 
     constructor(props={type: 'dummy'}){
-	var state = '';
-	var dim = {};
+			var state = '';
+			var dim = {};
 
-	if(props && typeof props != 'object')
-	    throw new Error('wrong parameter');
+			if(props && typeof props != 'object')
+				throw new Error('wrong parameter');
 
-	if(props.name && !props.type){
-	    props.type = "dummy";
-	}else if(props.type == "dummy" || props.type == "clock"){
-	    if(!props.name)
-		props.name = 't_' + paya.id();
-	}else if(props.type == "manual" || props.type == "automatic" ||
-		 props.type == "asub" || props.type == "ssub" || props.type == "event"){
-	    if(!props.name)
-		throw new Error("manual transition requires a name");
-	}else
-	    throw new Error("wrong transition type");
+			if(props.name && !props.type){
+				props.type = "dummy";
+			}else if(props.type == "dummy" || props.type == "clock"){
+				if(!props.name)
+				props.name = 't_' + paya.id();
+			}else if(props.type == "manual" || props.type == "automatic" ||
+				props.type == "asub" || props.type == "ssub" || props.type == "event"){
+				if(!props.name)
+				throw new Error("manual transition requires a name");
+			}else
+				throw new Error("wrong transition type");
 
-        this.panelPos = -1;
-	this.state = '';
-	
-	Object.keys(props).map((e)=>{
-	    if(e != 'x' && e != 'y')
-			this[e] = props[e];
+				this.panelPos = -1;
+			this.state = '';
+			
+			Object.keys(props).map((e)=>{
+				if(e != 'x' && e != 'y')
+					this[e] = props[e];
 	});
 	    
 	if(props.app == undefined)
