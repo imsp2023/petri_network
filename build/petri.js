@@ -789,7 +789,7 @@
 
 	        e = ComponentFactory.getComponent('edge', {src: target.comp.shape.uuid,
 		    			   dest: t.comp.shape.uuid,
-		    			   direction: 't2p'});
+		    			   direction: 'p2t'});
 	        e.comp.shape.redraw();
 
 	        for(i=0; i<2; i++){
@@ -1600,7 +1600,10 @@
 		if(ed.comp.shape && ed.comp.shape.altpath)
 		    obj.altpath = true;
 
-		if(ed.comp.direction == 'p2t'){
+		if(ed.comp.direction == 'ca'){
+		    obj.pid = src.comp.name;
+		    obj.tid = dst.comp.name;
+		}else if(ed.comp.direction == 'p2t'){
 		    obj.pid = src.comp.name;
 		    obj.tid = dst.comp.name;
 
@@ -1614,6 +1617,9 @@
 		    else if(dst.comp.type == 'automatic')
 			obj.app = dst.comp.app;
 
+		    if(dst.comp.ca)
+			obj.ca = dst.comp.ca;
+		    
 		    if(dst.comp.type == 'asub' || dst.comp.type == 'ssub')
 			obj.count = dst.comp.count;
 		    
