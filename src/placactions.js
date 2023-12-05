@@ -197,7 +197,7 @@ const placactions = {
 
         e = ComponentFactory.getComponent('edge', {src: target.comp.shape.uuid,
 	    			   dest: t.comp.shape.uuid,
-	    			   direction: 't2p'});
+	    			   direction: 'p2t'});
         e.comp.shape.redraw();
 
         for(i=0; i<2; i++){

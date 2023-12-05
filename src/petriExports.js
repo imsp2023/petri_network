@@ -19,7 +19,10 @@ let PetriExports = {
 	if(ed.comp.shape && ed.comp.shape.altpath)
 	    obj.altpath = true;
 
-	if(ed.comp.direction == 'p2t'){
+	if(ed.comp.direction == 'ca'){
+	    obj.pid = src.comp.name;
+	    obj.tid = dst.comp.name;
+	}else if(ed.comp.direction == 'p2t'){
 	    obj.pid = src.comp.name;
 	    obj.tid = dst.comp.name;
 
