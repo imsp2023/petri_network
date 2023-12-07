@@ -69,16 +69,16 @@ const Panel = {
 	});
     },
 
-    remove: (target)=>{
+    remove: (target, actions)=>{
 		var i, len;
 
 			if(target.panelPos < 0)
 				return;
 
-	len = target.comp.shape.children.length;
-        for(i = target.panelPos; i < target.comp.shape.children.length; i++)
-	    target.comp.shape.children[i].child.removeFromDOM();
-	target.comp.shape.children.splice(target.panelPos, len);
+		len = target.actions.list.length + 1;
+			for(i = target.panelPos; i < target.panelPos + len; i++)
+				target.comp.shape.children[i].child.removeFromDOM();
+		target.comp.shape.children.splice(target.panelPos, len);
 
 		target.panelPos = -1;
 		target.comp.shape.svg.removeEventListener("mouseover", () => {});

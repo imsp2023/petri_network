@@ -155,14 +155,16 @@ const Panel = {
 	});
     },
 
-    remove: (target)=>{
+    remove: (target, actions)=>{
 		var i, len;
 
 			if(target.panelPos < 0)
 				return;
 
-	len = target.comp.shape.children.length;
-        for(i = target.panelPos; i < target.comp.shape.children.length; i++)
+	len = target.actions.list.length + 1;
+	console.log("taille " + len + " panel pos " + target.panelPos);
+
+        for(i = target.panelPos; i < target.panelPos + len; i++)
 	    target.comp.shape.children[i].child.removeFromDOM();
 	target.comp.shape.children.splice(target.panelPos, len);
 
